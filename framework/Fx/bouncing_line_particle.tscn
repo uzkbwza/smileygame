@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cq1j06ogddrtj"]
+
+[ext_resource type="Script" path="res://framework/Fx/bouncing_line_particle.gd" id="1_6lhjn"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_wcbd5"]
+bounce = 0.5
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5ua2j"]
+radius = 0.5
+
+[node name="BouncingLineParticle" type="RigidBody2D"]
+physics_material_override = SubResource("PhysicsMaterial_wcbd5")
+lock_rotation = true
+script = ExtResource("1_6lhjn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_5ua2j")
+
+[node name="Line2D" type="Line2D" parent="."]
+width = 1.0

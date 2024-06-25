@@ -1,0 +1,14 @@
+[gd_resource type="Shader" format=3 uid="uid://d1k26ci1ox6j4"]
+
+[resource]
+code = "shader_type canvas_item;
+
+uniform bool flash = false;
+uniform vec4 color : source_color = vec4(1.,1.,1., 1.0);
+
+void fragment() {
+	if (flash) {
+		COLOR.rgb = color.rgb;
+	}
+
+}"

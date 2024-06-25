@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://5s0crml5h5ju" path="res://framework/objects/BaseObject2D.tscn" id="1_jpsug"]
+[ext_resource type="Script" path="res://framework/objects/PlatformerCharacterBody2D.gd" id="2_lkqle"]
+
+[node name="PlatformerCharacterBody2D" instance=ExtResource( "1_jpsug" )]
+script = ExtResource( "2_lkqle" )
+max_speed = 30000
+max_run_speed = 12000
+min_speed = 15
+accel_speed = 900
+air_accel_speed = 70
+jump_speed = 36500
+max_fall_speed = 39000
+max_ascend_speed = null
+fric = 500
+air_fric = 500
+snap_distance = 10
+gravity = 1500
+gravity_ascending_factor = 1.0
+gravity_multiplier = 1.0

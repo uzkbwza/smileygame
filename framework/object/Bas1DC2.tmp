@@ -1,0 +1,62 @@
+[gd_scene load_steps=6 format=3 uid="uid://ckdj8lntj2rnd"]
+
+[ext_resource type="Script" path="res://framework/object/BaseObject2D.gd" id="1_we4mw"]
+[ext_resource type="Shader" uid="uid://d1k26ci1ox6j4" path="res://framework/ObjectSprite.tres" id="2_vkul6"]
+[ext_resource type="Script" path="res://framework/FiniteStateMachine/StateMachine2D.gd" id="4_pmtwg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lh2tm"]
+resource_local_to_scene = true
+shader = ExtResource("2_vkul6")
+shader_parameter/flash = false
+shader_parameter/color = Color(1, 1, 1, 1)
+
+[sub_resource type="GDScript" id="GDScript_42gre"]
+script/source = "@tool
+
+extends KinematicObject2D
+
+class_name BaseObjectBody2D
+
+@export var host: BaseObject2D
+
+@onready var shape: CollisionShape2D = $CollisionShape2D
+
+func _ready():
+	if host == null:
+		host = get_parent()
+"
+
+[node name="BaseObject2D" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_we4mw")
+
+[node name="Flip" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Flip"]
+unique_name_in_owner = true
+root_node = NodePath("../../Body")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Flip"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_lh2tm")
+metadata/_edit_lock_ = true
+
+[node name="Sounds" type="Node2D" parent="Flip"]
+unique_name_in_owner = true
+
+[node name="Body" type="CharacterBody2D" parent="." node_paths=PackedStringArray("host") groups=["Object"]]
+unique_name_in_owner = true
+collision_layer = 4
+motion_mode = 1
+script = SubResource("GDScript_42gre")
+host = NodePath("..")
+drag = 0.999
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+
+[node name="StateMachine" type="Node2D" parent="." node_paths=PackedStringArray("animation_players", "animated_sprites")]
+unique_name_in_owner = true
+script = ExtResource("4_pmtwg")
+animation_players = [NodePath("../Flip/AnimationPlayer")]
+animated_sprites = [NodePath("../Flip/Sprite")]

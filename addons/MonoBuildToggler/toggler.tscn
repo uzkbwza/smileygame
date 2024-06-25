@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqtpjvdmenyxm"]
+
+[ext_resource type="Script" path="res://addons/MonoBuildToggler/toggler.gd" id="1"]
+
+
+[node name="HBoxContainer" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1")
+
+[node name="VSeparator" type="VSeparator" parent="."]
+layout_mode = 2
+
+[node name="ToggleButton" type="CheckButton" parent="."]
+layout_mode = 2
+text = "Mono build"
+
+[connection signal="toggled" from="ToggleButton" to="." method="_on_ToggleButton_toggled"]

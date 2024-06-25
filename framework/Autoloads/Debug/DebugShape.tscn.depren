@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://framework/OutlineShape.gd" id="1_hsh6f"]
+
+[node name="Node2D" type="Line2D"]
+rotation = -1.3945
+points = PackedVector2Array(10, 0, 8.09017, 5.87785, 3.09017, 9.51056, -3.09017, 9.51056, -8.09017, 5.87785, -10, 1.22461e-15, -8.09017, -5.87785, -3.09017, -9.51056, 3.09017, -9.51056, 8.09017, -5.87785, 10, -2.44921e-15, 8.09017, 5.87785, 3.09017, 9.51056, -3.09017, 9.51056, -8.09017, 5.87785)
+width = 3.0
+joint_mode = 1
+begin_cap_mode = 1
+end_cap_mode = 1
+antialiased = true
+script = ExtResource( "1_hsh6f" )
+shape = 0
+ellipse_resolution = 10

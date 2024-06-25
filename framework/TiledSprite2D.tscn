@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://bbvulrd8ou4u4"]
+
+[ext_resource type="Shader" path="res://framework/Shaders/TiledSprite.gdshader" id="1_wsvth"]
+[ext_resource type="Texture2D" uid="uid://colxnifvj71f8" path="res://placeholders/square1.png" id="2_7mwuh"]
+[ext_resource type="Script" path="res://framework/tiled_sprite.gd" id="3_b6ige"]
+
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_vat2m"]
+frame_0/texture = ExtResource("2_7mwuh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y07dp"]
+resource_local_to_scene = true
+shader = ExtResource("1_wsvth")
+shader_parameter/sprite_scale = Vector2(1, 1)
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/tile = SubResource("AnimatedTexture_vat2m")
+
+[node name="TiledSprite2D" type="Sprite2D"]
+texture_repeat = 3
+material = SubResource("ShaderMaterial_y07dp")
+texture = SubResource("AnimatedTexture_vat2m")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
+script = ExtResource("3_b6ige")
+tile = SubResource("AnimatedTexture_vat2m")

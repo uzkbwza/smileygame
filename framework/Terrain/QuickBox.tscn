@@ -1,0 +1,30 @@
+[gd_scene load_steps=8 format=3 uid="uid://d04kuvw5av1ya"]
+
+[ext_resource type="Script" path="res://framework/Terrain/QuickBox.gd" id="1_bmnoy"]
+[ext_resource type="PackedScene" uid="uid://bbvulrd8ou4u4" path="res://framework/TiledSprite2D.tscn" id="2_ko6jf"]
+[ext_resource type="Shader" path="res://framework/Shaders/TiledSprite.gdshader" id="3_1x5sw"]
+[ext_resource type="Texture2D" uid="uid://colxnifvj71f8" path="res://placeholders/square1.png" id="4_31o3a"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lhaad"]
+size = Vector2(32, 32)
+
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_vat2m"]
+frame_0/texture = ExtResource("4_31o3a")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y07dp"]
+shader = ExtResource("3_1x5sw")
+shader_parameter/sprite_scale = Vector2(1, 1)
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/tile = SubResource("AnimatedTexture_vat2m")
+
+[node name="QuickBox" type="StaticBody2D"]
+script = ExtResource("1_bmnoy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_lhaad")
+metadata/_edit_lock_ = true
+
+[node name="TiledSprite2D" parent="." instance=ExtResource("2_ko6jf")]
+material = SubResource("ShaderMaterial_y07dp")
+texture = SubResource("AnimatedTexture_vat2m")
+tile = SubResource("AnimatedTexture_vat2m")

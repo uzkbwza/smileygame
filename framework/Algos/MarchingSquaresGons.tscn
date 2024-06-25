@@ -1,0 +1,126 @@
+[gd_scene load_steps=2 format=3 uid="uid://c43ruko1mfcio"]
+
+[ext_resource type="Script" path="res://framework/Algos/MarchingSquaresGons.gd" id="1_bsksq"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_bsksq")
+
+[node name="Case" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+
+[node name="Case1" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, 0, -1, 1, 0, 1)
+
+[node name="Case2" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(1, 1, 1, 0, 0, 1)
+
+[node name="Case3" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, 0, 1, 0, 1, 1, -1, 1)
+
+[node name="Case4" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(0, -1, 1, -1, 1, 0)
+
+[node name="Case5" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(0, -1, 1, -1, 1, 0, 0, 1, -1, 1, -1, 0)
+
+[node name="Case6" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(0, -1, 1, -1, 1, 1, 0, 1)
+
+[node name="Case7" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(0, -1, 1, -1, 1, 1, -1, 1, -1, 0)
+
+[node name="Case8" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 0, -1, -1, 0)
+
+[node name="Case9" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 0, -1, 0, 1, -1, 1)
+
+[node name="Case10" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 0, -1, 1, 0, 1, 1, 0, 1, -1, 0)
+
+[node name="Case11" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 0, -1, 1, 0, 1, 1, -1, 1)
+
+[node name="Case12" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 0, -1, 0)
+
+[node name="Case13" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 0, 0, 1, -1, 1)
+
+[node name="Case14" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, 0, -1, -1, 1, -1, 1, 1, 0, 1)
+
+[node name="Case15" type="Polygon2D" parent="."]
+visible = false
+color = Color(1, 1, 1, 0.129412)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+
+[node name="TestParent" type="Node2D" parent="."]
+position = Vector2(110, 100)
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+offset_right = 240.0
+offset_bottom = 31.0
+
+[node name="NW" type="CheckBox" parent="HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NW"
+
+[node name="NE" type="CheckBox" parent="HBoxContainer2"]
+layout_mode = 2
+text = "NE"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 162.0
+offset_right = 240.0
+offset_bottom = 193.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SW" type="CheckBox" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SW"
+
+[node name="SE" type="CheckBox" parent="HBoxContainer"]
+layout_mode = 2
+text = "SE"
+
+[connection signal="pressed" from="HBoxContainer2/NW" to="." method="_on_nw_pressed"]
+[connection signal="pressed" from="HBoxContainer2/NE" to="." method="_on_ne_pressed"]
+[connection signal="pressed" from="HBoxContainer/SW" to="." method="_on_sw_pressed"]
+[connection signal="pressed" from="HBoxContainer/SE" to="." method="_on_se_pressed"]
