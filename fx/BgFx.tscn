@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1wbgtnls6imx"]
+
+[ext_resource type="Shader" path="res://fx/BgFx.gdshader" id="1_6uiwt"]
+[ext_resource type="Texture2D" uid="uid://pnqifoaerxg6" path="res://stupid crap/friends/player/player-die2.png" id="2_o7i41"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8fsvd"]
+shader = ExtResource("1_6uiwt")
+shader_parameter/alpha = 1.0
+shader_parameter/h_osc_speed = 3.373
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 0.2
+shader_parameter/h_osc_freq = 3.0
+shader_parameter/v_osc_speed = 1.0
+shader_parameter/v_osc = true
+shader_parameter/v_osc_width = 0.1
+shader_parameter/v_osc_freq = 2.0
+shader_parameter/scroll = false
+shader_parameter/scroll_speed = 0.5
+shader_parameter/scroll_dir = Vector2(1, 1)
+shader_parameter/use_custom_texture = false
+
+[node name="TextureRect" type="TextureRect"]
+material = SubResource("ShaderMaterial_8fsvd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("2_o7i41")
+expand_mode = 1

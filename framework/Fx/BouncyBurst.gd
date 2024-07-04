@@ -22,6 +22,10 @@ const WIDTH = 1
 @export_range(0.0, 50.0, 1, "or_greater") var quantize_amount := 0.0
 
 @export_category("Start Behavior")
+@export_range(0, 180) var spread_degrees = 180:
+	set(value):
+		spread_degrees = value
+		spread = deg_to_rad(value)
 @export_range(0.0, 2000, 0.5, "or_greater") var starting_velocity := 500.0
 @export_range(0.0, 2000, 0.5, "or_greater") var starting_velocity_deviation := 100.0
 @export_range(0.0, 100.0, 0.5, "or_greater") var max_starting_distance := 2.0
@@ -35,7 +39,7 @@ const WIDTH = 1
 @export_range(-10.0, 10.0, 0.1) var gravity_scale := 1.0
 @export var continuous_cd := PhysicsServer2D.CCD_MODE_CAST_RAY
 @export var freeze_rotation := true
-@export var lifetime := 0
+@export var lifetime :float = 0.0
 
 @export_category("Bias")
 @export_range(0, 1) var direction_bias_amount := 0.0
@@ -45,6 +49,8 @@ const WIDTH = 1
 @export_range(0, 1) var ignore_bias_effect_chance := 0.0
 
 var px1_mode: bool = false
+
+var spread := deg_to_rad(spread_degrees)
 
 var real_num_points: int:
 	get:
@@ -85,11 +91,14 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	if autostart:
-		go()
+		go.call_deferred()
 	
 func go() -> void:
 	if lifetime > 0:
 		get_tree().create_timer(lifetime, false, true, false).timeout.connect(queue_free)
+	
+	reset_physics_interpolation()
+	
 	if initialized:
 		return
 	
@@ -139,8 +148,9 @@ func _draw_lines() -> void:
 
 		RenderingServer.canvas_item_add_multiline(canvas_item, line, colors, WIDTH, false)
 
-		#else:
-			#RenderingServer.canvas_item_add_circle(canvas_item, line[-1], circle_radius, colors[-1])
+
+	## Debug
+	## RenderingServer.canvas_item_add_circle(canvas_item, Vector2(), 5, Color.RED)
 
 	_cleanup_bodies()
 
@@ -207,7 +217,7 @@ func _create_body(space:RID) -> RID:
 	PhysicsServer2D.body_set_param(body, PhysicsServer2D.BODY_PARAM_MASS, mass)
 	
 	PhysicsServer2D.body_set_space(body, space)
-	PhysicsServer2D.body_set_state(body, PhysicsServer2D.BODY_STATE_TRANSFORM, transform.translated(rng.random_vec(false) * max_starting_distance))
+	PhysicsServer2D.body_set_state(body, PhysicsServer2D.BODY_STATE_TRANSFORM, Transform2D().translated(global_position + rng.random_vec(false) * max_starting_distance))
 	PhysicsServer2D.body_set_param(body, PhysicsServer2D.BODY_PARAM_BOUNCE, bounce)
 	PhysicsServer2D.body_set_param(body, PhysicsServer2D.BODY_PARAM_FRICTION, friction)
 	PhysicsServer2D.body_set_param(body, PhysicsServer2D.BODY_PARAM_GRAVITY_SCALE, gravity_scale)
@@ -217,7 +227,8 @@ func _create_body(space:RID) -> RID:
 	
 	var ignore_bias := !bias_active or rng.chance(ignore_bias_effect_chance)
 	var speed := starting_velocity + rng.randfn(0, starting_velocity_deviation)
-	var impulse := rng.random_vec()
+	var impulse := bias_dir.rotated(rng.randf_range(-spread, spread))
+
 
 	if !ignore_bias:
 		if rng.chance(direction_bias_amount):

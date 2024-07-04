@@ -24,7 +24,7 @@ collision_layer = 4
 motion_mode = 1
 script = ExtResource("2_o81ii")
 host = NodePath("..")
-simple_physics = null
+simple_physics = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
 

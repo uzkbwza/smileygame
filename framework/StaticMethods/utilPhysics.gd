@@ -2,30 +2,15 @@ extends Node
 
 class_name Physics
 
-static func spring(x:float,  v:float, xt:float, zeta:float, omega:float, h:float) -> Array[float]:
-	# thanks chaoclypse
-	var f := 1.0 + 2.0 * h * zeta * omega
-	var oo := omega * omega
-	var hoo := h * oo
-	var hhoo := h * hoo
-	var detInv := 1.0 / (f + hhoo)
-	var detX := f * x + h * v + hhoo * xt
-	var detV := v + hoo * (xt - x)
-	x = detX * detInv
-	v = detV * detInv
-	return [x,v]
+static func spring(spring: float, displacement: float, damp: float, velocity: float) -> float:
+	return -spring * displacement - damp * velocity
 
-static func vector_spring(vec:Vector2, vel:Vector2, target:Vector2, zeta:float,  omega:float,  h:float) -> Array[Vector2]:
-	var x := vec.x;
-	var y := vec.y;
-	var t1 := spring(x, vel.x, target.x, zeta, omega, h);
-	x = t1[0]
-	vel.x = t1[1]
-	var t2 := spring(y, vel.y, target.y, zeta, omega, h);
-	y = t2[0]
-	vel.y = t2[1]
-	vec = Vector2(x, y);
-	return [vec,vel];
+static func get_raycast_end_point(raycast: RayCast2D) -> Vector2:
+	return raycast.to_global(raycast.target_position)
+
+static func get_point_on_raycast(raycast: RayCast2D, dist: float) -> Vector2:
+	return raycast.to_global(raycast.target_position * dist)
+
 
 static func area2d_contains_point(area2d: Area2D, point: Vector2) -> bool:
 	var space_state = area2d.get_world_2d().direct_space_state

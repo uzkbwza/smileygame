@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdwx6ky6fwj4i"]
+
+[ext_resource type="Script" path="res://stupid crap/friends/cheevus.gd" id="1_ghdm4"]
+
+[node name="Cheevus" type="Node2D"]
+script = ExtResource("1_ghdm4")

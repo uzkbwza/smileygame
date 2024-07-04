@@ -1,0 +1,48 @@
+[gd_scene load_steps=9 format=3 uid="uid://b86n8pgtnxbxk"]
+
+[ext_resource type="Shader" path="res://fx/level_parallax_1.gdshader" id="1_5rejl"]
+[ext_resource type="Texture2D" uid="uid://x0odv4pinqhw" path="res://placeholders/square_white.png" id="2_n3qyh"]
+[ext_resource type="Script" path="res://fx/bg_stars.gd" id="3_s4bu6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wgbhw"]
+noise_type = 0
+frequency = 0.0858
+fractal_gain = -0.914
+fractal_weighted_strength = 1.0
+fractal_ping_pong_strength = -0.9695
+cellular_distance_function = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wiuyk"]
+width = 1024
+height = 1024
+in_3d_space = true
+seamless = true
+seamless_blend_skirt = 0.972
+noise = SubResource("FastNoiseLite_wgbhw")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_adcy3"]
+frequency = 0.0134
+fractal_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_t3irl"]
+width = 1024
+height = 1024
+seamless = true
+noise = SubResource("FastNoiseLite_adcy3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ytpl6"]
+shader = ExtResource("1_5rejl")
+shader_parameter/speed = 0.005
+shader_parameter/smoke_color = Color(0.552941, 0.262745, 0.6, 1)
+shader_parameter/noise = SubResource("NoiseTexture2D_wiuyk")
+shader_parameter/noise2 = SubResource("NoiseTexture2D_t3irl")
+
+[node name="Icon" type="Sprite2D"]
+modulate = Color(1, 1, 1, 0.219608)
+texture_repeat = 2
+material = SubResource("ShaderMaterial_ytpl6")
+position = Vector2(-3, 0)
+scale = Vector2(20.0625, 20.0625)
+texture = ExtResource("2_n3qyh")
+script = ExtResource("3_s4bu6")
+noise = SubResource("FastNoiseLite_wgbhw")

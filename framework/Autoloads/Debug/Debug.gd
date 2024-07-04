@@ -1,6 +1,6 @@
 extends Node
 
-var enabled = false
+var enabled = true
 var draw = true
 var show_object_info = true
 

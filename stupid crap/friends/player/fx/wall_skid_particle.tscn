@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlv88qba7pfkk"]
+
+[ext_resource type="Script" path="res://framework/Fx/BouncyBurst.gd" id="1_3fa3m"]
+
+[node name="BouncyBurst" type="Node2D"]
+script = ExtResource("1_3fa3m")
+num_bodies = 1
+autostart = false
+spread_degrees = 111
+starting_velocity = 0.0
+starting_velocity_deviation = 0.0
+friction = 0.3
+damp = 2
+freeze_rotation = false
+lifetime = 1.5
+direction_bias_amount = 0.7809
+velocity_bias_amount = 0.4382
+velocity_bias_multiplier = 1.869
+velocity_bias_power = 3.5

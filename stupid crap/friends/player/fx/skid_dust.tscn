@@ -1,0 +1,61 @@
+[gd_scene load_steps=10 format=3 uid="uid://b3nhqm767vina"]
+
+[ext_resource type="PackedScene" uid="uid://clqmafq7aouke" path="res://framework/Fx/DisappearingParticle.tscn" id="1_fs0hj"]
+[ext_resource type="Texture2D" uid="uid://d0euuisk0jlw1" path="res://framework/Fx/white_circle.png" id="2_vwi6y"]
+
+[sub_resource type="Curve" id="Curve_eetmh"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_rrct1"]
+curve = SubResource("Curve_eetmh")
+
+[sub_resource type="Curve" id="Curve_0qxjo"]
+max_value = 100.0
+_data = [Vector2(0, 1), 0.0, -17.5528, 0, 0, Vector2(1, 19.4805), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_sfvgi"]
+curve = SubResource("Curve_0qxjo")
+
+[sub_resource type="Curve" id="Curve_58cf8"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.689046, 0.727273), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_w0o6d"]
+curve = SubResource("Curve_58cf8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_iag3f"]
+resource_local_to_scene = true
+lifetime_randomness = 0.67
+particle_flag_disable_z = true
+particle_flag_damping_as_friction = true
+spread = 9.116
+initial_velocity_min = 264.95
+initial_velocity_max = 264.95
+gravity = Vector3(0, -25, 0)
+damping_min = 1.21
+damping_max = 1.21
+damping_curve = SubResource("CurveTexture_sfvgi")
+scale_min = 0.0
+scale_max = 0.15
+scale_curve = SubResource("CurveTexture_w0o6d")
+scale_over_velocity_min = 70.26
+scale_over_velocity_max = 70.26
+alpha_curve = SubResource("CurveTexture_rrct1")
+turbulence_noise_strength = 6.95
+turbulence_noise_scale = 0.429
+
+[node name="DisappearingParticle" node_paths=PackedStringArray("independent") instance=ExtResource("1_fs0hj")]
+scale = Vector2(0.5, 0.5)
+independent = [null, null]
+
+[node name="LandingDust3" type="GPUParticles2D" parent="." index="0"]
+z_index = 2
+amount = 2
+process_material = SubResource("ParticleProcessMaterial_iag3f")
+texture = ExtResource("2_vwi6y")
+lifetime = 2.0
+speed_scale = 2.84
+explosiveness = 0.97
+fixed_fps = 60

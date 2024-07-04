@@ -4,13 +4,13 @@ class_name StateMachine2D
 
 const STACK_SIZE = 32
 
-var states_stack = []
-var states_map = {}
-var state
-var queued_states = []
-var queued_data = []
+var states_stack : Array[StateInterface2D] = []
+var states_map  := {}
+var state: StateInterface2D
+var queued_states : Array[String] = []
+var queued_data : Array[Variant] = []
 
-var initialized = false
+var initialized := false
 
 signal state_changed(states_stack)
 signal state_exited(state)
@@ -26,10 +26,10 @@ signal state_exited(state)
 var is_ready = false
 var host
 
-func _ready():
+func _ready() -> void:
 	is_ready = true
 
-func _enter_tree():
+func _enter_tree() -> void:
 	var custom_host = host_node
 	if !is_instance_valid(custom_host):
 		host = get_parent()
@@ -78,21 +78,21 @@ func init(st: String = "", data=null) -> bool:
 	initialized = true
 	return true
 
-func auto_transition(_anim_name):
+func auto_transition(_anim_name) -> void:
 	var next = state._animation_finished()
 	if next:
 		queue_state(next)
 	elif state.next_state != "":
 		queue_state(state.next_state)
 
-func queue_state(new_state, data=null, old_state=state):
+func queue_state(new_state: String, data=null, old_state=state) -> void:
 	if old_state.active:
 		queued_states = []
 		queued_data = []
 		queued_states.push_back(new_state)
 		queued_data.append(data)
 
-func update(delta):
+func update(delta: float) -> void:
 	if !state.update:
 		return
 	
@@ -107,7 +107,7 @@ func update(delta):
 	if next_state_name:
 		queue_state(next_state_name)
 
-func tick():
+func tick() -> void:
 	if queued_states.size() > 0:
 		var state = queued_states.pop_front()
 		var data = queued_data.pop_front()
@@ -120,20 +120,20 @@ func tick():
 	if next_state_name:
 		queue_state(next_state_name)
 
-func deactivate():
+func deactivate() -> void:
 	state.active = false
 	state._exit_shared()
 	state._exit()
 	emit_signal("state_exited", state)
 
-func integrate(st):
+func integrate(st: PhysicsDirectBodyState2D) -> void:
 	state._integrate_shared(st)
 	state._integrate(st)
 
 func _change_state(state_name: String, data=null) -> void:
 	if !(state_name in states_map):
 		return
-	var next_state = states_map[state_name]
+	var next_state: StateInterface2D = states_map[state_name]
 	queued_states = []
 	queued_data = []
 
@@ -177,20 +177,21 @@ func _change_state(state_name: String, data=null) -> void:
 		return
 	emit_signal("state_changed", states_stack)
 
-func try(method: String, args: Array = []):
+func try(method: String, args: Array = []) -> void:
 	if state.has_method(method):
 		state.callv(method, args)
 
-func last_x_states(x, names=true):
+func last_x_states(x, names=true) -> Array[StateInterface2D]:
 	var states = states_stack.slice(-x, states_stack.size())
 	if names:
-		var s = []
+		var s: Array[StateInterface2D] = []
 		for state in states:
 			s.append(state.name)
 		states = s
 	states.reverse()
 	return states
 
-func get_state(state_name):
+func get_state(state_name) -> StateInterface2D:
 	if states_map.has(state_name):
 		return states_map[state_name]
+	return null

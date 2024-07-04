@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://clqmafq7aouke"]
+
+[ext_resource type="Script" path="res://framework/Fx/disappearing_particle.gd" id="1_5t3mt"]
+
+[node name="DisappearingParticle" type="Node2D"]
+z_index = 2
+script = ExtResource("1_5t3mt")

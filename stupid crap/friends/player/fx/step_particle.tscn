@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://c806y4devy3pl"]
+
+[ext_resource type="Script" path="res://framework/Fx/BouncyBurst.gd" id="2_ue718"]
+
+[node name="BouncyBurst" type="Node2D"]
+script = ExtResource("2_ue718")
+num_bodies = 1
+collision_layer = 1
+autostart = false
+jitter_amount = 1.0
+spread_degrees = 20
+starting_velocity = 196.0
+starting_velocity_deviation = 21.0
+bounce = 0.119
+friction = 0.3
+damp = 18
+gravity_scale = 0.1
+lifetime = 0.25
+direction_bias_amount = 0.7809
+velocity_bias_amount = 0.4382
+velocity_bias_multiplier = 1.869
+velocity_bias_power = 3.5

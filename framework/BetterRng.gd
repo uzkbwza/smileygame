@@ -37,7 +37,6 @@ func random_rect2i(start: Vector2i, end: Vector2i, min_width := 1, min_height :=
 	var rect_start := random_cell(start, end - rect_size)
 	return Rect2i(rect_start, rect_size)
 
-
 func random_vec(normalized :=true) -> Vector2:
 	return ang2vec(random_angle()) * (randf_range(0, 1) if !normalized else 1)
 

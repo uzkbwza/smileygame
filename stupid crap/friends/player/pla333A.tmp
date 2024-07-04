@@ -1,0 +1,115 @@
+[gd_scene load_steps=22 format=3 uid="uid://b50q5nl24l32n"]
+
+[ext_resource type="PackedScene" uid="uid://ckdj8lntj2rnd" path="res://framework/object/BaseObject2D.tscn" id="1_ib3fj"]
+[ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://stupid crap/friends/player/player-die1.png" id="2_b3jsg"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/player.gd" id="2_hcyei"]
+[ext_resource type="Texture2D" uid="uid://db0rk1k4ylg0y" path="res://placeholders/circle1.png" id="3_7lcie"]
+[ext_resource type="Texture2D" uid="uid://pnqifoaerxg6" path="res://stupid crap/friends/player/player-die2.png" id="3_br4ij"]
+[ext_resource type="Texture2D" uid="uid://b7dl0l5sbxwuy" path="res://stupid crap/friends/player/player-die3.png" id="4_o6yrg"]
+[ext_resource type="Texture2D" uid="uid://br5y2ssi04dx2" path="res://stupid crap/friends/player/player-die4.png" id="5_qm325"]
+[ext_resource type="Texture2D" uid="uid://cc6jq4yprktq7" path="res://stupid crap/friends/player/player-die5.png" id="6_ol7bq"]
+[ext_resource type="Texture2D" uid="uid://btrrcfrnor3vv" path="res://stupid crap/friends/player/player-die6.png" id="7_sk2qs"]
+[ext_resource type="Texture2D" uid="uid://dhsb40elmt327" path="res://stupid crap/friends/player/player-die7.png" id="8_b4yt4"]
+[ext_resource type="Texture2D" uid="uid://b2l7lpwni7fu1" path="res://stupid crap/friends/player/player-die8.png" id="9_n5vqi"]
+[ext_resource type="Texture2D" uid="uid://towj388otj6r" path="res://stupid crap/friends/player/player-die9.png" id="10_o2hr3"]
+[ext_resource type="Texture2D" uid="uid://clchdt05mxpg7" path="res://stupid crap/friends/player/player-die10.png" id="11_wkfii"]
+[ext_resource type="Texture2D" uid="uid://c2te0w8dkcvx2" path="res://stupid crap/friends/player/player-die11.png" id="12_iwpiv"]
+[ext_resource type="Texture2D" uid="uid://df1gt0u8s6esy" path="res://stupid crap/friends/player/player-die12.png" id="13_msatk"]
+[ext_resource type="Texture2D" uid="uid://d1oxqbn80us3b" path="res://stupid crap/friends/player/player-die13.png" id="14_lhgw3"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/state/idle.gd" id="16_1k1wy"]
+
+[sub_resource type="Animation" id="Animation_aiivk"]
+resource_name = "Idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t7we1"]
+_data = {
+"Idle": SubResource("Animation_aiivk")
+}
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_na6rt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b3jsg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_br4ij")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_o6yrg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_qm325")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ol7bq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_sk2qs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_b4yt4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_n5vqi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_o2hr3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_wkfii")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_iwpiv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_msatk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_lhgw3")
+}],
+"loop": true,
+"name": &"HappyToSad",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dmrwf"]
+radius = 6.0
+
+[node name="BaseObject2D" instance=ExtResource("1_ib3fj")]
+script = ExtResource("2_hcyei")
+
+[node name="AnimationPlayer" parent="Flip" index="0"]
+libraries = {
+"": SubResource("AnimationLibrary_t7we1")
+}
+
+[node name="Foot1" type="Sprite2D" parent="Flip" index="2"]
+unique_name_in_owner = true
+position = Vector2(-8, 8)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_7lcie")
+
+[node name="Foot2" type="Sprite2D" parent="Flip" index="3"]
+unique_name_in_owner = true
+position = Vector2(8, 8)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_7lcie")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." index="1"]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_na6rt")
+animation = &"HappyToSad"
+
+[node name="CollisionShape2D" parent="Body" index="0"]
+shape = SubResource("CircleShape2D_dmrwf")
+
+[node name="StateMachine" parent="." index="3" node_paths=PackedStringArray("animation_players")]
+animation_players = [NodePath("../Flip/AnimationPlayer")]
+
+[node name="Idle" type="Node2D" parent="StateMachine" index="0"]
+script = ExtResource("16_1k1wy")
+
+[node name="FeetPos" type="RayCast2D" parent="." index="4"]
+unique_name_in_owner = true
+target_position = Vector2(0, 14)

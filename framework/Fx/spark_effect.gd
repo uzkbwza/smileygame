@@ -29,8 +29,6 @@ extends Node2D
 @export_range(0, 1) var bias_amount = 0.0
 @export var two_way_bias = false
 
-
-
 var real_num_points:
 	get:
 		if !dynamic_point_count:

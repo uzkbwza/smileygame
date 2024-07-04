@@ -1,0 +1,80 @@
+[gd_scene load_steps=5 format=3 uid="uid://p7x2wup1cutc"]
+
+[ext_resource type="Script" path="res://stupid crap/character_body_2d.gd" id="1_phurw"]
+[ext_resource type="Texture2D" uid="uid://colxnifvj71f8" path="res://placeholders/square1.png" id="2_5vnx3"]
+
+[sub_resource type="SeparationRayShape2D" id="SeparationRayShape2D_atbvh"]
+custom_solver_bias = 1.0
+length = 6.0
+slide_on_slope = true
+
+[sub_resource type="SeparationRayShape2D" id="SeparationRayShape2D_515uf"]
+length = 16.0
+slide_on_slope = true
+
+[node name="PlayerCharacter" type="CharacterBody2D"]
+collision_layer = 4
+floor_constant_speed = true
+floor_block_on_wall = false
+floor_max_angle = 0.802851
+floor_snap_length = 4.0
+script = ExtResource("1_phurw")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -2.38419e-07)
+scale = Vector2(0.6875, 1)
+texture = ExtResource("2_5vnx3")
+
+[node name="Box" type="CollisionPolygon2D" parent="."]
+position = Vector2(0, -5)
+polygon = PackedVector2Array(-6, -11, 0, 10, 6, -11)
+
+[node name="Side3" type="CollisionShape2D" parent="."]
+position = Vector2(-3.05176e-05, -15.5)
+rotation = 1.57079
+shape = SubResource("SeparationRayShape2D_atbvh")
+
+[node name="Side4" type="CollisionShape2D" parent="."]
+position = Vector2(-3.05176e-05, -15.5)
+rotation = -1.5708
+shape = SubResource("SeparationRayShape2D_atbvh")
+
+[node name="UpMiddle" type="CollisionShape2D" parent="."]
+position = Vector2(-3.05176e-05, -0.499969)
+rotation = -3.14159
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="UpRight" type="CollisionShape2D" parent="."]
+position = Vector2(5.99997, -0.499969)
+rotation = -3.14159
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="UpLeft" type="CollisionShape2D" parent="."]
+position = Vector2(-6.00003, -0.499969)
+rotation = -3.14159
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="Down" type="CollisionShape2D" parent="."]
+position = Vector2(-3.05176e-05, -0.499969)
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="DownLeft" type="CollisionShape2D" parent="."]
+position = Vector2(-1.00003, -0.499969)
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="DownRight" type="CollisionShape2D" parent="."]
+position = Vector2(0.999969, -0.499969)
+shape = SubResource("SeparationRayShape2D_515uf")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 15.0
+
+[node name="GroundDetector" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, 15)
+exclude_parent = false
+target_position = Vector2(0, 9)

@@ -1,0 +1,261 @@
+[gd_scene load_steps=31 format=3 uid="uid://b50q5nl24l32n"]
+
+[ext_resource type="PackedScene" uid="uid://ckdj8lntj2rnd" path="res://framework/object/BaseObject2D.tscn" id="1_ib3fj"]
+[ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://stupid crap/friends/player/player-die1.png" id="2_b3jsg"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/player.gd" id="2_hcyei"]
+[ext_resource type="AudioStream" uid="uid://bgkptth0hsw22" path="res://stupid crap/friends/player/sound/footstep1.wav" id="3_1xtrs"]
+[ext_resource type="Texture2D" uid="uid://pnqifoaerxg6" path="res://stupid crap/friends/player/player-die2.png" id="3_br4ij"]
+[ext_resource type="Texture2D" uid="uid://c0w1e5nlv4sus" path="res://stupid crap/friends/player/foot.png" id="3_m3y8g"]
+[ext_resource type="Script" path="res://framework/VariableSound2D.gd" id="4_52o34"]
+[ext_resource type="Texture2D" uid="uid://b7dl0l5sbxwuy" path="res://stupid crap/friends/player/player-die3.png" id="4_o6yrg"]
+[ext_resource type="AudioStream" uid="uid://bdtm5gu6w36kt" path="res://stupid crap/friends/player/sound/skid2.wav" id="5_nfng3"]
+[ext_resource type="Texture2D" uid="uid://br5y2ssi04dx2" path="res://stupid crap/friends/player/player-die4.png" id="5_qm325"]
+[ext_resource type="Texture2D" uid="uid://cc6jq4yprktq7" path="res://stupid crap/friends/player/player-die5.png" id="6_ol7bq"]
+[ext_resource type="AudioStream" uid="uid://p7avdlys5dsw" path="res://stupid crap/friends/player/sound/heavylanding.wav" id="6_wtfdd"]
+[ext_resource type="AudioStream" uid="uid://64i43ysf7mm1" path="res://stupid crap/friends/player/sound/jump.wav" id="7_6x5h1"]
+[ext_resource type="Texture2D" uid="uid://btrrcfrnor3vv" path="res://stupid crap/friends/player/player-die6.png" id="7_sk2qs"]
+[ext_resource type="Texture2D" uid="uid://dhsb40elmt327" path="res://stupid crap/friends/player/player-die7.png" id="8_b4yt4"]
+[ext_resource type="Texture2D" uid="uid://b2l7lpwni7fu1" path="res://stupid crap/friends/player/player-die8.png" id="9_n5vqi"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/foot.gd" id="9_tgiu5"]
+[ext_resource type="Texture2D" uid="uid://towj388otj6r" path="res://stupid crap/friends/player/player-die9.png" id="10_o2hr3"]
+[ext_resource type="Texture2D" uid="uid://clchdt05mxpg7" path="res://stupid crap/friends/player/player-die10.png" id="11_wkfii"]
+[ext_resource type="Texture2D" uid="uid://c2te0w8dkcvx2" path="res://stupid crap/friends/player/player-die11.png" id="12_iwpiv"]
+[ext_resource type="Texture2D" uid="uid://df1gt0u8s6esy" path="res://stupid crap/friends/player/player-die12.png" id="13_msatk"]
+[ext_resource type="Texture2D" uid="uid://d1oxqbn80us3b" path="res://stupid crap/friends/player/player-die13.png" id="14_lhgw3"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/state/idle.gd" id="16_1k1wy"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/fall.gd" id="18_rseg1"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/run.gd" id="18_uwtm1"]
+[ext_resource type="Script" path="res://stupid crap/friends/player/state/kick.gd" id="26_ikwih"]
+
+[sub_resource type="Animation" id="Animation_aiivk"]
+resource_name = "Idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t7we1"]
+_data = {
+"Idle": SubResource("Animation_aiivk")
+}
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_na6rt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b3jsg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_br4ij")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_o6yrg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_qm325")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ol7bq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_sk2qs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_b4yt4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_n5vqi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_o2hr3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_wkfii")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_iwpiv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_msatk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_lhgw3")
+}],
+"loop": true,
+"name": &"HappyToSad",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dmrwf"]
+radius = 2.0
+
+[node name="Smiley" instance=ExtResource("1_ib3fj")]
+z_index = 2
+script = ExtResource("2_hcyei")
+
+[node name="AnimationPlayer" parent="Flip" index="0"]
+libraries = {
+"": SubResource("AnimationLibrary_t7we1")
+}
+
+[node name="Footstep1" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="0"]
+stream = ExtResource("3_1xtrs")
+volume_db = -15.0
+pitch_scale = 2.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+
+[node name="Footstep2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="1"]
+stream = ExtResource("3_1xtrs")
+volume_db = -15.0
+pitch_scale = 2.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+
+[node name="Skid" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="2"]
+stream = ExtResource("5_nfng3")
+volume_db = -15.0
+pitch_scale = 0.75
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.025
+
+[node name="Landing" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="3"]
+stream = ExtResource("6_wtfdd")
+volume_db = -6.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.025
+
+[node name="Landing2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="4"]
+stream = ExtResource("3_1xtrs")
+volume_db = -10.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+
+[node name="Jump" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="5"]
+stream = ExtResource("7_6x5h1")
+volume_db = -6.0
+pitch_scale = 2.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+
+[node name="Foot1" type="Sprite2D" parent="Flip" index="2"]
+unique_name_in_owner = true
+position = Vector2(-8, 8)
+texture = ExtResource("3_m3y8g")
+script = ExtResource("9_tgiu5")
+
+[node name="Foot2" type="Sprite2D" parent="Flip" index="3"]
+unique_name_in_owner = true
+position = Vector2(8, 8)
+texture = ExtResource("3_m3y8g")
+script = ExtResource("9_tgiu5")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." index="1"]
+unique_name_in_owner = true
+z_index = -1
+sprite_frames = SubResource("SpriteFrames_na6rt")
+animation = &"HappyToSad"
+
+[node name="Body" parent="." index="2"]
+collision_layer = 2
+motion_mode = 0
+gravity = 700
+simple_physics = false
+drag_vert = 0.5019
+ground_drag = 1.6409
+air_drag = 0.892
+
+[node name="CollisionShape2D" parent="Body" index="0"]
+shape = SubResource("CircleShape2D_dmrwf")
+
+[node name="StateMachine" parent="." index="3" node_paths=PackedStringArray("animation_players")]
+animation_players = [NodePath("../Flip/AnimationPlayer")]
+
+[node name="Idle" type="Node2D" parent="StateMachine" index="0"]
+script = ExtResource("16_1k1wy")
+update_feet_position_lerp_value = 0.2
+update_face_position_lerp_value = 0.2
+apply_gravity = false
+
+[node name="Fall" type="Node2D" parent="StateMachine" index="1"]
+script = ExtResource("18_rseg1")
+apply_friction = false
+
+[node name="CanLandTimer" type="Timer" parent="StateMachine/Fall" index="0"]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
+[node name="JumpHoldTimer" type="Timer" parent="StateMachine/Fall" index="1"]
+process_callback = 0
+wait_time = 0.4
+one_shot = true
+
+[node name="Foot1Rest" type="RayCast2D" parent="StateMachine/Fall" index="2"]
+rotation = 0.383972
+enabled = false
+target_position = Vector2(0, 20)
+hit_from_inside = true
+
+[node name="Foot2Rest" type="RayCast2D" parent="StateMachine/Fall" index="3"]
+rotation = -0.383972
+enabled = false
+target_position = Vector2(0, 20)
+hit_from_inside = true
+
+[node name="Run" type="Node2D" parent="StateMachine" index="2"]
+script = ExtResource("18_uwtm1")
+update_feet_position_lerp_value = 0.0
+
+[node name="Foot1Rest" type="RayCast2D" parent="StateMachine/Run" index="0"]
+position = Vector2(-7, 17)
+rotation = 0.392699
+enabled = false
+target_position = Vector2(0, 10)
+
+[node name="Foot2Rest" type="RayCast2D" parent="StateMachine/Run" index="1"]
+position = Vector2(7, 17)
+rotation = -0.392699
+enabled = false
+target_position = Vector2(0, 10)
+
+[node name="FootCanGoUnderTimer" type="Timer" parent="StateMachine/Run" index="2"]
+process_callback = 0
+wait_time = 0.1
+one_shot = true
+
+[node name="Kick" type="Node2D" parent="StateMachine" index="3"]
+script = ExtResource("26_ikwih")
+update_feet_position_lerp_value = 0.0
+apply_friction = false
+
+[node name="KickRay" type="RayCast2D" parent="StateMachine/Kick" index="0"]
+target_position = Vector2(30, 0)
+
+[node name="CeilingDetector" type="RayCast2D" parent="." index="4"]
+unique_name_in_owner = true
+target_position = Vector2(0, -5)
+collision_mask = 513
+hit_from_inside = true
+
+[node name="FeetPos" type="RayCast2D" parent="." index="5"]
+unique_name_in_owner = true
+target_position = Vector2(0, 25)
+
+[node name="BoostTileDetector" type="RayCast2D" parent="." index="6"]
+unique_name_in_owner = true
+target_position = Vector2(0, 25)
+collision_mask = 256
+
+[node name="Foot1Rest" type="RayCast2D" parent="." index="7"]
+unique_name_in_owner = true
+rotation = 0.174533
+target_position = Vector2(0, 40)
+hit_from_inside = true
+
+[node name="Foot2Rest" type="RayCast2D" parent="." index="8"]
+unique_name_in_owner = true
+rotation = -0.174533
+target_position = Vector2(0, 40)
+hit_from_inside = true
+
+[node name="CameraTarget" type="Marker2D" parent="." index="9"]
+unique_name_in_owner = true

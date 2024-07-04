@@ -1,0 +1,268 @@
+[gd_scene load_steps=19 format=3 uid="uid://dxpugm2wudu7x"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_npn1s"]
+[ext_resource type="Script" path="res://game_view.gd" id="2_bjns2"]
+[ext_resource type="Script" path="res://framework/IntegerScaleViewportContainer.gd" id="3_65avi"]
+[ext_resource type="Shader" path="res://fx/BgFx.gdshader" id="4_0ea48"]
+[ext_resource type="Texture2D" uid="uid://d0g46hlhg3njf" path="res://levels/bg1.png" id="5_k8s3i"]
+[ext_resource type="Texture2D" uid="uid://csvh6nymftj4b" path="res://levels/bg2.png" id="6_ns7pd"]
+[ext_resource type="Shader" path="res://stupid crap/friends/sadman/Sadman.gdshader" id="7_jq4jp"]
+[ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://stupid crap/friends/player/player-die1.png" id="8_nrmxe"]
+[ext_resource type="Script" path="res://tile_map_camera.gd" id="9_h475i"]
+[ext_resource type="Shader" path="res://viewport.gdshader" id="10_cnl33"]
+[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://stupid crap/friends/terrain/tileset.tres" id="11_eokrp"]
+[ext_resource type="PackedScene" uid="uid://dd47mcoj0b87m" path="res://levels/tutorial/wall slide 1.tscn" id="12_dg5ax"]
+[ext_resource type="Theme" uid="uid://bf211gwt1w3k4" path="res://theme.tres" id="13_iop45"]
+[ext_resource type="Script" path="res://framework/Autoloads/Debug/DebugLabel.gd" id="14_bhb4p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fcd5y"]
+shader = ExtResource("4_0ea48")
+shader_parameter/alpha = 1.0
+shader_parameter/h_osc_speed = 2.38
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 0.255
+shader_parameter/h_osc_freq = 9.1885
+shader_parameter/v_osc_speed = 2.2
+shader_parameter/v_osc = false
+shader_parameter/v_osc_width = 0.1
+shader_parameter/v_osc_freq = 2.0
+shader_parameter/scroll = true
+shader_parameter/scroll_speed = 0.1
+shader_parameter/scroll_dir = Vector2(1, 1)
+shader_parameter/use_custom_texture = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rkktj"]
+shader = ExtResource("4_0ea48")
+shader_parameter/alpha = 0.15
+shader_parameter/h_osc_speed = 0.3
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 0.073
+shader_parameter/h_osc_freq = 10.3775
+shader_parameter/v_osc_speed = 0.022
+shader_parameter/v_osc = true
+shader_parameter/v_osc_width = 0.8845
+shader_parameter/v_osc_freq = 2.0
+shader_parameter/scroll = true
+shader_parameter/scroll_speed = 0.1
+shader_parameter/scroll_dir = Vector2(0, 1)
+shader_parameter/use_custom_texture = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wmyc1"]
+shader = ExtResource("7_jq4jp")
+shader_parameter/time_scale = 0.141
+shader_parameter/squash_scale = 16.3345
+shader_parameter/modulate = Color(1, 0.607843, 0.196078, 0.352941)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rgfe7"]
+shader = ExtResource("10_cnl33")
+shader_parameter/borderScale = 1.0
+shader_parameter/offset = Vector2(-2, -2)
+shader_parameter/color = Color(0, 0, 0, 0.235294)
+shader_parameter/debug = false
+
+[node name="Root" type="Node"]
+script = ExtResource("1_npn1s")
+
+[node name="GameZone" type="Node" parent="."]
+
+[node name="BgLayer" type="CanvasLayer" parent="GameZone"]
+layer = -128
+
+[node name="ColorRect" type="ColorRect" parent="GameZone/BgLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0, 0, 0, 1)
+
+[node name="GameView" type="CanvasLayer" parent="GameZone"]
+process_priority = -3
+follow_viewport_enabled = true
+script = ExtResource("2_bjns2")
+
+[node name="LevelBg" type="SubViewportContainer" parent="GameZone/GameView"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("3_65avi")
+metadata/_edit_lock_ = true
+
+[node name="SubViewport" type="SubViewport" parent="GameZone/GameView/LevelBg"]
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="BgColor" type="ColorRect" parent="GameZone/GameView/LevelBg/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0115448, 0.16016, 0.306201, 1)
+
+[node name="BgTexture2" type="TextureRect" parent="GameZone/GameView/LevelBg/SubViewport"]
+material = SubResource("ShaderMaterial_fcd5y")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k8s3i")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="BgTexture" type="TextureRect" parent="GameZone/GameView/LevelBg/SubViewport"]
+material = SubResource("ShaderMaterial_rkktj")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_ns7pd")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="LevelParallax" type="SubViewportContainer" parent="GameZone/GameView"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("3_65avi")
+metadata/_edit_lock_ = true
+
+[node name="SubViewport" type="SubViewport" parent="GameZone/GameView/LevelParallax"]
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="GameZone/GameView/LevelParallax/SubViewport"]
+follow_viewport_enabled = true
+
+[node name="Parallax2D2" type="Parallax2D" parent="GameZone/GameView/LevelParallax/SubViewport/CanvasLayer"]
+scroll_scale = Vector2(0.5, 0.5)
+repeat_size = Vector2(30, 30)
+repeat_times = 100
+
+[node name="Sprite2D" type="Sprite2D" parent="GameZone/GameView/LevelParallax/SubViewport/CanvasLayer/Parallax2D2"]
+visible = false
+modulate = Color(1, 1, 1, 0.156863)
+material = SubResource("ShaderMaterial_wmyc1")
+scale = Vector2(0.3015, 0.3015)
+texture = ExtResource("8_nrmxe")
+
+[node name="BGCamera" type="Camera2D" parent="GameZone/GameView/LevelParallax/SubViewport/CanvasLayer" node_paths=PackedStringArray("game_view")]
+unique_name_in_owner = true
+process_mode = 3
+process_priority = -10
+process_physics_priority = -10
+script = ExtResource("9_h475i")
+game_view = NodePath("../../../..")
+
+[node name="TileMapViewport" type="SubViewportContainer" parent="GameZone/GameView"]
+visible = false
+material = SubResource("ShaderMaterial_rgfe7")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("3_65avi")
+metadata/_edit_lock_ = true
+
+[node name="SubViewport" type="SubViewport" parent="GameZone/GameView/TileMapViewport"]
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+size = Vector2i(640, 360)
+render_target_update_mode = 0
+
+[node name="GameLayer" type="CanvasLayer" parent="GameZone/GameView/TileMapViewport/SubViewport"]
+follow_viewport_enabled = true
+
+[node name="TileMapCamera" type="Camera2D" parent="GameZone/GameView/TileMapViewport/SubViewport/GameLayer" node_paths=PackedStringArray("game_view")]
+unique_name_in_owner = true
+process_priority = -10
+process_physics_priority = -10
+script = ExtResource("9_h475i")
+game_view = NodePath("../../../..")
+
+[node name="TileMap" type="TileMapLayer" parent="GameZone/GameView/TileMapViewport/SubViewport/GameLayer"]
+unique_name_in_owner = true
+tile_set = ExtResource("11_eokrp")
+
+[node name="GameViewport" type="SubViewportContainer" parent="GameZone/GameView"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("3_65avi")
+metadata/_edit_lock_ = true
+
+[node name="SubViewport" type="SubViewport" parent="GameZone/GameView/GameViewport"]
+physics_interpolation_mode = 1
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="GameLayer" type="CanvasLayer" parent="GameZone/GameView/GameViewport/SubViewport"]
+unique_name_in_owner = true
+follow_viewport_enabled = true
+
+[node name="Level" parent="GameZone/GameView/GameViewport/SubViewport/GameLayer" instance=ExtResource("12_dg5ax")]
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="GameZone"]
+
+[node name="Control" type="Control" parent="GameZone/CanvasLayer2"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("13_iop45")
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="DebugLabel" type="Label" parent="GameZone/CanvasLayer2/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "dfssdfsdfdsfsdfsdfsdf"
+horizontal_alignment = 3
+autowrap_mode = 2
+justification_flags = 161
+script = ExtResource("14_bhb4p")

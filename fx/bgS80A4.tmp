@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://b86n8pgtnxbxk"]
+
+[ext_resource type="Shader" path="res://fx/level_parallax_1.gdshader" id="1_5rejl"]
+[ext_resource type="Texture2D" uid="uid://x0odv4pinqhw" path="res://placeholders/square_white.png" id="2_n3qyh"]
+[ext_resource type="Script" path="res://fx/bg_stars.gd" id="3_s4bu6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ytpl6"]
+shader = ExtResource("1_5rejl")
+shader_parameter/speed = 1.0
+shader_parameter/smoke_color = Color(1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wgbhw"]
+offset = Vector3(0, 1563, 0)
+
+[node name="Icon" type="Sprite2D"]
+modulate = Color(1, 1, 1, 0.219608)
+material = SubResource("ShaderMaterial_ytpl6")
+position = Vector2(-3, 0)
+scale = Vector2(20.0625, 20.0625)
+texture = ExtResource("2_n3qyh")
+script = ExtResource("3_s4bu6")
+noise = SubResource("FastNoiseLite_wgbhw")

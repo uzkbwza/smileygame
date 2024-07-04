@@ -1,0 +1,115 @@
+[gd_scene load_steps=11 format=3 uid="uid://coiicgxoebjaq"]
+
+[ext_resource type="PackedScene" uid="uid://clqmafq7aouke" path="res://framework/Fx/DisappearingParticle.tscn" id="1_d2wlg"]
+[ext_resource type="Texture2D" uid="uid://d0euuisk0jlw1" path="res://framework/Fx/white_circle.png" id="2_a0ovm"]
+[ext_resource type="Script" path="res://framework/Fx/BouncyBurst.gd" id="3_cgni3"]
+
+[sub_resource type="Curve" id="Curve_wdcy4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_3ebwo"]
+curve = SubResource("Curve_wdcy4")
+
+[sub_resource type="Curve" id="Curve_jincx"]
+max_value = 100.0
+_data = [Vector2(0, 1), 0.0, -17.5528, 0, 0, Vector2(1, 41.5584), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cmhjk"]
+curve = SubResource("Curve_jincx")
+
+[sub_resource type="Curve" id="Curve_05u5s"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.689046, 0.727273), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_iqaow"]
+curve = SubResource("Curve_05u5s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oitku"]
+resource_local_to_scene = true
+lifetime_randomness = 0.53
+particle_flag_disable_z = true
+particle_flag_damping_as_friction = true
+direction = Vector3(1, -0.4, 0)
+spread = 15.721
+initial_velocity_max = 613.1
+gravity = Vector3(0, -25, 0)
+damping_min = 1.21
+damping_max = 1.21
+damping_curve = SubResource("CurveTexture_cmhjk")
+scale_min = 0.0
+scale_max = 0.2
+scale_curve = SubResource("CurveTexture_iqaow")
+scale_over_velocity_min = 70.26
+scale_over_velocity_max = 70.26
+alpha_curve = SubResource("CurveTexture_3ebwo")
+turbulence_noise_strength = 6.95
+turbulence_noise_scale = 0.429
+
+[node name="DisappearingParticle" instance=ExtResource("1_d2wlg")]
+
+[node name="LandingDust2" type="GPUParticles2D" parent="." index="0"]
+z_index = 2
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_oitku")
+texture = ExtResource("2_a0ovm")
+lifetime = 2.0
+preprocess = 0.01
+speed_scale = 4.7
+explosiveness = 0.97
+fixed_fps = 60
+
+[node name="LandingDust3" type="GPUParticles2D" parent="." index="1"]
+z_index = 2
+scale = Vector2(-1, 1)
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_oitku")
+texture = ExtResource("2_a0ovm")
+lifetime = 2.0
+preprocess = 0.01
+speed_scale = 4.7
+explosiveness = 0.97
+fixed_fps = 60
+
+[node name="BouncyBurst" type="Node2D" parent="." index="2"]
+z_index = 2
+position = Vector2(0, -5)
+rotation = -0.785397
+script = ExtResource("3_cgni3")
+num_bodies = 3
+autostart = false
+jitter_amount = 1.0
+spread_degrees = 70
+starting_velocity = 477.0
+starting_velocity_deviation = 88.5
+bounce = 0.833
+friction = 0.3
+damp = 14
+gravity_scale = 0.1
+lifetime = 0.5
+direction_bias_amount = 0.7809
+velocity_bias_amount = 0.4382
+velocity_bias_multiplier = 1.869
+velocity_bias_power = 3.5
+
+[node name="BouncyBurst2" type="Node2D" parent="." index="3"]
+z_index = 2
+position = Vector2(0, -5)
+rotation = -2.35619
+script = ExtResource("3_cgni3")
+num_bodies = 3
+autostart = false
+jitter_amount = 1.0
+spread_degrees = 70
+starting_velocity = 477.0
+starting_velocity_deviation = 88.5
+bounce = 0.833
+friction = 0.3
+damp = 14
+gravity_scale = 0.1
+lifetime = 0.5
+direction_bias_amount = 0.7809
+velocity_bias_amount = 0.4382
+velocity_bias_multiplier = 1.869
+velocity_bias_power = 3.5

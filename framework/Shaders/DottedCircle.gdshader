@@ -11,7 +11,7 @@ void fragment() {
   float inner_radius = outer_radius - thickness;
   float outer_circle = step(length(pos), outer_radius);
   float inner_circle = step(length(pos), inner_radius);
-  
+
 
   float angle = atan(pos.y, pos.x);
   if (angle < 0.0) {
@@ -19,10 +19,10 @@ void fragment() {
   }
 
   float wave = 0.5 * sin(frequency * angle + -phase) + 0.5;
-  
+
 
   float ring = outer_circle - inner_circle;
   ring *= step(0.5, wave);
-  
+
   COLOR = vec4(color.rgb, ring * color.a);
 }

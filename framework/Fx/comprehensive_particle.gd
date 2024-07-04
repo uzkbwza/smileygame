@@ -29,8 +29,8 @@ enum CircleLocation {
 @export var dir = Vector2(1, 0)
 @export var modifier = 1.0
 @export var symmetrical = true
-@export var straight_spread = rad2deg(TAU/20)
-@export var wide_spread = rad2deg(TAU/4)
+@export var straight_spread = rad_to_deg(TAU/20)
+@export var wide_spread = rad_to_deg(TAU/4)
 @export var straight_size_modifier = 2.0
 @export var wide_size_modifier = 1.0
 @export var full_circle_size_modifier = 0.5

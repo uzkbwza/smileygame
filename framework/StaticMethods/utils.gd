@@ -13,13 +13,15 @@ static func clear_children(node: Node, deferred=true) -> void:
 static func enum_string(value: int, enum_) -> String:
 	return enum_.keys()[value].capitalize().to_lower()
 
-static func get_first_dict_value_above_number(dict: Dictionary, num: int) -> int:
-	var value = dict[0]
+
+static func get_first_dict_key_below_number(dict: Dictionary, num: int):
+	var highest = -INF
 	for key in dict:
 		if key > num:
-			return value
-		value = dict[key]
-	return value
+			return highest
+		if key > highest:
+			highest = key
+	return highest
 
 static func tree_set_all_process(p_node: Node, p_active: bool, p_self_too: bool = false) -> void:
 	if not p_node:
@@ -53,7 +55,10 @@ static func bools_to_axis(negative: bool, positive: bool) -> float:
 
 static func bools_to_vector2(left: bool, right: bool, up: bool, down: bool) -> Vector2:
 	return Vector2(bools_to_axis(left, right), bools_to_axis(up, down))
-
+	
+static func bools_to_vector2i(left: bool, right: bool, up: bool, down: bool) -> Vector2i: 
+	return Vector2i(bools_to_axis(left, right), bools_to_axis(up, down))
+	
 static func remove_duplicates(array: Array) -> Array:
 	var seen = []
 	var new = []

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="GameplayRecording" load_steps=2 format=3 uid="uid://bld2ew03wkivg"]
+
+[ext_resource type="Script" path="res://recording/GameplayRecording.gd" id="1_ry825"]
+
+[resource]
+script = ExtResource("1_ry825")
+positions = {
+0: Vector2(83.4445, 3.76949),
+20: Vector2(87.2149, 7.32363),
+40: Vector2(140.684, 26.0639),
+60: Vector2(201.877, 10.1816),
+80: Vector2(222.925, -71.4563),
+100: Vector2(222.924, -131.425),
+120: Vector2(227.621, -146.075)
+}
+velocities = {
+0: Vector2(0.00328273, 3.04214),
+20: Vector2(74.943, 39.339),
+40: Vector2(189.575, 0.848276),
+60: Vector2(154.219, -53.7232),
+80: Vector2(0, -278.312),
+100: Vector2(0, -108.814),
+120: Vector2(49.8634, 0)
+}
+inputs = {
+0: 0,
+13: 2,
+68: 18,
+80: 50,
+122: 18,
+123: 2
+}
+length = 137

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c6ruw6wthgjhd"
+path="res://.godot/imported/WallJump2.wav-c7d51e1b32d69a4d1e4090b4b0074b6c.sample"
+
+[deps]
+
+source_file="res://stupid crap/friends/player/sound/WallJump2.wav"
+dest_files=["res://.godot/imported/WallJump2.wav-c7d51e1b32d69a4d1e4090b4b0074b6c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

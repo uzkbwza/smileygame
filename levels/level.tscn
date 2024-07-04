@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3 uid="uid://slqbwnid78go"]
+
+[ext_resource type="Script" path="res://levels/level.gd" id="1_bb30t"]
+[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://stupid crap/friends/player/player.tscn" id="1_ipjpd"]
+[ext_resource type="Script" path="res://framework/GoodCamera.gd" id="2_oaxte"]
+[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://stupid crap/friends/terrain/tileset.tres" id="3_m3iuj"]
+
+[node name="Level" type="Node2D"]
+script = ExtResource("1_bb30t")
+
+[node name="Smiley" parent="." instance=ExtResource("1_ipjpd")]
+metadata/_edit_group_ = true
+
+[node name="StateMachine" parent="Smiley" index="4" node_paths=PackedStringArray("animation_players")]
+animation_players = [NodePath("../Flip/AnimationPlayer")]
+
+[node name="Camera" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+process_callback = 0
+limit_bottom = -32
+position_smoothing_speed = 15.0
+script = ExtResource("2_oaxte")
+target = NodePath("../Smiley/CameraTarget")
+smoothing_enabled = true
+smoothing_half_life = 7.0
+metadata/_edit_lock_ = true
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+
+[node name="TileMapShadow" type="TileMapLayer" parent="CanvasGroup"]
+unique_name_in_owner = true
+modulate = Color(0, 0, 0, 0.462745)
+texture_repeat = 2
+position = Vector2(2, 2)
+tile_set = ExtResource("3_m3iuj")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="MainTileMap" type="TileMapLayer" parent="CanvasGroup"]
+unique_name_in_owner = true
+texture_repeat = 2
+tile_set = ExtResource("3_m3iuj")
+
+[editable path="Smiley"]

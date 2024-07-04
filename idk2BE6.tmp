@@ -1,0 +1,36 @@
+[gd_scene load_steps=7 format=3 uid="uid://de4i3kq6n0dky"]
+
+[ext_resource type="PackedScene" uid="uid://bbvulrd8ou4u4" path="res://framework/TiledSprite2D.tscn" id="3_6uqb4"]
+[ext_resource type="Texture2D" uid="uid://0w1rqks8admj" path="res://stupid crap/friends/brick.png" id="3_51ff6"]
+[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://stupid crap/friends/player/player.tscn" id="4_q6hop"]
+[ext_resource type="Shader" path="res://framework/Shaders/TiledSprite.gdshader" id="4_uqwu1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e6dn2"]
+size = Vector2(388, 108)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3jap0"]
+resource_local_to_scene = true
+shader = ExtResource("4_uqwu1")
+shader_parameter/sprite_scale = Vector2(12.1563, 3.53125)
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/tile = ExtResource("3_51ff6")
+
+[node name="Node2D" type="Node2D"]
+position = Vector2(-73, 70)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D13" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(230, 78)
+shape = SubResource("RectangleShape2D_e6dn2")
+metadata/_edit_group_ = true
+
+[node name="TiledSprite2D" parent="StaticBody2D/CollisionShape2D13" instance=ExtResource("3_6uqb4")]
+material = SubResource("ShaderMaterial_3jap0")
+position = Vector2(0.210007, 1.5)
+scale = Vector2(12.1563, 3.53125)
+texture = ExtResource("3_51ff6")
+tile = ExtResource("3_51ff6")
+
+[node name="BaseObject2D" parent="." instance=ExtResource("4_q6hop")]
+position = Vector2(156, -20)
