@@ -1,7 +1,8 @@
-[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://corij70qfdc2b"]
+[gd_resource type="TileSet" load_steps=6 format=3 uid="uid://corij70qfdc2b"]
 
 [ext_resource type="Texture2D" uid="uid://b5a2ay3ntwawj" path="res://stupid crap/friends/terrain/terrain.png" id="1_oblxo"]
-[ext_resource type="PackedScene" uid="uid://c0uy25dkfda0q" path="res://stupid crap/friends/sadman/Sadman.tscn" id="2_m4sab"]
+[ext_resource type="PackedScene" uid="uid://c0uy25dkfda0q" path="res://stupid crap/friends/terrain/sadman/Sadman.tscn" id="2_vjd1r"]
+[ext_resource type="PackedScene" uid="uid://ce6t5k5hktx14" path="res://stupid crap/friends/terrain/disappearingblock/DisappearingBlock.tscn" id="3_frdpl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3lgjg"]
 texture = ExtResource("1_oblxo")
@@ -72,7 +73,8 @@ use_texture_padding = false
 5:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, 8, 8, 8, 8, -8)
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_c7em4"]
-scenes/1/scene = ExtResource("2_m4sab")
+scenes/1/scene = ExtResource("2_vjd1r")
+scenes/2/scene = ExtResource("3_frdpl")
 
 [resource]
 physics_layer_0/collision_layer = 1

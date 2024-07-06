@@ -15,16 +15,17 @@ var size: Vector2:
 
 @export_range(0, 1000, 0.002, "or_greater", "or_less") var size_x = 32.0:
 	set(x):
-		x = abs(x)
+		x = abs(Math.stepify(x, pixel_snap))
 		size_x = x
 		recalculate_rect()
 	
 @export_range(0, 1000, 0.002, "or_greater", "or_less") var size_y = 32.0:
 	set(y):
-		y = abs(y)
+		y = abs(Math.stepify(y, pixel_snap))
 		size_y = y
 		recalculate_rect()
 
+@export_range(1, 128, 1.0) var pixel_snap = 1
 
 var rect: Rect2
 var stroke_color = Color()

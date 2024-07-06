@@ -96,6 +96,7 @@ radius = 2.0
 radius = 3.16228
 
 [node name="Smiley" instance=ExtResource("1_ib3fj")]
+light_mask = 3
 z_index = 2
 script = ExtResource("2_hcyei")
 tutorial_character = false
@@ -107,35 +108,35 @@ libraries = {
 
 [node name="Footstep1" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="0"]
 stream = ExtResource("3_1xtrs")
-volume_db = -12.0
+volume_db = -9.0
 pitch_scale = 2.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Footstep2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="1"]
 stream = ExtResource("3_1xtrs")
-volume_db = -12.0
+volume_db = -9.0
 pitch_scale = 2.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="FootstepBass" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="2"]
 stream = ExtResource("5_d8nv4")
-volume_db = -12.0
+volume_db = -7.0
 pitch_scale = 2.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Skid" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="3"]
 stream = ExtResource("5_nfng3")
-volume_db = -18.0
+volume_db = -10.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 pitch_variation = 0.025
 
 [node name="Skid2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="4"]
 stream = ExtResource("6_gi08p")
-volume_db = -18.0
+volume_db = -10.0
 pitch_scale = 1.4
 bus = &"Fx"
 script = ExtResource("4_52o34")
@@ -143,14 +144,14 @@ pitch_variation = 0.025
 
 [node name="WallFall" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="5"]
 stream = ExtResource("7_yxlbp")
-volume_db = -11.0
+volume_db = -4.0
 pitch_scale = 1.46
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Kick" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="6"]
 stream = ExtResource("8_c6i0v")
-volume_db = -16.0
+volume_db = -7.0
 pitch_scale = 1.26
 bus = &"Fx"
 script = ExtResource("4_52o34")
@@ -158,33 +159,31 @@ pitch_variation = 0.2
 
 [node name="WallJump" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="7"]
 stream = ExtResource("8_cbqgv")
-volume_db = -11.0
+volume_db = -6.0
 pitch_scale = 2.7
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="WallJump2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="8"]
 stream = ExtResource("9_v6h1m")
-volume_db = -9.0
+volume_db = -2.0
 pitch_scale = 1.21
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Landing" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="9"]
 stream = ExtResource("6_wtfdd")
-volume_db = -2.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Landing2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="10"]
 stream = ExtResource("3_1xtrs")
-volume_db = -6.0
+volume_db = -4.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 
 [node name="Jump" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="11"]
 stream = ExtResource("7_6x5h1")
-volume_db = -4.0
 pitch_scale = 2.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
@@ -220,6 +219,18 @@ air_drag = 0.892
 [node name="CollisionShape2D" parent="Body" index="0"]
 shape = SubResource("CircleShape2D_dmrwf")
 
+[node name="WallDetector1" type="RayCast2D" parent="Body" index="1"]
+unique_name_in_owner = true
+position = Vector2(0, -3)
+target_position = Vector2(4, 0)
+hit_from_inside = true
+
+[node name="WallDetector2" type="RayCast2D" parent="Body" index="2"]
+unique_name_in_owner = true
+position = Vector2(0, -3)
+target_position = Vector2(-4, 0)
+hit_from_inside = true
+
 [node name="Hurtbox" type="Area2D" parent="." index="3"]
 unique_name_in_owner = true
 collision_layer = 0
@@ -233,12 +244,11 @@ animation_players = [NodePath("../Flip/AnimationPlayer")]
 
 [node name="Idle" type="Node2D" parent="StateMachine" index="0"]
 script = ExtResource("16_1k1wy")
-update_feet_position_lerp_value = 0.2
-update_face_position_lerp_value = 0.2
 apply_gravity = false
 
 [node name="Fall" type="Node2D" parent="StateMachine" index="1"]
 script = ExtResource("18_rseg1")
+apply_physics = false
 apply_friction = false
 
 [node name="CanLandTimer" type="Timer" parent="StateMachine/Fall" index="0"]
@@ -294,7 +304,6 @@ target_position = Vector2(17.675, 17.675)
 
 [node name="Kick" type="Node2D" parent="StateMachine" index="3"]
 script = ExtResource("26_ikwih")
-update_feet_position_lerp_value = 0.75
 apply_gravity = false
 apply_friction = false
 
@@ -367,3 +376,6 @@ unique_name_in_owner = true
 self_modulate = Color(0.669624, 0.3145, 1, 1)
 target_position = Vector2(0, 25)
 hit_from_inside = true
+
+[node name="CameraTargetRaycast" type="RayCast2D" parent="." index="11"]
+target_position = Vector2(0, 10)

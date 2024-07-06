@@ -48,11 +48,15 @@ var foot_2_pos: Vector2 = Vector2()
 
 @onready var ceiling_detector: RayCast2D = %CeilingDetector
 @onready var hurtbox: Area2D = %Hurtbox
-
+@onready var camera_target_raycast: RayCast2D = $CameraTargetRaycast
+@onready var wall_detector_1: RayCast2D = %WallDetector1
+@onready var wall_detector_2: RayCast2D = %WallDetector2
 
 var is_grounded: bool = false
 
 var is_boosting: bool = false
+
+var wall_sliding: bool = false
 
 var footstep_particles := false
 var bounce_dir: int = -1:
@@ -125,6 +129,15 @@ var replay_record: GameplayRecording = null
 var recording := false
 var playing_replay := false
 
+var feet_touching_terrain = null
+var body_touching_terrain = []
+var body_touching_terrain_new = []
+
+var touching_wall := false
+var touching_wall_dir := 0
+
+var slope_level = 0.0
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 
@@ -138,16 +151,26 @@ func _ready() -> void:
 	feet_ray.target_position.y = FEET_DIST
 	
 	hurtbox.body_entered.connect(on_hurtbox_hazard_entered)
+
 	hurtbox.area_entered.connect(on_hurtbox_hazard_entered)
 	hurtbox.body_exited.connect(on_hurtbox_hazard_exited)
 	hurtbox.area_exited.connect(on_hurtbox_hazard_exited)
 
-func on_hurtbox_hazard_entered(hazard: Node2D):
+func on_hurtbox_hazard_entered(hazard: Node2D) -> void:
 	nearby_hazards.append(hazard)
 
-func on_hurtbox_hazard_exited(hazard: Node2D):
+func on_hurtbox_hazard_exited(hazard: Node2D) -> void:
 	nearby_hazards.erase(hazard)
-	
+
+func touch_terrain_with_feet(object: Node2D) -> void:
+	if object and object != feet_touching_terrain:
+		collide_with_terrain(object)
+	feet_touching_terrain = object
+
+
+func collide_with_terrain(object: Node2D):
+	if object is DisappearingBlock:
+		object.start()
 
 func get_floor_angle() -> float:
 	## normalized to up
@@ -193,6 +216,9 @@ func _physics_process(delta: float) -> void:
 		floor_overlap_ratio = diff / (feet_ray.target_position.y + (3 if ducking else 0))
 		var normal = feet_ray.get_collision_normal()
 
+	touching_wall = wall_detector_1.is_colliding() or wall_detector_2.is_colliding()
+	touching_wall_dir = Utils.bools_to_axis(wall_detector_2.is_colliding(), wall_detector_1.is_colliding())
+
 	super._physics_process(delta)
 
 	if Debug.enabled:
@@ -213,10 +239,27 @@ func _physics_process(delta: float) -> void:
 		if y > death_height:
 			die()
 
+	var collision_count = body.get_slide_collision_count()
+	body_touching_terrain_new.clear()
+	if collision_count > 0:
+		for i in collision_count:
+			var object = body.get_slide_collision(i).get_collider()
+			if object and not (object in body_touching_terrain_new):
+				if not (object in body_touching_terrain):
+					collide_with_terrain(object)
+				body_touching_terrain_new.append(object)
+	body_touching_terrain.clear()
+	for body in body_touching_terrain_new:
+		body_touching_terrain.append(body)
+
 	queue_redraw()
 
 func get_slope_level() -> float:
-	return Vector2.RIGHT.dot(feet_ray.get_collision_normal()) * facing
+	if !feet_ray.is_colliding():
+		return 0.0
+	#if floor_ov
+	slope_level = Vector2.RIGHT.dot(feet_ray.get_collision_normal()) * facing
+	return slope_level
 
 func die():
 	#hide()
@@ -225,13 +268,19 @@ func die():
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()
 
-func debug_process():
+func debug_process() -> void:
 	#Debug.dbg("ducking", ducking)
 	#Debug.dbg("duck_blocking", body.get_collision_mask_value(10))
 	Debug.dbg("body_vel", body.velocity.round())
+	Debug.dbg("body_accel", body.accel.round())
+	Debug.dbg("body_impulses", body.impulses.round())
 	Debug.dbg("aerial_vel", last_aerial_velocity.round())
 	Debug.dbg("input_dir", input_move_dir_vec)
+	Debug.dbg("floor_overlap", floor_overlap_ratio)
 	Debug.dbg("slope", get_slope_level())
+	Debug.dbg("floor_normal", feet_ray.get_collision_normal())
+	Debug.dbg("touching_wall_dir", touching_wall_dir)
+	#Debug.dbg("feet_rotation", feet_ray.global_rotation)
 	
 
 func update_camera_target(delta: float) -> void:
@@ -242,20 +291,25 @@ func update_camera_target(delta: float) -> void:
 	camera_offset.x = clamp(camera_offset.x, min_x, max_x)
 
 	camera_target.global_position.x = global_position.x + camera_offset.x
-	if is_grounded or position.y > last_grounded_height:
+	if wall_sliding:
+		camera_target.global_position.y = y + camera_offset.y
+	elif is_grounded or position.y >= last_grounded_height:
 		if is_grounded:
 			camera_target.global_position.y = last_grounded_height + camera_offset.y
 		else:
 			camera_target.global_position.y = last_grounded_height + camera_offset.y + body.velocity.y * 0.25
-			var dist = global_position.y - camera_target.global_position.y + 100
+			var dist = global_position.y - camera_target.global_position.y + (100)
 			if dist > (Global.viewport_size.y / 2):
 				var diff = dist - (Global.viewport_size.y / 2)
 				camera_target.global_position.y += diff
 	else:
-		camera_target.global_position.y = Math.splerp(camera_target.global_position.y, global_position.y, delta, 5.0)
+		camera_target.global_position.y = Math.splerp(camera_target.global_position.y, global_position.y, delta, 2.0)
 	#camera_target.global_position = global_position + camera_offset
+	camera_target_raycast.target_position = to_local(camera_target.global_position)
+	if camera_target_raycast.is_colliding():
+		camera_target.global_position = camera_target_raycast.get_collision_point()
 
-func footstep_effect(foot: SmileyFoot):
+func footstep_effect(foot: SmileyFoot) -> void:
 	var speed = body.speed
 	if speed < FOOTSTEP_PARTICLE_MIN_SPEED:
 		return
@@ -283,7 +337,7 @@ func get_run_speed() -> float:
 		modifier *= BOOST_TILE_SPEED_MODIFIER
 	return RUN_SPEED * modifier
 
-func jump_effect():
+func jump_effect() -> void:
 	#print(body.velocity.normalized())
 	play_sound("Jump")
 	spawn_scene(preload("res://stupid crap/friends/player/fx/jump_dust.tscn"), to_local(feet_ray.get_collision_point()) if feet_ray.is_colliding() else Vector2(0, 16), (body.velocity + body.impulses))
@@ -301,14 +355,17 @@ func stick_to_ground() -> void:
 		#body.move_directly(Vector2(0, ground_detector.get_collision_point().y - feet_pos.y))
 	pass
 
-func duck():
+func duck() -> void:
 	ducking = true
 	
-func squish():
+func squish() -> void:
 	var delta = get_physics_process_delta_time()
 	var speed = (body.velocity.y) * 0.0025 + ((-1 + floor_overlap_ratio * 2) if ducking else 0)
 	sprite.scale.y = Math.splerp(sprite.scale.y, 1 - 0.5 * speed, delta, 0.2)
 	sprite.scale.x = Math.splerp(sprite.scale.x, 1 + 0.5 * speed, delta, 0.2)
+
+func _process(delta: float) -> void:
+	queue_redraw()
 
 func process_input() -> void:
 	input_move_dir_vec = Utils.bools_to_vector2i(Input.is_action_pressed("move_left"), Input.is_action_pressed("move_right"),Input.is_action_pressed("move_up"), Input.is_action_pressed("move_down"))
@@ -335,7 +392,7 @@ func process_input() -> void:
 			replay_playback = replay_record
 			start_playback()
 
-func start_playback():
+func start_playback() -> void:
 	playing_replay = true
 	if replay_playback:
 		replay_playback.restart()
@@ -420,35 +477,35 @@ func set_flip(dir: int) -> void:
 	foot_2.flip_v = foot_1.flip_v
 	facing = dir
 
-func get_vert_drag():
+func get_vert_drag() -> float:
 	return body.drag_vert if body.velocity.y < 0 else FALLING_DRAG
 
 func apply_friction(delta: float) -> void:
 	body.apply_drag(delta, body.ground_drag if is_grounded else body.air_drag, GROUNDED_VERT_DRAG if is_grounded else get_vert_drag())
 
-
 const RIDE_HEIGHT = 0.25
 const SPRING_AMOUNT = 3000
-const SPRING_DAMP = 2.0
+const SPRING_DAMP = 1.0
 const DUCK_SPRING_DAMP = 4.0
 
-func feet_lift_body(stand_force:float=STAND_FORCE,power:float=2) -> void:
+func feet_lift_body(stand_force:float=SPRING_AMOUNT, power:float=2, damp:float=SPRING_DAMP) -> void:
 	is_grounded = false
 	#face_offset.y = 0.0
 	if feet_ray.is_colliding():
 		face_offset.y = body.velocity.y * 0.025
 		var normal := feet_ray.get_collision_normal()
+		#var normal := Vector2.UP
 		var displacement =  floor_overlap_ratio - RIDE_HEIGHT
-		var force = Physics.spring(SPRING_AMOUNT, displacement, SPRING_DAMP if !ducking else DUCK_SPRING_DAMP, body.velocity.y)
+		var force = Physics.spring(stand_force, displacement, damp if !ducking else DUCK_SPRING_DAMP, body.velocity.y)
 
-		Debug.dbg("spring force", round(force))
 		body.apply_force(force * -normal)
 		#body.apply_force(pow(floor_overlap_ratio, power) * stand_force * normal)
 		is_grounded = true
 		can_coyote_jump = true
+		touch_terrain_with_feet(feet_ray.get_collider())
 		
 
-func reset_idle_feet():
+func reset_idle_feet() -> void:
 	foot_1_pos = feet_pos
 	foot_2_pos = feet_pos
 	foot_1_rest.global_rotation = foot_1_rest_idle_angle
@@ -488,6 +545,10 @@ func foot_idle(foot: Node2D, foot_rest: RayCast2D) -> Vector2:
 		foot_normal = -end
 	foot.global_rotation = foot_normal.angle()
 	return foot_pos
-#
-#func _draw() -> void:
-	#draw_circle(to_local(camera_target.global_position), 6, Color.PURPLE)
+
+func _draw():
+	if Debug.draw:
+		draw_line(Vector2(), feet_ray.get_collision_normal() * 32, Color.CYAN)
+		draw_line(Vector2(), body.velocity * 0.1, Color.ORANGE)
+		draw_circle(body.velocity * Vector2(0, 1) * 0.1, 2.0, Color.YELLOW)
+		draw_circle(body.velocity * Vector2(1, 0) * 0.1, 2.0, Color.YELLOW)

@@ -1,7 +1,10 @@
 extends Node
 
 var enabled = true
-var draw = true
+var draw = true:
+	get:
+		return draw and enabled
+
 var show_object_info = true
 
 var items = {
@@ -60,6 +63,8 @@ func _process(delta):
 		dbg_max(time_array + " max", total_time)
 #		times.erase(time_array)
 
+	if Input.is_action_just_pressed("debug_show") and Debug.enabled:
+		draw = !draw
 
 func dbg_prop(object: Object, prop: String):
 	dbg(prop, object.get(prop))

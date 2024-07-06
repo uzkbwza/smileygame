@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4iy47cf4ja2e"
-path="res://.godot/imported/sadman.png-a317cbe2249c66461ca2e49176a8ea46.ctex"
+uid="uid://b5fllklal0xq"
+path="res://.godot/imported/chucky-die11.png-356347ca2d5c03457eeb7e02f61fdd6c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://stupid crap/friends/sadman/sadman.png"
-dest_files=["res://.godot/imported/sadman.png-a317cbe2249c66461ca2e49176a8ea46.ctex"]
+source_file="res://stupid crap/friends/chucky-die11.png"
+dest_files=["res://.godot/imported/chucky-die11.png-356347ca2d5c03457eeb7e02f61fdd6c.ctex"]
 
 [params]
 

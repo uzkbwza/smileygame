@@ -4,7 +4,7 @@ class_name DebugLabel
 var timer
 
 func _ready():
-	if !Debug.draw or !Debug.enabled:
+	if !Debug.draw:
 		hide()
 	timer = Timer.new()
 	add_child(timer)
@@ -18,7 +18,4 @@ func loop():
 		for line in Debug.lines():
 			text = text + line + "\n"
 		timer.start()
-
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("debug_show") and Debug.enabled:
-		visible = !visible
+	visible = Debug.draw

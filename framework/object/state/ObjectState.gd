@@ -16,11 +16,9 @@ var body: BaseObjectBody2D:
 @export var apply_friction = true
 
 func _update_shared(delta):
+	if apply_gravity:
+		body.apply_gravity()
+	if apply_friction:
+		host.apply_friction(delta)
 	if apply_physics:
-		if apply_gravity:
-			body.apply_gravity()
-		if apply_friction:
-			host.apply_friction(delta)
-		#if apply_drag:
-			#body.apply_drag(delta)
 		body.apply_physics(delta)

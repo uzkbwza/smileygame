@@ -1,15 +1,14 @@
 extends CanvasLayer
 
 @onready var bg_camera: Camera2D = %BGCamera
-@onready var tile_map_camera: Camera2D = %TileMapCamera
 @onready var game_layer: CanvasLayer = %GameLayer
-@onready var tile_map: TileMapLayer = %TileMap
+
 
 func _ready():
 	on_level_updated()
 
-func get_level() -> SmileyLevel:
-	return game_layer.get_child(0)
+func get_level():
+	return game_layer.get_child(0) if game_layer.get_child_count() > 0 else null
 
 func on_level_updated():
 	#var level_tile_map: TileMapLayer = get_level().tile_map

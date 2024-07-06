@@ -23,8 +23,8 @@ func _enter_shared() -> void:
 	elapsed_time = 0.0
 	if Debug.enabled:
 		var stack = player.state_machine.states_stack
-		if stack.size() >= 7:
-			for i in range(min(7, stack.size())):	
+		if stack.size() >= 5:
+			for i in range(min(5, stack.size())):	
 				Debug.dbg("state:" + str(i), stack[stack.size() - i - 1].state_name)
 
 func _exit_shared() -> void:
@@ -42,7 +42,7 @@ func _update_shared(delta: float) -> void:
 
 func check_fall() -> bool:
 	if !player.is_grounded:
-		queue_state_change("Fall")
+		queue_state_change("Fall", null)
 		if body.velocity.y > 0 and body.impulses.y >= 0:
 			body.velocity.y = 0
 		return true
@@ -52,7 +52,7 @@ func check_duck() -> void:
 	if player.input_duck:
 		player.duck()
 
-func check_jump() -> bool:
+func check_jump(extra_data: Dictionary = {}) -> bool:
 	if player.input_jump and !(player.ceiling_detector.is_colliding() and player.ducking):
 		if body.velocity.y > 0:
 			body.velocity.y *= 0
@@ -63,7 +63,8 @@ func check_jump() -> bool:
 		if player.is_grounded and body.velocity.y <= 0:
 			body.velocity.y *= UPWARD_MOMENTUM_JUMP_MULTIPLIER
 		body.move_directly(Vector2(0, -1))
-		queue_state_change("Fall", {"jump": true})
+		extra_data.merge({"jump": true})
+		queue_state_change("Fall", extra_data)
 		body.apply_impulse.call_deferred(Vector2(0, -JUMP_VELOCITY))
 		player.jump_effect.call_deferred()
 		return true
@@ -74,9 +75,11 @@ func check_landing() -> bool:
 		
 		var slope = player.get_slope_level()
 		if slope != 0:
-			body.velocity = Vector2(body.velocity.x, player.last_aerial_velocity.y).rotated(-player.get_floor_angle()) 
-			if body.velocity.x != 0:
-				player.set_flip(sign(body.velocity.x))
+			#if (player.touching_wall_dir != player.input_move_dir):
+				body.velocity = Vector2(body.velocity.x, player.last_aerial_velocity.y).rotated(-player.get_floor_angle()) 
+		if body.velocity.x != 0:
+			player.set_flip(sign(body.velocity.x))
+		#queue_state_change("Idle")
 		queue_state_change("Idle" if abs(body.velocity.x) < SmileyRunState.MIN_RUN_SPEED else "Run")
 		player.foot_1_was_touching_ground = true
 		player.foot_2_was_touching_ground = true

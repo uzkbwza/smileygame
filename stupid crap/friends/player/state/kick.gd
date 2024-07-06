@@ -43,6 +43,7 @@ func _enter() -> void:
 	foot_2_rest.enabled = true
 	player.is_boosting = false
 	hazard_ray.enabled = true
+	player.wall_sliding = false
 	kick_ray.enabled = true
 	started_sliding = false
 	slide_time = 0.0
@@ -51,7 +52,8 @@ func _update(delta: float):
 	player.squish()
 	body.apply_drag(delta, body.air_drag * 0.25, player.get_vert_drag())
 
-
+	player.wall_sliding = false
+	
 	if player.input_move_dir_vec:
 		if player.input_move_dir_vec.x != 0 and player.input_move_dir_vec.y != 0:
 			diagonal_sticky_time = DIAGONAL_STICKY_TIME
@@ -85,13 +87,16 @@ func _update(delta: float):
 	collision_overlap = 0.0
 	if kick_ray.is_colliding() and kick_ray.get_collision_normal().y >= 0:
 		collision_overlap = min(((kick_ray.target_position - kick_ray.to_local(kick_ray.get_collision_point()))).length() / KICK_DIST, 1)
-
 		if collision_overlap > 0.5:
 
+			player.touch_terrain_with_feet(kick_ray.get_collider())
 			if body.velocity.y < 0:
 				slide_time += delta * 0.25
 			else:
 				slide_time += delta
+			
+			player.wall_sliding = true
+			#player.last_grounded_height = player.y
 			
 			body.apply_gravity(Vector2.DOWN * lerpf(body.gravity, body.gravity * clampf(slide_time, 0, 2), collision_overlap))
 			started_sliding = true
@@ -105,7 +110,7 @@ func _update(delta: float):
 	if slide_time == 0.0 and started_sliding:
 		queue_state_change("Fall", {"no_buffer_kick": true})
 	
-	Debug.dbg("slide gravity",slide_time)
+	#Debug.dbg("slide gravity",slide_time)
 	
 	if collision_overlap > 0.5 and rng.chance_delta(3.0 * body.speed / 10.0, delta):
 		player.play_sound("WallFall", false)
@@ -117,7 +122,7 @@ func _update(delta: float):
 			particle.go()
 
 	
-	body.velocity.x *= (1 - pow(collision_overlap, 10) / 10.0)
+	#body.velocity.x *= (1 - pow(collision_overlap, 10) / 10.0)
 	body.velocity.y *= (1 - pow(collision_overlap, 10) / 10.0) if body.velocity.y > 0 else (1 - pow(collision_overlap, 10) / 30.0)
 
 	if player.floor_overlap_ratio > 0.0 and ((collision_overlap <= 0.9 or body.is_on_floor()) and body.velocity.y >= 0 and player.feet_ray.get_collision_normal().dot(Vector2.UP) > 0.5):
@@ -129,7 +134,7 @@ func _update(delta: float):
 
 	
 	if !player.input_kick_held:
-		if collision_overlap <= 0.0:
+		if collision_overlap <= 0.5:
 			return "Fall"
 		else:
 			var kick_strength = pow(collision_overlap, 2)
@@ -142,7 +147,7 @@ func _update(delta: float):
 			player.spawn_scene(preload("res://stupid crap/friends/player/fx/jump_dust.tscn"), to_local(kick_ray.get_collision_point()), (-kick_ray.target_position))
 			pass
 
-	Debug.dbg("kick overlap", collision_overlap)
+	#Debug.dbg("kick overlap", collision_overlap)
 
 func _exit():
 	player.stop_sound("WallFall")
@@ -150,3 +155,4 @@ func _exit():
 	foot_2_rest.enabled = false
 	kick_ray.enabled = false
 	hazard_ray.enabled = false
+	player.wall_sliding = false	

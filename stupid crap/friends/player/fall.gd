@@ -3,6 +3,7 @@ extends SmileyState
 const ROTATE_SPEED = 8
 const MOVE_SPEED = 420
 const COYOTE_TIME = 0.08
+const PREV_SPEED_DECAY = 0.9999
 
 @onready var jump_hold_timer: Timer = $JumpHoldTimer
 @onready var can_land_timer: Timer = $CanLandTimer
@@ -12,9 +13,13 @@ const COYOTE_TIME = 0.08
 @onready var jump_grace_pos: RayCast2D = %JumpGracePos
 
 var can_use_run_speed = true
-var rotate_dir := 0
-var rotate_amount = 0.0
-var jump_held = true
+var rotate_dir := 0.0
+var rotate_amount := 0.0
+var jump_held := true
+var retain_speed := false
+var starting_dir = 0
+
+var prev_speed := 0.0
 
 var time = 0.00
 
@@ -31,7 +36,19 @@ func _enter():
 	jump_grace_pos.enabled = true
 	foot_2_rest.enabled = true
 	player.is_grounded = false
+	prev_speed = 0.0
+	starting_dir = signf(body.velocity.x)
+	prev_speed = data.retain_speed if data is Dictionary and data.has("retain_speed") else 0.0
+	retain_speed = prev_speed > 0
 	
+
+	if retain_speed:
+		if signf(body.velocity.x) != starting_dir or signf(body.velocity.x) == 0 or signf(body.velocity.x) != player.input_move_dir:
+			retain_speed = false
+			prev_speed = 0.0
+		elif absf(body.velocity.x) < prev_speed:
+			body.velocity.x = sign(body.velocity.x) * prev_speed
+
 	can_use_run_speed = _previous_state() == "Run" and sign(player.input_move_dir) == sign(player.facing)
 	
 	
@@ -49,6 +66,7 @@ func _enter():
 			#return "Kick"
 
 func _update(delta: float):
+
 	if (!jump_held and can_land_timer.is_stopped()) or (body.velocity.y > 0):
 		check_landing()
 	
@@ -73,6 +91,7 @@ func _update(delta: float):
 	else:
 		if !jump_held:
 			body.velocity.y *= 0.9
+
 		
 	var angle = Vector2(lerp_angle(player.facing, -player.facing, body.velocity.y * 0.005), -1).angle()
 	
@@ -99,13 +118,32 @@ func _update(delta: float):
 		#player.foot_1_pos = foot_1_rest.get_collision_point()
 	#if foot_2_rest.is_colliding():
 		#player.foot_2_pos = foot_2_rest.get_collision_point()
-	
-	if player.input_move_dir == player.facing and can_use_run_speed:
+
+	if retain_speed:
+		prev_speed *= PREV_SPEED_DECAY
+		var air_speed = absf(body.velocity.x)
+		if time > 0.032:
+			prev_speed = air_speed if air_speed > prev_speed else prev_speed
+		else:
+			body.velocity.x = prev_speed * sign(body.velocity.x)
+		if signf(body.velocity.x) != starting_dir or signf(body.velocity.x) == 0 or signf(body.velocity.x) != player.input_move_dir:
+			retain_speed = false
+
+		body.velocity.x = sign(body.velocity.x) * prev_speed
+		body.apply_force(Vector2(player.get_run_speed() * player.input_move_dir, 0))
+		body.apply_drag(delta, body.ground_drag, player.get_vert_drag())
+
+		Debug.dbg("prev_speed", prev_speed)
+
+
+	elif player.input_move_dir == player.facing and can_use_run_speed:
+		#if (player.touching_wall_dir != player.input_move_dir):
 		body.apply_force(Vector2(player.get_run_speed() * player.input_move_dir, 0))
 		body.apply_drag(delta, body.ground_drag, player.get_vert_drag())
 	else:
 		player.is_boosting = false
 		can_use_run_speed = false
+		#if (player.touching_wall_dir != player.input_move_dir):
 		body.apply_force(Vector2(MOVE_SPEED * player.input_move_dir, 0))
 		if player.input_move_dir != 0:
 			player.apply_friction(delta)
@@ -119,6 +157,8 @@ func _update(delta: float):
 	if input_kick:
 		if !(data and data.get("jump") and player.input_duck and time < 0.03):
 			return "Kick"
+	body.apply_physics(delta)
+
 	time += delta
 
 	

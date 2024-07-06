@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3sh1m82tur87"
-path="res://.godot/imported/sadman-.png-a2b1903f5a6a34a184441836dba441d9.ctex"
+uid="uid://dob4a3ep3vhnf"
+path="res://.godot/imported/tutorial_keys-1.png-519924239d7fa75369692a1c1397a979.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://stupid crap/friends/sadman/sadman-.png"
-dest_files=["res://.godot/imported/sadman-.png-a2b1903f5a6a34a184441836dba441d9.ctex"]
+source_file="res://stupid crap/friends/tutorialguy/tutorial_keys-1.png"
+dest_files=["res://.godot/imported/tutorial_keys-1.png-519924239d7fa75369692a1c1397a979.ctex"]
 
 [params]
 

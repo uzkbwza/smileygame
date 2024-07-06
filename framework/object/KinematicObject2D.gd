@@ -113,7 +113,7 @@ func push(node: KinematicObject2D) -> void:
 	node.apply_force(node.global_position - global_position * PUSH_SPEED)
 
 func move_directly(v: Vector2) -> void:
-	speed = v.length()
+	global_position += v
 
 func rotate_directly(r: float, delta: float) -> void:
 	rotation += r * delta

@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://c0uy25dkfda0q"]
 
-[ext_resource type="Texture2D" uid="uid://c3sh1m82tur87" path="res://stupid crap/friends/sadman/sadman-.png" id="1_0ldmb"]
-[ext_resource type="Script" path="res://stupid crap/friends/sadman/sadman.gd" id="1_5jurn"]
-[ext_resource type="Shader" path="res://stupid crap/friends/sadman/Spiral.gdshader" id="2_o2r6m"]
+[ext_resource type="Texture2D" uid="uid://c3sh1m82tur87" path="res://stupid crap/friends/terrain/sadman/sadman-.png" id="1_0ldmb"]
+[ext_resource type="Script" path="res://stupid crap/friends/terrain/sadman/sadman.gd" id="1_5jurn"]
+[ext_resource type="Shader" path="res://stupid crap/friends/terrain/sadman/Spiral.gdshader" id="2_o2r6m"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_34uq3"]
 resource_local_to_scene = true
