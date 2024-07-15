@@ -1,13 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://slqbwnid78go"]
+[gd_scene load_steps=9 format=3 uid="uid://slqbwnid78go"]
 
 [ext_resource type="Script" path="res://levels/level.gd" id="1_bb30t"]
-[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://stupid crap/friends/player/player.tscn" id="1_ipjpd"]
+[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://object/player/player.tscn" id="1_ipjpd"]
 [ext_resource type="Script" path="res://framework/GoodCamera.gd" id="2_oaxte"]
 [ext_resource type="Script" path="res://camera/CameraSystem.gd" id="2_r3kni"]
-[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://stupid crap/friends/terrain/tileset.tres" id="3_m3iuj"]
+[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://terrain/tileset.tres" id="3_m3iuj"]
+[ext_resource type="Script" path="res://levels/LevelTileMapLayer.gd" id="6_jbkvo"]
+[ext_resource type="TileSet" uid="uid://ryxe02p8hrc6" path="res://terrain/generator/block_tileset.tres" id="7_tkgp3"]
 
-[node name="Level" type="Node2D"]
+[sub_resource type="TileSet" id="TileSet_18vtm"]
+
+[node name="Level" type="Node2D" groups=["Level"]]
+texture_repeat = 2
 script = ExtResource("1_bb30t")
+death_height = 176
 
 [node name="CameraSystem" type="Node2D" parent="."]
 script = ExtResource("2_r3kni")
@@ -33,22 +39,58 @@ metadata/_edit_lock_ = true
 
 [node name="Smiley" parent="." instance=ExtResource("1_ipjpd")]
 unique_name_in_owner = true
-metadata/_edit_group_ = true
+light_mask = 1
+position = Vector2(872, -184)
 
-[node name="CanvasGroup" type="CanvasGroup" parent="."]
+[node name="BackgroundShapes" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.533333, 0.533333, 0.533333, 1)
+z_index = -10
+scroll_scale = Vector2(0.25, 0.25)
+
+[node name="TerrainShapes" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = 5
+
+[node name="TileMaps" type="Node2D" parent="."]
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="TileMapShadow" type="TileMapLayer" parent="CanvasGroup"]
+[node name="BackgroundTiles" type="TileMapLayer" parent="TileMaps"]
 unique_name_in_owner = true
-modulate = Color(0, 0, 0, 0.462745)
+clip_children = 2
+z_index = -2
 texture_repeat = 2
-position = Vector2(2, 2)
 tile_set = ExtResource("3_m3iuj")
-collision_enabled = false
-navigation_enabled = false
+script = ExtResource("6_jbkvo")
+input_tileset_template = ExtResource("7_tkgp3")
+metadata/_edit_lock_ = true
 
-[node name="MainTileMap" type="TileMapLayer" parent="CanvasGroup"]
+[node name="GreyBox" type="TileMapLayer" parent="TileMaps"]
 unique_name_in_owner = true
 texture_repeat = 2
 tile_set = ExtResource("3_m3iuj")
+script = ExtResource("6_jbkvo")
+metadata/_edit_lock_ = true
+
+[node name="Objects" type="TileMapLayer" parent="TileMaps"]
+unique_name_in_owner = true
+texture_repeat = 2
+tile_set = ExtResource("3_m3iuj")
+script = ExtResource("6_jbkvo")
+metadata/_edit_lock_ = true
+
+[node name="PrettyTiles" type="TileMapLayer" parent="TileMaps"]
+unique_name_in_owner = true
+texture_repeat = 2
+tile_set = ExtResource("3_m3iuj")
+script = ExtResource("6_jbkvo")
+input_tileset_template = ExtResource("7_tkgp3")
+metadata/_edit_lock_ = true
+
+[node name="CustomTiles" type="TileMapLayer" parent="TileMaps"]
+unique_name_in_owner = true
+texture_repeat = 2
+tile_set = SubResource("TileSet_18vtm")
+script = ExtResource("6_jbkvo")
+metadata/_edit_lock_ = true

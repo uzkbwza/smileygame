@@ -1,17 +1,18 @@
 [gd_resource type="Resource" script_class="GameplayRecording" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://recording/GameplayRecording.gd" id="1_i3034"]
+[ext_resource type="Script" path="res://recording/GameplayRecording.gd" id="1_o00hb"]
 
 [resource]
-script = ExtResource("1_i3034")
+script = ExtResource("1_o00hb")
 positions = {
-0: Vector2(352, -6.12321)
+0: Vector2(-107.1, 78.078),
+20: Vector2(-69.7086, 50.1218)
 }
 velocities = {
-0: Vector2(0.001, 37.2669)
+0: Vector2(138.967, -46.3224),
+20: Vector2(140.369, -19.6244)
 }
 inputs = {
-0: 32,
-1: 0
+0: 2
 }
-length = 16
+length = 22

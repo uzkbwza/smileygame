@@ -1,6 +1,7 @@
 extends Node2D
 
 @export var independent: Array[Node2D]
+@export var lifetime = 0.0
 
 func _ready() -> void:
 	go.call_deferred()
@@ -14,14 +15,28 @@ func go():
 			child.emitting = true
 			if child.lifetime > max_time:
 				max_time = child.lifetime / child.speed_scale
-		if child is BouncyBurst:
+		elif child is BouncyBurst:
 			separate.call_deferred(child)
 			child.go.call_deferred()
-	get_tree().create_timer(max_time, false).timeout.connect(queue_free)
+			if child.lifetime > max_time:
+				max_time = child.lifetime
+		elif child is VariableSound2D:
+			var length = child.stream.get_length() * (1 / child.pitch_scale_) * 2
+			if length > max_time:
+				max_time = length
+			child.go()
+		elif child is AudioStreamPlayer2D:
+			var length = child.stream.get_length() * (1 / child.pitch_scale) * 2
+			if length > max_time:
+				max_time = length
+			child.play()
+	get_tree().create_timer(max_time if lifetime == 0 else lifetime, false).timeout.connect(queue_free)
 	reset_physics_interpolation()
 
 func separate(child: Node2D):
 	var pos = child.global_position
+	child.scale = scale
 	remove_child(child)
-	get_parent().add_child(child)
 	child.global_position = pos
+	child.global_rotation += global_rotation
+	get_parent().add_child(child)

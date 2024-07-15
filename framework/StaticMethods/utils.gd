@@ -2,6 +2,10 @@ extends Node
 
 class_name Utils
 
+const cardinal_dirs: Array[Vector2i] = [Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1)]
+const diagonal_dirs: Array[Vector2i] = [Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, -1), Vector2i(-1, 1)]
+const all_dirs: Array[Vector2i] = [Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, -1), Vector2i(-1, 1)]
+
 static func clear_children(node: Node, deferred=true) -> void:
 	if deferred:
 		for child in node.get_children():
@@ -93,3 +97,54 @@ static func walk_path(path, absolute=false, filter_file_type=""):
 		elif not file.begins_with("."):
 			files.append(file if !absolute else dir.get_current_dir().path_join(file))
 	return files.filter(func(f: String): return f.ends_with(filter_file_type))
+
+static func rainbow_gradient(resolution=256) -> Gradient:
+	resolution = min(resolution, 256)
+	var grad = Gradient.new()
+	for i in range(resolution):
+		var color = hsv_to_rgb(i / float(resolution), 1.0, 1.0)
+		if i < 2:
+			grad.set_color(i, color)
+		else:
+			grad.add_point(i / float(resolution), color)
+	return grad
+
+static func hsv_to_rgb(h: float, s: float, v: float, a: float = 1) -> Color:
+	#based on code at
+	#http://stackoverflow.com/questions/51203917/math-behind-hsv-to-rgb-conversion-of-colors
+	var r: float
+	var g: float
+	var b: float
+
+	var i: float = floor(h * 6)
+	var f: float = h * 6 - i
+	var p: float = v * (1 - s)
+	var q: float = v * (1 - f * s)
+	var t: float = v * (1 - (1 - f) * s)
+
+	match (int(i) % 6):
+		0:
+			r = v
+			g = t
+			b = p
+		1:
+			r = q
+			g = v
+			b = p
+		2:
+			r = p
+			g = v
+			b = t
+		3:
+			r = p
+			g = q
+			b = v
+		4:
+			r = t
+			g = p
+			b = v
+		5:
+			r = v
+			g = p
+			b = q
+	return Color(r, g, b, a)

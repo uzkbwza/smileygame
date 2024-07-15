@@ -1,0 +1,136 @@
+[gd_scene load_steps=20 format=3 uid="uid://dklvg4jgohli2"]
+
+[ext_resource type="PackedScene" uid="uid://clqmafq7aouke" path="res://framework/Fx/DisappearingParticle.tscn" id="1_lqddt"]
+[ext_resource type="Texture2D" uid="uid://gytevy852v05" path="res://object/coin/coin.png" id="2_450ew"]
+[ext_resource type="Texture2D" uid="uid://diwt0jig8s4mt" path="res://object/coin/starparticle.png" id="2_oriwq"]
+[ext_resource type="Texture2D" uid="uid://ce6dedgbcto4n" path="res://placeholders/whitepixel.png" id="3_fkvo5"]
+
+[sub_resource type="Curve" id="Curve_0wshk"]
+_data = [Vector2(0, 1), 0.0, -3.18362, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ilrk3"]
+curve = SubResource("Curve_0wshk")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_imn2u"]
+lifetime_randomness = 0.6
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 11.17
+initial_velocity_max = 39.14
+gravity = Vector3(0, 0, 0)
+damping_min = 44.451
+damping_max = 44.451
+scale_curve = SubResource("CurveTexture_ilrk3")
+
+[sub_resource type="Curve" id="Curve_dierc"]
+_data = [Vector2(0, 1), 0.0, -3.18362, 0, 0, Vector2(0.152975, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_wg20w"]
+curve = SubResource("Curve_dierc")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cbk8w"]
+lifetime_randomness = 0.6
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 11.17
+initial_velocity_max = 39.14
+gravity = Vector3(0, 0, 0)
+damping_min = 44.451
+damping_max = 44.451
+scale_curve = SubResource("CurveTexture_wg20w")
+
+[sub_resource type="Curve" id="Curve_x44xo"]
+_data = [Vector2(0, 1), 0.0, -3.18362, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qopdv"]
+curve = SubResource("Curve_x44xo")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uacqs"]
+lifetime_randomness = 0.6
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_max = 50.46
+gravity = Vector3(0, 0, 0)
+damping_min = 49.947
+damping_max = 49.947
+scale_max = 1.7
+scale_curve = SubResource("CurveTexture_qopdv")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_uyb4r"]
+blend_mode = 1
+
+[sub_resource type="Curve" id="Curve_ljsd6"]
+_data = [Vector2(0, 1), 0.0, -3.41153, 0, 0, Vector2(0.416431, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_2yvtw"]
+curve = SubResource("Curve_ljsd6")
+
+[sub_resource type="Curve" id="Curve_saq8g"]
+_data = [Vector2(0, 0.597403), 0.0, 1.38397, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ngoqt"]
+curve = SubResource("Curve_saq8g")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_n8xed"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+scale_min = 2.7
+scale_max = 2.7
+scale_curve = SubResource("CurveTexture_ngoqt")
+alpha_curve = SubResource("CurveTexture_2yvtw")
+
+[node name="DisappearingParticle" instance=ExtResource("1_lqddt")]
+z_index = 0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." index="0"]
+scale = Vector2(1.5, 1.5)
+amount = 9
+process_material = SubResource("ParticleProcessMaterial_imn2u")
+texture = ExtResource("2_oriwq")
+lifetime = 4.9
+preprocess = 0.02
+speed_scale = 4.64
+explosiveness = 1.0
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="." index="1"]
+scale = Vector2(1.5, 1.5)
+amount = 4
+process_material = SubResource("ParticleProcessMaterial_cbk8w")
+texture = ExtResource("2_450ew")
+lifetime = 4.9
+preprocess = 0.02
+speed_scale = 4.64
+explosiveness = 1.0
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="." index="2"]
+visible = false
+scale = Vector2(1.5, 1.5)
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_uacqs")
+texture = ExtResource("3_fkvo5")
+lifetime = 4.9
+preprocess = 0.02
+speed_scale = 4.64
+explosiveness = 1.0
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="." index="3"]
+material = SubResource("CanvasItemMaterial_uyb4r")
+amount = 1
+process_material = SubResource("ParticleProcessMaterial_n8xed")
+texture = ExtResource("2_450ew")
+lifetime = 4.9
+preprocess = 0.02
+speed_scale = 4.64
+explosiveness = 1.0

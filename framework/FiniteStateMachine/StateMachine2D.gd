@@ -91,11 +91,14 @@ func queue_state(new_state: String, data=null, old_state=state) -> void:
 		queued_data = []
 		queued_states.push_back(new_state)
 		queued_data.append(data)
+	if Debug.enabled and queued_data and queued_data[0] != null:
+		Debug.dbg("queued_state_data", queued_data.duplicate(true))
 
 func update(delta: float) -> void:
 	if !state.update:
 		return
 	
+
 	var new_state = queued_states.pop_front()
 	if new_state:
 		var data = queued_data.pop_front()
@@ -165,6 +168,7 @@ func _change_state(state_name: String, data=null) -> void:
 	#			animation_player.play("RESET")
 			if animation_player.has_animation(state.animation):
 				animation_player.play.call_deferred(state.animation)
+
 
 	state.data = data
 	var new_state = state._enter_shared()

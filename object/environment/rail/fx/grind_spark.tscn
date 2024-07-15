@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://do8iqfiu75esd"]
+
+[ext_resource type="Script" path="res://framework/Fx/BouncyBurst.gd" id="1_xrcia"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_7imia"]
+blend_mode = 1
+
+[node name="BouncyBurst" type="Node2D"]
+material = SubResource("CanvasItemMaterial_7imia")
+rotation = -2.61799
+script = ExtResource("1_xrcia")
+num_bodies = 2
+autostart = false
+color = Color(0.992157, 0.819608, 0.301961, 1)
+spread_degrees = 15
+starting_velocity = 688.0
+starting_velocity_deviation = 261.0
+damp = 16
+gravity_scale = 0.3
+lifetime = 0.25

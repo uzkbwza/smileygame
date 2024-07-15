@@ -1,0 +1,74 @@
+[gd_scene load_steps=11 format=3 uid="uid://bfpvhh1jqahdc"]
+
+[ext_resource type="Script" path="res://object/coin/coin.gd" id="1_4c4wl"]
+[ext_resource type="Texture2D" uid="uid://gytevy852v05" path="res://object/coin/coin.png" id="2_hlwj4"]
+[ext_resource type="Shader" path="res://object/coin/coin.gdshader" id="2_ldkmq"]
+[ext_resource type="Texture2D" uid="uid://diwt0jig8s4mt" path="res://object/coin/starparticle.png" id="4_ilo4f"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ab2bq"]
+radius = 16.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vel5v"]
+resource_local_to_scene = true
+shader = ExtResource("2_ldkmq")
+shader_parameter/normal_offset = 1.0
+shader_parameter/time_influence = 3.961
+shader_parameter/time_offset = 0.0
+shader_parameter/y_div = 0.1
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vy0qs"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_hlwj4")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 60.0
+}]
+
+[sub_resource type="Curve" id="Curve_i4j3w"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.00849859, 1), -3.76718, -3.76718, 0, 0, Vector2(0.130312, 0), 0.0, 0.0, 0, 0, Vector2(0.314448, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), -0.150348, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_a7226"]
+curve = SubResource("Curve_i4j3w")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8o7sd"]
+resource_local_to_scene = true
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 8.0
+angle_min = -720.0
+angle_max = 720.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.2
+scale_curve = SubResource("CurveTexture_a7226")
+
+[node name="Coin" type="Area2D"]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_4c4wl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_ab2bq")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_ab2bq")
+
+[node name="Icon" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_vel5v")
+sprite_frames = SubResource("SpriteFrames_vy0qs")
+animation = &"new_animation"
+frame_progress = 0.45018
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 4
+process_material = SubResource("ParticleProcessMaterial_8o7sd")
+texture = ExtResource("4_ilo4f")
+lifetime = 9.0
+randomness = 1.0

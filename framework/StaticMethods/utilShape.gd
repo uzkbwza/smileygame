@@ -52,6 +52,12 @@ static func line(start: Vector2i, end: Vector2i, order_matters:bool=false) -> Ar
 
 	return points
 
+static func does_polygon_enclose(poly1: PackedVector2Array, poly2: PackedVector2Array) -> bool:
+	for point in poly2:
+		if !Geometry2D.is_point_in_polygon(point, poly1):
+			return false
+	return true
+
 static func straight_line(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
 	var points: Array[Vector2i] = []
 	assert(start.x == end.x or start.y == end.y)
@@ -79,6 +85,9 @@ static func get_polygon_tris(polygon: PackedVector2Array) -> Array[Array]:
 		tris.append([polygon[points[i]], polygon[points[i + 1]], polygon[points[i + 2]]])
 	return tris
 
+static func move_polygon(polygon: PackedVector2Array, offset: Vector2) -> PackedVector2Array:
+	return Transform2D(0, offset) * polygon
+
 static func get_polygon_area(polygon: PackedVector2Array):
 	var area := 0.0
 	for tri in get_polygon_tris(polygon):
@@ -97,7 +106,11 @@ static func get_polygon_bounding_box(polygon: PackedVector2Array) -> Rect2:
 			bottom_right.x = point.x
 		if point.y > bottom_right.y:
 			bottom_right.y = point.y
-	return Rect2(top_left, bottom_right - top_left)
+	var rect = Rect2(top_left, bottom_right - top_left).abs()
+	if rect.size.length_squared() == 0:
+		rect.size.x = rect.position.x + 1
+		rect.size.y = rect.position.y + 1
+	return rect
 
 static func get_polygon_center(polygon: PackedVector2Array) -> Vector2:
 	var avg := Vector2()

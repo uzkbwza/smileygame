@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-# my fucked up character controller. sorry!
+# my fucked up character controller thing. sorry!
 class_name KinematicObject2D
 
 const PUSH_SPEED: float = 0.1
@@ -108,6 +108,9 @@ func reset_momentum() -> void:
 	velocity = Vector2()
 	accel = Vector2()
 	impulses = Vector2()
+
+func apply_force_toward(point: Vector2, strength: float) -> void:
+	apply_force((point - global_position).normalized() * strength)
 
 func push(node: KinematicObject2D) -> void:
 	node.apply_force(node.global_position - global_position * PUSH_SPEED)

@@ -1,0 +1,62 @@
+[gd_scene load_steps=11 format=3 uid="uid://c8sjhubr16uad"]
+
+[ext_resource type="Script" path="res://hud/game_hud_layer.gd" id="1_4b6o3"]
+[ext_resource type="Shader" path="res://framework/Shaders/Cool3dText.gdshader" id="2_m15re"]
+[ext_resource type="PackedScene" uid="uid://bfpvhh1jqahdc" path="res://object/coin/coin.tscn" id="3_ymdr1"]
+
+[sub_resource type="Gradient" id="Gradient_rxjby"]
+offsets = PackedFloat32Array(0, 0.73817)
+colors = PackedColorArray(0.817923, 0.693514, 3.85046e-07, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_d0k85"]
+gradient = SubResource("Gradient_rxjby")
+
+[sub_resource type="Gradient" id="Gradient_vyuf8"]
+colors = PackedColorArray(0.0728333, 0, 0.19, 0.2, 0.163671, 0.050519, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tvnt2"]
+gradient = SubResource("Gradient_vyuf8")
+fill_from = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="Gradient_torsq"]
+colors = PackedColorArray(0, 0, 0, 1, 0.698294, 0.255379, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_572db"]
+gradient = SubResource("Gradient_torsq")
+fill_from = Vector2(0.542735, 0.397436)
+fill_to = Vector2(0.346154, 0.564103)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_71thv"]
+shader = ExtResource("2_m15re")
+shader_parameter/angle = -0.2
+shader_parameter/thickness = 10.0
+shader_parameter/scale = 1.0
+shader_parameter/shear = Vector2(0, -0.4)
+shader_parameter/slices = 16
+shader_parameter/outline = true
+shader_parameter/outline_width = 5.0
+shader_parameter/front_tex = SubResource("GradientTexture1D_d0k85")
+shader_parameter/side_tex = SubResource("GradientTexture2D_572db")
+shader_parameter/outline_tex = SubResource("GradientTexture2D_tvnt2")
+shader_parameter/show_bound = false
+
+[node name="GameHUDLayer" type="CanvasLayer"]
+script = ExtResource("1_4b6o3")
+
+[node name="Node2D" type="Node2D" parent="."]
+scale = Vector2(0.3, 0.3)
+
+[node name="CoinLabel" type="Label" parent="Node2D"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_71thv")
+offset_left = 96.6667
+offset_top = 1.0
+offset_right = 630.667
+offset_bottom = 193.0
+theme_override_font_sizes/font_size = 64
+text = "0/10000"
+
+[node name="Coin" parent="." instance=ExtResource("3_ymdr1")]
+position = Vector2(18, 17)
+scale = Vector2(2, 2)
+collision_layer = 0

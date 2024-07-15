@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bedcvs6ocserq"]
 
-[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://stupid crap/friends/player/player.tscn" id="1_j6c13"]
-[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://stupid crap/friends/terrain/tileset.tres" id="2_spv0u"]
+[ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://object/player/player.tscn" id="1_j6c13"]
+[ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://terrain/tileset.tres" id="2_spv0u"]
 [ext_resource type="Script" path="res://framework/GoodCamera.gd" id="3_dnh3q"]
 
 [node name="Level" type="Node2D"]

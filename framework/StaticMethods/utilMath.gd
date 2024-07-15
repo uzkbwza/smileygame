@@ -59,6 +59,9 @@ static func clamp_cell(cell: Vector2i, map: Array2D) -> Vector2i:
 static func stepify(s: float, step: float) -> float:
 	return round(s / step) * step
 
+static func stepify_floor(s: float, step: float) -> float:
+	return floor(s / step) * step
+	
 static func wave(from: float, to: float, duration: float, offset: float =0) -> float:
 	var t := Time.get_ticks_msec() / 1000.0
 	var a := (to - from) * 0.5

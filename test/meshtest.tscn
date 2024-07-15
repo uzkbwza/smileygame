@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dx6ncff1sm76j"]
+
+[ext_resource type="Script" path="res://meshtest.gd" id="1_8lxtq"]
+
+[node name="Node2D" type="MeshInstance2D"]
+script = ExtResource("1_8lxtq")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(80, 176, 80, 80, 144, 32, 304, 16, 432, 48, 480, 128, 480, 192, 336, 176, 320, 304, 192, 288, 240, 192, 224, 128)

@@ -57,13 +57,29 @@ func reset_rotation() -> void:
 	flip.rotation = 0
 	body.rotation = 0
 
-func spawn_scene(scene: PackedScene, offset: Vector2=Vector2(), direction: Vector2=Vector2(1.0, 0.0)) -> Node2D:
+func spawn_scene(scene: PackedScene, offset: Vector2=Vector2(), direction: Vector2=Vector2(1.0, 0.0), particle_flip=true) -> Node2D:
+	var child = scene.instantiate()
+	child.global_position = global_position + offset
+
+	_finish_spawn.call_deferred(child, offset, direction, particle_flip)
+	return child
+
+func spawn_scene_direct(scene: PackedScene) -> Node2D:
 	var child = scene.instantiate()
 	get_parent().add_child(child)
-	child.global_position = global_position + offset
 	child.reset_physics_interpolation()
-	child.rotation = direction.angle()
 	return child
+
+func _finish_spawn(child: Node, offset: Vector2, direction: Vector2, particle_flip=true):
+	if direction.x < 0 and particle_flip:
+		child.rotation = Vector2(abs(direction.x), direction.y).angle()
+		child.scale.x *= -1
+	else:
+		child.global_rotation = direction.angle()
+	get_parent().add_child(child)
+	child.reset_physics_interpolation()
+
+	pass
 
 func set_flip(dir: int) -> void:
 	if dir < 0:
@@ -90,10 +106,18 @@ func get_position_dir(pos: Vector2) -> Vector2:
 	return (pos - global_position).normalized()
 
 func play_sound(sound_name: String, force=true, pitch=null, amplitude=null) -> void:
-	var sound: VariableSound2D = sounds[sound_name]
-	if force or !sound.playing:
-		sound.go(0.0, pitch, amplitude)
+	#return
+	var sound = sounds[sound_name]
+	if force or !sound.is_playing():
+		if sound is VariableSound2D:
+			sound.go(0.0, pitch, amplitude)
+		elif sound is AudioStreamPlayer2D:
+			sound.pitch = pitch
+			sound.volume_db = amplitude
+			sound.play()
 
+func get_sound(sound_name: String):
+	return sounds[sound_name]
 		
 func stop_sound(sound_name: String) -> void:
 	sounds[sound_name].stop()
@@ -102,6 +126,7 @@ func change_state(state_name: String) -> void:
 	state_machine.queue_state(state_name)
 
 func _physics_process(delta: float) -> void:
+	delta = 0.01666666666667
 	if !hitstopped:
 		state_machine.update(delta)
 	flip.rotation = body.rotation

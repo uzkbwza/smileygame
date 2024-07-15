@@ -28,6 +28,9 @@ func _input(event):
 	elif event is InputEventKey:
 	#elif event is InputEventMouse or event is InputEventKey:
 		keyboard = true
+		if event.pressed and event.keycode == KEY_F11:
+			Display.toggle_fullscreen()
+
 
 func toggle_mouse_mode():
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:

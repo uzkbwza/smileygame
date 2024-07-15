@@ -28,20 +28,45 @@ func insert(position: Vector2, value: Variant = null) -> bool:
 			return true
 	return false
 
-func search_region(region: Rect2, return_values=false, matches=null):
+#func insert_rect(rect: Rect2, value: Variant = null) -> bool:
+	#var inserted := false
+	#for point in polygon:
+		#if insert(point, value):
+			#inserted = true
+	#return inserted
+
+func insert_polygon(polygon: PackedVector2Array, value: Variant = null) -> bool:
+	var inserted := false
+	for point in polygon:
+		if insert(point, value):
+			inserted = true
+	return inserted
+
+func search_region(region: Rect2, return_values=false, matches=null, skip=null):
+	if skip == null:
+		skip = {}
 	if matches == null:
 		matches = []
+	if region.size.x < 0 or region.size.y < 0:
+		pass
 	if !overlaps(region):
 		return matches
 	for point in points.keys():
 		if region.has_point(point):
-			if return_values: # are we returning the positions or the objects at those positions?
-				matches.append_array(points[point])
+			if return_values: # are we returning the positions or the objects at those posirtions?
+				for value in points[point]:
+					if value in skip:
+						continue
+					matches.append(value)
+					skip[value] = true
 			else:
+				if point in skip:
+					continue
 				matches.append(point)
+				skip[point] = true
 	if children:
 		for child in children:
-			child.search_region(region, return_values, matches)
+			child.search_region(region, return_values, matches, skip)
 	return matches
 
 func search(position: Vector2, width: float, height: float, return_values=false, matches=null) -> Array:
@@ -52,7 +77,7 @@ func overlaps(region: Rect2) -> bool:
 	return region.intersects(boundary, true)
 
 func contains(position: Vector2) -> bool:
-	return boundary.has_point(position)
+	return boundary.abs().has_point(position)
 
 func is_at_capacity() -> bool:
 	return points.size() >= capacity

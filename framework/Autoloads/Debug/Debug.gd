@@ -1,9 +1,16 @@
 extends Node
 
+signal draw_toggled
+
 var enabled = true
-var draw = true:
+var draw = false:
 	get:
 		return draw and enabled
+	set(value):
+		var different = draw != value
+		draw = value
+		if different:
+			draw_toggled.emit()
 
 var show_object_info = true
 
@@ -45,6 +52,9 @@ func time_function(method: Callable):
 		times[method.get_method()] = [TimeLength.new(method.get_method(), end - start)]
 
 func _enter_tree():
+	if !OS.is_debug_build():
+		enabled = false
+
 	if enabled:
 		dbg_function = dbg_enabled
 	else:

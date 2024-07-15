@@ -19,7 +19,7 @@ class_name CameraZone
 		#
 #var open_bottom_padding := -1
 
-@export_range(0, 4096, 16) var open_side_padding := 128
+@export_range(0, 4096, 16) var open_side_padding := 64
 
 @export_range(0, 4096, 16) var open_left_padding := 0
 		
@@ -112,6 +112,10 @@ func _process(delta: float) -> void:
 		#pass
 		size.x = max(size.x, Math.stepify(ProjectSettings.get_setting("display/window/size/viewport_width"), 16))
 		size.y = max(size.y, Math.stepify(ProjectSettings.get_setting("display/window/size/viewport_height"), 16))
+		if size.x <= 0:
+			size.x = 1
+		if size.y <= 0:
+			size.y = 1
 	else:
 		visible = Debug.draw
 	queue_redraw()

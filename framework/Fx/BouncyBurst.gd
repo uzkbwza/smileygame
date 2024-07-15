@@ -54,8 +54,9 @@ var spread := deg_to_rad(spread_degrees)
 
 var real_num_points: int:
 	get:
-		if !dynamic_point_count:
-			return segment_count * 2
+		return segment_count * 2
+		#if !dynamic_point_count:
+			#return segment_count * 2
 
 		var fps : float = DisplayServer.screen_get_refresh_rate() if Engine.max_fps <= 0 else min(DisplayServer.screen_get_refresh_rate(), Engine.max_fps)
 		var mod := fps / 60.0
@@ -87,6 +88,7 @@ var rng := BetterRng.new()
 
 func _ready() -> void:
 	set_process(false)
+	set_physics_process(false)
 	
 	if Engine.is_editor_hint():
 		return
@@ -105,6 +107,23 @@ func go() -> void:
 	#assert(!initialized)
 	_initialize()
 	set_process.call_deferred(true)
+	set_physics_process.call_deferred(true)
+
+
+func _physics_process(delta: float) -> void:
+	for id in num_left:
+		var body = bodies[id]
+		var line := lines[id]
+	
+		var tform: Transform2D = PhysicsServer2D.body_get_state(body, PhysicsServer2D.BODY_STATE_TRANSFORM) 
+		var bodypos := tform.origin - global_position
+
+		line.append(line[-1])
+		line.append(bodypos)
+
+		line = line.slice(2)
+		lines[id] = line
+
 
 func _process(delta: float) -> void:
 	_draw_lines()
@@ -139,12 +158,6 @@ func _draw_lines() -> void:
 		if quantize:
 			bodypos.x = Math.stepify(bodypos.x, quantize_amount)
 			bodypos.y = Math.stepify(bodypos.y, quantize_amount)
-		
-		line.append(line[-1])
-		line.append(bodypos)
-
-		line = line.slice(2)
-		lines[id] = line
 
 		RenderingServer.canvas_item_add_multiline(canvas_item, line, colors, WIDTH, false)
 
@@ -169,12 +182,15 @@ func _canvas_item_clear() -> void:
 	RenderingServer.canvas_item_clear(canvas_item)
 	RenderingServer.canvas_item_set_parent(canvas_item, get_canvas_item())
 	RenderingServer.canvas_item_set_transform(canvas_item, Transform2D())
+	#RenderingServer.canvas_item_set_material(canvas_item, material)
 
 func _initialize() -> void:
 	bias_active = direction_bias_amount > 0 or velocity_bias_amount > 0
+
 	bias_dir = Vector2.RIGHT.rotated(global_rotation)
 	global_rotation *= 0
-	
+	global_scale = Vector2(1, 1)
+
 	
 
 	if freeze_rotation:

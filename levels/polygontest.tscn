@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=4 uid="uid://0bre3wscquy0"]
+
+[ext_resource type="PackedScene" uid="uid://slqbwnid78go" path="res://levels/level.tscn" id="1_7idvv"]
+[ext_resource type="Script" path="res://camera/CameraZone.gd" id="2_sy28e"]
+[ext_resource type="Shader" path="res://framework/Shaders/Cool3dText.gdshader" id="3_5rtu7"]
+[ext_resource type="PackedScene" uid="uid://cu15m05l27lk2" path="res://object/environment/rail/RailPost.tscn" id="4_txeag"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dvmpg"]
+shader = ExtResource("3_5rtu7")
+shader_parameter/angle = -0.1775
+shader_parameter/thickness = 11.892
+shader_parameter/scale = 0.84
+shader_parameter/shear = Vector2(0, -0.4)
+shader_parameter/slices = 16
+shader_parameter/outline = true
+shader_parameter/outline_width = 2.0
+shader_parameter/show_bound = false
+
+[node name="TestLevel" instance=ExtResource("1_7idvv")]
+death_height = 880
+metadata/_edit_lock_ = true
+
+[node name="CameraZone" type="ReferenceRect" parent="CameraSystem/CameraZones" index="0"]
+offset_left = 320.0
+offset_top = -768.0
+offset_right = 1792.0
+offset_bottom = 864.0
+script = ExtResource("2_sy28e")
+metadata/_edit_lock_ = true
+
+[node name="Smiley" parent="." index="1"]
+position = Vector2(600, -328)
+
+[node name="BackgroundTileMap" parent="TileMaps" index="0"]
+metadata/_edit_lock_ = true
+
+[node name="TileMap" parent="TileMaps" index="1"]
+tile_map_data = PackedByteArray("AAAkAO//AQAAAAAAAAAkAPD/AQAAAAAAAAAlAO7/AQAAAAAAAAAlAO//AQAAAAAAAAAlAPD/AQAAAAAAAAAmAO7/AQAAAAAAAAAmAO//AQAAAAAAAAAmAPD/AQAAAAAAAAAnAO7/AQAAAAAAAAAnAO//AQAAAAAAAAAnAPD/AQAAAAAAAAAoAO7/AQAAAAAAAAAoAO//AQAAAAAAAAAoAPD/AQAAAAAAAAAkAO7/AQAAAAAAAAA=")
+metadata/_edit_lock_ = true
+
+[node name="TileMap2" parent="TileMaps" index="2"]
+metadata/_edit_lock_ = true
+
+[node name="TileMap3" parent="TileMaps" index="3"]
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="." index="3"]
+material = SubResource("ShaderMaterial_dvmpg")
+offset_left = 1648.0
+offset_top = -832.0
+offset_right = 1715.0
+offset_bottom = -800.0
+text = "you win"
+
+[node name="RailPost" parent="." index="4" instance=ExtResource("4_txeag")]
+position = Vector2(560, 784)
+points = PackedVector2Array(0, 32, 160, 32, 224, -32)

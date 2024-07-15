@@ -2,7 +2,7 @@ extends Node2D
 
 class_name CameraSystem
 
-const CAMERA_TARGET_SPLERP_HALF_LIFE = 2
+const CAMERA_TARGET_SPLERP_HALF_LIFE = 0.5
 
 @onready var camera: GoodCamera = %Camera
 @onready var camera_zones: Array[CameraZone] = []
@@ -23,7 +23,14 @@ func _ready() -> void:
 		for neighbor in %CameraZones.get_children():
 			if zone != neighbor:
 				zone.try_add_neighbor(neighbor)
+	camera.global_position = camera_target.global_position
 	camera.global_position = player.global_position
+	camera_target.reset_physics_interpolation()
+	camera.reset_physics_interpolation()
+
+	await get_tree().create_timer(0.4).timeout
+	init = true
+
 
 func _process(delta: float) -> void:
 	if not player:
@@ -59,7 +66,10 @@ func _process(delta: float) -> void:
 	#Debug.dbg("curr_zone", current_camera_zone.get_instance_id() if current_camera_zone else null)
 	
 	Debug.dbg("overlapping zones", overlapping_zones.size())
-	
+	camera.limit_bottom = 1000000
+	camera.limit_top = -1000000
+	camera.limit_left = -1000000
+	camera.limit_right = 1000000
 	if in_zone:
 		var new_camera_target_pos: Vector2 = Vector2()
 		var zone = overlapping_zones[0]
@@ -72,6 +82,11 @@ func _process(delta: float) -> void:
 
 		if zone.point_within_padding(p_pos):
 			new_camera_target_pos = center
+			if !init:
+				camera.limit_bottom = zone.bottom
+				camera.limit_top = zone.top
+				camera.limit_left = zone.left
+				camera.limit_right = zone.right
 
 		else:
 			var y = c_pos.y
@@ -135,7 +150,10 @@ func _process(delta: float) -> void:
 	else:
 		camera_target.global_position = c_pos
 	
-	init = true
+	camera.smoothing_enabled = true
+	if !init:
+		camera.global_position = camera_target.global_position
+		camera.smoothing_enabled = false
 
 
 	#if !in_zone and player.global_position.y < death_height:
@@ -153,9 +171,10 @@ func _draw():
 		pass
 	else:
 		if Debug.draw:
-			draw_arc((camera_target.position), 4.0, 0, TAU, 32, Color.GREEN_YELLOW, 1.0)
+			draw_circle((camera_target.position), 4.0, Color.GREEN_YELLOW, false, 1.0)
 			if player:
 				var c = Color.GREEN_YELLOW
 				c.a *= 0.5
-				draw_arc((to_local(player.camera_target.global_position)), 4.0, 0, TAU, 32, Color.PURPLE, 1.0)
+				draw_circle((to_local(player.camera_target.global_position)), 4.0, Color.PURPLE, false)
 				draw_line(camera_target.position, to_local(player.camera_target.global_position), c)
+				draw_circle((to_local(camera.global_position)), 2.0, Color.BLUE, false, 1.0)

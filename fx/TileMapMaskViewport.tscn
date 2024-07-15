@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://db5iady5gg3ix"]
+
+[ext_resource type="Script" path="res://fx/tile_map_mask_viewport.gd" id="1_djrr8"]
+
+[node name="SubViewport" type="SubViewport"]
+transparent_bg = true
+canvas_item_default_texture_filter = 0
+render_target_update_mode = 4
+script = ExtResource("1_djrr8")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="Camera2D"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 10000.0
+offset_bottom = 10000.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

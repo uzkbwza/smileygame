@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dq1jhoh71tsdl"]
+
+[ext_resource type="Script" path="res://terrain/shapes/terrain_polygon.gd" id="1_1qlsq"]
+
+[node name="SS2D_Shape" type="Node2D"]
+script = ExtResource("1_1qlsq")
+collision_polygon_node_path = NodePath("StaticBody2D/CollisionPolygon2D")
+metadata/_edit_group_ = true
+
+[node name="StaticBody2D" type="CharacterBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-64.1036, -64.1036, 64.1036, -64.1036, 64.1036, 32.1036, -64.1036, 32.1036)
+metadata/_edit_group_ = true

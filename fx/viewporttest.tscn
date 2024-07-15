@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://db57knndayijp"]
+
+[ext_resource type="Texture2D" uid="uid://ci4abvs2udmbc" path="res://viewport.png" id="1_f2hxv"]
+[ext_resource type="Shader" path="res://fx/tilemapshadowtransparency.gdshader" id="1_tnfqd"]
+[ext_resource type="Script" path="res://fx/viewporttest.gd" id="2_441dl"]
+[ext_resource type="Shader" path="res://fx/tile_darkness_2.gdshader" id="3_72o2q"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ow55v"]
+shader = ExtResource("1_tnfqd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ymk06"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ag1dk"]
+shader = ExtResource("3_72o2q")
+shader_parameter/radius = 2.0
+shader_parameter/steps = 32
+shader_parameter/vertex_expand = 1.0
+shader_parameter/alpha = 1.0
+
+[node name="SubViewportContainer" type="SubViewportContainer"]
+material = SubResource("ShaderMaterial_ow55v")
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_441dl")
+metadata/_edit_lock_ = true
+
+[node name="SubViewport" type="SubViewport" parent="."]
+unique_name_in_owner = true
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(5120, 5120)
+render_target_update_mode = 4
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="SubViewport"]
+material = SubResource("ShaderMaterial_ymk06")
+offset_right = 2000.0
+offset_bottom = 2000.0
+
+[node name="SubViewport2" type="SubViewport" parent="SubViewport/SubViewportContainer"]
+unique_name_in_owner = true
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(2000, 2000)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="SubViewport/SubViewportContainer/SubViewport2"]
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewport/SubViewportContainer/SubViewport2"]
+material = SubResource("ShaderMaterial_ag1dk")
+texture = ExtResource("1_f2hxv")
+centered = false

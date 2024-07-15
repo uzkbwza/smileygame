@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cu15m05l27lk2"]
+
+[ext_resource type="Texture2D" uid="uid://x0odv4pinqhw" path="res://placeholders/square_white.png" id="1_4km8q"]
+[ext_resource type="Script" path="res://object/environment/rail/rail_post.gd" id="1_8unip"]
+[ext_resource type="Texture2D" uid="uid://bquiofavpacm4" path="res://object/environment/rail/rail.png" id="1_pbjna"]
+
+[node name="RailPost" type="Line2D"]
+points = PackedVector2Array(0, 0)
+width = 5.0
+texture = ExtResource("1_pbjna")
+texture_mode = 2
+joint_mode = 2
+script = ExtResource("1_8unip")
+metadata/_edit_group_ = true
+
+[node name="Icon" type="Sprite2D" parent="."]
+visible = false
+z_index = -1
+scale = Vector2(0.125, 0.5)
+texture = ExtResource("1_4km8q")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 0
