@@ -67,6 +67,12 @@ enum ImageType {
 	Border
 }
 
+const IMAGE_TEMPLATES = {
+	ImageType.Pattern : preload("res://terrain/generator/pattern_only.png"),
+	ImageType.PatternBig : preload("res://terrain/generator/pattern_only_big.png"),
+	ImageType.Border : preload("res://terrain/generator/border_pattern.png"),
+}
+
 @export var image_type: ImageType:
 	set(value):
 		image_type = value
@@ -88,21 +94,26 @@ func load_file() -> void:
 	if !Engine.is_editor_hint():
 		return
 
-	var input_name = get_input_name()
-	var filename = TileSetGenerator.params_to_filename(input_name, pattern_index, palette_index, palette_index, palette_offset, true)
-
-	#if filename == filename_string:
-		#return
-
-	filename_string = filename
+	#var input_name = get_input_name()
+	#var filename = TileSetGenerator.params_to_filename(input_name, pattern_index, palette_index, palette_index, palette_offset, true)
+#
+	##if filename == filename_string:
+		##return
+#
+	#filename_string = filename
+	#
+	#var image = ResourceLoader.load(filename)
+	#
+	#if Engine.is_editor_hint():
+		#print("loading " + filename)
+	var input = TileSetGeneratorInput.new()
+	input.texture = IMAGE_TEMPLATES[image_type]
+	input.name = get_input_name()
 	
-	var image = ResourceLoader.load(filename)
-	
-	if Engine.is_editor_hint():
-		print("loading " + filename)
+	var image = TileSetGenerator.create_one_tileset(input, pattern_index, palette_index, palette_index, palette_offset)
 	
 	if image:
-		self.set_image(image.get_image()) 
+		self.set_image(image) 
 
 func get_input_name() -> String:
 	match image_type:

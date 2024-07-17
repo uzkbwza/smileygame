@@ -561,7 +561,7 @@ one_shot = true
 
 [node name="ReTrickTimer" type="Timer" parent="." index="15"]
 process_callback = 0
-wait_time = 0.0833333
+wait_time = 0.0166667
 one_shot = true
 script = ExtResource("50_tjctf")
 frames = 5
