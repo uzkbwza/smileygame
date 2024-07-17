@@ -27,4 +27,4 @@ Reproducible steps:
 1. Then let's say you manually update the Solution/
 1. As soon as you click the addon "Mono build" toggle, the "*.disabled" files will be renamed back and your customized solution file will be overwritten.
 
-Ideally do not manually build while "Mono build" is toggled off. 
+Ideally do not manually build while "Mono build" is toggled off. hey
