@@ -2,6 +2,7 @@ extends ObjectState
 
 class_name SmileyState
 
+#const JUMP_VELOCITY = 910
 const JUMP_VELOCITY = 310
 const KICK_JUMP_FORCE = 200
 const GROUND_POUND_SPEED = 350
@@ -13,6 +14,8 @@ const MAX_DEBUG_LINES = 5
 
 @export_range(0.0, 1.0) var update_feet_position_lerp_value = 0.5
 @export_range(0.0, 1.0)  var update_face_position_lerp_value = 0.5
+@export var process_trickable_objects := true
+@export var center_camera := false
 
 var debug_color := Color.WHITE
 
@@ -71,7 +74,8 @@ func _exit_shared() -> void:
 	
 	player.foot_2.flip_h = false
 	player.foot_1.flip_h = false
-
+	if Debug.enabled:
+		queue_redraw()
 
 func _update_shared(delta: float) -> void:
 	super._update_shared(delta)
@@ -80,6 +84,11 @@ func _update_shared(delta: float) -> void:
 	if update_feet_position_lerp_value > 0:
 		player.update_feet_position(update_feet_position_lerp_value)
 	elapsed_time += delta
+	if process_trickable_objects:
+		player.process_trickable_objects.call_deferred()
+
+	if Debug.enabled:
+		queue_redraw()
 
 
 func check_fall(extra_data: Dictionary = {}, reset_y = true) -> bool:
@@ -95,20 +104,20 @@ func check_duck() -> void:
 	if player.input_duck:
 		player.duck()
 	
-func check_grounded_kick(extra_data = {}) -> bool:
-	if player.input_kick:
-		if body.velocity.y > 0:
-			body.velocity.y *=0 
-		if body.impulses.y > 0:
-			body.impulses.y *= 0
-		if body.accel.y > 0:
-			body.accel.y *= 0
-		player.is_grounded = false
-		body.move_and_collide(Vector2(0, -5))
-		body.apply_impulse(Vector2(0, -KICK_JUMP_FORCE))
-		queue_state_change("Kick", extra_data)
-		return true
-	return false
+#func check_grounded_kick(extra_data = {}) -> bool:
+	#if player.input_secondary:
+		#if body.velocity.y > 0:
+			#body.velocity.y *=0 
+		#if body.impulses.y > 0:
+			#body.impulses.y *= 0
+		#if body.accel.y > 0:
+			#body.accel.y *= 0
+		#player.is_grounded = false
+		#body.move_and_collide(Vector2(0, -5))
+		#body.apply_impulse(Vector2(0, -KICK_JUMP_FORCE))
+		#queue_state_change("Kick", extra_data)
+		#return true
+	#return false
 
 func check_jump(extra_data: Dictionary = {}, force=false) -> bool:
 	if force or (player.input_jump_window() and !(player.ceiling_detector.is_colliding() and player.ducking)):
@@ -165,8 +174,14 @@ func check_landing(custom_landing_state = "", extra_data=null) -> bool:
 		
 		if body.velocity.x != 0 and run and custom_landing_state == "":
 			player.set_flip(sign(body.velocity.x))
-			
-		queue_state_change(("Idle" if !run else "Run") if custom_landing_state == "" else custom_landing_state, extra_data)
+		
+		var state = ("Idle" if !run else "Run")
+		
+		if player.input_slide_window(): 
+		#if player.input_jump_window() and player.input_move_dir_vec.y > 0: 
+			state = "FloorSlide"
+
+		queue_state_change(state if custom_landing_state == "" else custom_landing_state, extra_data)
 		player.foot_1_was_touching_ground = true
 		player.foot_2_was_touching_ground = true
 	
@@ -185,6 +200,12 @@ func check_landing(custom_landing_state = "", extra_data=null) -> bool:
 
 		return true
 	return false
+
+func fall_and_retain_speed(extra_data = null):
+	var data = {"retain_speed": abs(body.velocity.x)}
+	if extra_data is Dictionary:
+		data.merge(extra_data)
+	queue_state_change("Fall", data)
 
 func check_run() -> void:
 	if player.input_move_dir != 0:

@@ -14,7 +14,7 @@ signal finished()
 
 @export var color: Color = Color.WHITE
 var time: float
-var rng: BetterRng = BetterRng.new()
+static var rng: BetterRng = BetterRng.new()
 	
 #	func apply_forces(delta):
 #		vel += accel * delta

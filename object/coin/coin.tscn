@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bfpvhh1jqahdc"]
+[gd_scene load_steps=15 format=3 uid="uid://bfpvhh1jqahdc"]
 
 [ext_resource type="Script" path="res://object/coin/coin.gd" id="1_4c4wl"]
 [ext_resource type="Texture2D" uid="uid://gytevy852v05" path="res://object/coin/coin.png" id="2_hlwj4"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://diwt0jig8s4mt" path="res://object/coin/starparticle.png" id="4_ilo4f"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ab2bq"]
-radius = 16.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vel5v"]
 resource_local_to_scene = true
@@ -45,19 +44,41 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.2
 scale_curve = SubResource("CurveTexture_a7226")
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ch3ty"]
+blend_mode = 1
+
+[sub_resource type="Curve" id="Curve_shliv"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_3wta4"]
+curve = SubResource("Curve_shliv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cbj5k"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 0.01
+spread = 0.0
+initial_velocity_min = 19.99
+initial_velocity_max = 19.99
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_3wta4")
+
 [node name="Coin" type="Area2D"]
+z_index = 1000
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_4c4wl")
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 shape = SubResource("CircleShape2D_ab2bq")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2(0, 6)
+position = Vector2(0, 10)
 shape = SubResource("CircleShape2D_ab2bq")
 
 [node name="Icon" type="AnimatedSprite2D" parent="."]
@@ -72,3 +93,13 @@ process_material = SubResource("ParticleProcessMaterial_8o7sd")
 texture = ExtResource("4_ilo4f")
 lifetime = 9.0
 randomness = 1.0
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_ch3ty")
+emitting = false
+amount = 4
+process_material = SubResource("ParticleProcessMaterial_cbj5k")
+texture = ExtResource("2_hlwj4")
+lifetime = 0.25
+speed_scale = 5.0
+fixed_fps = 60

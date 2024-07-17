@@ -53,6 +53,8 @@ func apply_drag(delta: float, h_drag: float = air_drag, v_drag: float = drag_ver
 	#velocity.y = Math.damp(velocity.y, 0, drag, delta)
 	velocity.x = Math.damp(velocity.x, 0, h_drag, delta)
 	velocity.y = Math.damp(velocity.y, 0, v_drag, delta) 
+	Debug.dbg("h_drag", h_drag)
+	Debug.dbg("v_drag", v_drag)
 
 func apply_physics_simple(delta: float) -> void:
 	var prev_position = global_position

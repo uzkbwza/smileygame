@@ -84,7 +84,7 @@ var num_left: int = 0
 
 var bodies_to_remove: Array[RID] = []
 
-var rng := BetterRng.new()
+static var rng := BetterRng.new()
 
 func _ready() -> void:
 	set_process(false)

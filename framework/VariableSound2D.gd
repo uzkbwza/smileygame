@@ -8,7 +8,7 @@ class_name VariableSound2D
 var pitch_scale_
 var amplitude
 
-var rng = BetterRng.new()
+static var rng = BetterRng.new()
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

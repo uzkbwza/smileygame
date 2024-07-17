@@ -6,6 +6,7 @@ const DOWN_DRAG = 0.07
 const DRAG = 0.999
 const KICKOFF_DIST = 7
 const SLOPE_SPEED_BOOST = 200
+const BASE_SLOPE_BOOST = 100
 const MIN_TIME = 0.4
 const MIN_JUMP_TIME = 0.16
 
@@ -38,14 +39,14 @@ func _enter():
 	player.can_apply_duck_force = false
 	#if data and data.get("speed_boost"):
 	buffer_jump = false
-	body.apply_impulse(player.ground_normal.rotated(TAU/4 * player.facing) * SLOPE_SPEED_BOOST * max(player.slope_level, 0))
+	body.apply_impulse(player.ground_normal.rotated(TAU/4 * player.facing) * lerpf(BASE_SLOPE_BOOST, SLOPE_SPEED_BOOST, max(player.slope_level, 0)))
 	#body.velocity = player.ground_normal.rotated(TAU/4 * player.facing) * body.velocity.length()
 
 func _update(delta):
 	
 	body.velocity = Math.splerp_vec(body.velocity, player.ground_normal.rotated(TAU/4 * player.facing) * body.velocity.length(), delta, 1.25)
 	
-	if !player.input_kick_held and elapsed_time > MIN_TIME:
+	if !player.input_primary_held and elapsed_time > MIN_TIME:
 		return "Run"
 
 	player.duck()
@@ -56,15 +57,17 @@ func _update(delta):
 
 	var extra_data = {"retain_speed": abs(body.velocity.x)}
 	#var extra_data = {"retain_speed": abs(body.velocity.x), "no_buffer_kick": true}
-	if player.input_jump_window():
+	if player.input_primary:
 		buffer_jump = true
 
 	var jumped = false
 	
 
-	if !(buffer_jump and elapsed_time > MIN_JUMP_TIME and player.input_jump_held and check_jump(extra_data, true)):
-		if buffer_jump and player.input_jump_held:
+	if !(buffer_jump and elapsed_time > MIN_JUMP_TIME and player.input_primary_held and check_jump(extra_data, true)):
+		if buffer_jump and player.input_primary_held:
 			if !player.is_grounded:
+				if body.velocity.y > 0:
+					body.velocity.y = 0
 				check_jump(extra_data, true)
 				jumped = true
 		else:
@@ -74,7 +77,9 @@ func _update(delta):
 	else:
 		jumped = true
 
-	if !jumped and buffer_jump and player.input_jump_held and player.get_slope_level() > last_slope:
+	if !jumped and buffer_jump and player.input_primary_held and player.get_slope_level() > last_slope:
+			if body.velocity.y > 0:
+				body.velocity.y = 0
 			check_jump(extra_data, true)
 			return
 
@@ -121,21 +126,22 @@ func _update(delta):
 	
 	wall_detector.force_raycast_update()
 	if wall_detector.is_colliding() and wall_detector.get_collision_normal().y > player.MAX_GROUNDED_Y_NORMAL:
-		var normal = wall_detector.get_collision_normal()
-		var speed = body.velocity.length()
-		body.velocity *= 0
-		body.move_and_collide(normal.rotated(TAU/4 * player.facing) * 5)
-		if speed < 200:
-			body.apply_impulse(normal.rotated(TAU/4 * player.facing) * 200)
-		else:
-			body.apply_impulse(speed * normal.rotated(TAU/4 * player.facing))
+		#var normal = wall_detector.get_collision_normal()
+		#var speed = body.velocity.length()
+		#body.velocity *= 0
+		#body.move_and_collide(normal.rotated(TAU/4 * player.facing) * 5)
+		#if speed < 200:
+			#body.apply_impulse(normal.rotated(TAU/4 * player.facing) * 200)
+		#else:
+			#body.apply_impulse(speed * normal.rotated(TAU/4 * player.facing))
 
-		print(body.velocity)
-		queue_state_change("Kick")
-	elif player.input_kick:
+		#print(body.velocity)
+		#queue_state_change("Fall")
+		check_jump({}, true)
+	#elif player.input_secondary:
 		#queue_state_change("KickOff", { "kick_dir": , "kick_strength": 1.0 } )
-		if check_grounded_kick({"retain_speed": abs(body.velocity.x)}):
-			pass
+		#if check_grounded_kick({"retain_speed": abs(body.velocity.x)}):
+			#pass
 	else:
 		if body.speed < MIN_SPEED and elapsed_time > MIN_TIME:
 			return "Run"

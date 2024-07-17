@@ -122,8 +122,8 @@ func get_sound(sound_name: String):
 func stop_sound(sound_name: String) -> void:
 	sounds[sound_name].stop()
 
-func change_state(state_name: String) -> void:
-	state_machine.queue_state(state_name)
+func change_state(state_name: String, data = null) -> void:
+	state_machine.queue_state(state_name, data, current_state)
 
 func _physics_process(delta: float) -> void:
 	delta = 0.01666666666667

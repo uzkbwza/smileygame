@@ -1,5 +1,7 @@
 extends SmileyState
 
+class_name SmileyKickState
+
 const KICK_DIST = 42.5
 const MIN_TIME = 0.2
 
@@ -7,7 +9,6 @@ const KICK_FORCE = 5000
 const MAX_STRENGTH_LENIENCY = 0.1
 const MIN_STRENGTH = 0.7
 const COLLISION_OVERLAP_THRESHOLD = 0.5
-const KICK_FRICTION = 0.9
 const FLOOR_KICK_REDUCTION_AMOUNT = 0.35
 const DIAGONAL_STICKY_TIME = 0.0167
 const ACTIVE_TIME = 0.064
@@ -40,7 +41,6 @@ var kick_input := Vector2i():
 				if !player.disable_feet:
 					player.play_sound("Kick", true)
 		kick_input = value
-			
 
 var slide_time := 0.0
 var time := 0.0
@@ -63,9 +63,9 @@ func _enter() -> void:
 	object_detector.show()
 	player.can_coyote_jump = false
 	kick_ray.enabled = true
-	started_sliding = false
 	object_detector.monitoring = true
 	object_detector_shape.set_deferred("disabled", false)
+	started_sliding = false
 	slide_time = 0.0
 	prev_speed = data.retain_speed if data is Dictionary and data.has("retain_speed") else 0.0
 	retain_speed = data is Dictionary and data.get("retain_speed")
@@ -76,7 +76,7 @@ func _update(delta: float):
 	body.apply_drag(delta, body.air_drag * 0.25, player.get_vert_drag())
 	player.wall_sliding = false
 
-	if player.input_move_dir_vec and player.input_kick_held:
+	if player.input_move_dir_vec and player.input_secondary_held:
 		if player.input_move_dir_vec.x != 0 and player.input_move_dir_vec.y != 0:
 			diagonal_sticky_time = DIAGONAL_STICKY_TIME
 			kick_input = player.input_move_dir_vec
@@ -86,7 +86,6 @@ func _update(delta: float):
 
 		kick_ray.target_position = Math.splerp_vec(kick_ray.target_position, Vector2(kick_input).normalized() * KICK_DIST, delta, 2.5 if kick_ray.is_colliding() else 0.0)
 
-		
 		if player.input_move_dir:
 			player.set_flip(player.input_move_dir)
 
@@ -102,16 +101,6 @@ func _update(delta: float):
 	if diagonal_sticky_time >= 0:
 		diagonal_sticky_time -= delta
 
-	foot_1_rest.target_position = kick_ray.target_position * 0.55 - Vector2(0, 10).rotated(kick_ray.target_position.angle() + (PI if player.facing == 1 else 0))
-	player.foot_1_pos = Physics.get_raycast_end_point(foot_1_rest) if !foot_1_rest.is_colliding() else foot_1_rest.get_collision_point()
-	player.foot_1.rotation = kick_ray.target_position.angle() - (TAU/4 if player.facing == 1 else (TAU/4 * 3))
-
-	foot_2_rest.target_position = kick_ray.target_position * 0.20 + Vector2(0, 0).rotated(kick_ray.target_position.angle() + (PI if player.facing == 1 else 0))
-	player.foot_2_pos = Physics.get_raycast_end_point(foot_2_rest) if !foot_2_rest.is_colliding() else foot_2_rest.get_collision_point()
-	player.foot_2.rotation = kick_ray.target_position.angle() - (TAU/4 if player.facing == 1 else (TAU/4 * 3))
-	#player.foot_2.flip_v
-	player.foot_2_was_touching_ground = foot_2_rest.is_colliding()
-	player.foot_1_was_touching_ground = foot_1_rest.is_colliding()
 	
 	Debug.dbg("kick_ray.get_collision_normal()",  kick_ray.get_collision_normal())
 	Debug.dbg("kick_ray.is_colliding()",  kick_ray.is_colliding())
@@ -178,7 +167,7 @@ func _update(delta: float):
 		#queue_state_change("KickOff", { "kick_dir": -kick_ray.target_position.normalized() } )
 
 	
-	if !player.input_kick_held and elapsed_time > MIN_TIME:
+	if !player.input_secondary_held and elapsed_time > MIN_TIME:
 		if collision_overlap <= 0.5:
 			var data = {}
 			if retain_speed:
@@ -229,7 +218,6 @@ func _exit():
 	object_detector.monitoring = false
 	kickable_objects_detected.clear()
 	object_detector_shape.set_deferred("disabled", true)
-
 
 func process_kickable_objects():
 	processed_objects.clear()

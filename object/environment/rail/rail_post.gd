@@ -22,7 +22,7 @@ var length = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if !(Engine.is_editor_hint() or Debug.enabled):
+	if !(Engine.is_editor_hint()):
 		set_process(false)
 
 	width = texture.get_height()
@@ -142,4 +142,3 @@ func _draw():
 		draw_circle(point, 4.0, col, false, 1.0, false)
 
 	draw_circle(points[0], 4.0, col3, true)
-		

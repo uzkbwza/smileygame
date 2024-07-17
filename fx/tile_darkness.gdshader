@@ -15,11 +15,11 @@ void fragment() {
 
 
 	vec2 s = radius / DEFAULT_RADIUS * step / vec2(textureSize(TEXTURE, 0));
-	
+
 	//if (make_transparent && col.r > 0.0)
 		//col.a *= 0.0;
 
-	
+
 	vec4 color =
 		0.011194727 * texture(TEXTURE, UV - 10.000000000 * s) +
 		0.039368696 * texture(TEXTURE, UV - 8.415809477 * s) +

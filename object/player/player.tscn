@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://b50q5nl24l32n"]
+[gd_scene load_steps=60 format=3 uid="uid://b50q5nl24l32n"]
 
 [ext_resource type="PackedScene" uid="uid://ckdj8lntj2rnd" path="res://framework/object/BaseObject2D.tscn" id="1_ib3fj"]
 [ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://object/player/player-die1.png" id="2_b3jsg"]
@@ -45,10 +45,13 @@
 [ext_resource type="AudioStream" uid="uid://dnp1qkqxjksvs" path="res://object/coin/sound/coin5.wav" id="22_044j7"]
 [ext_resource type="AudioStream" uid="uid://bt5tjwpgm5hy2" path="res://object/coin/sound/coin2.wav" id="23_1ox7k"]
 [ext_resource type="AudioStream" uid="uid://g4xk4qfx0ih5" path="res://object/coin/sound/coin6.wav" id="24_mxrf2"]
-[ext_resource type="Script" path="res://object/player/state/kick.gd" id="26_ikwih"]
 [ext_resource type="Script" path="res://object/player/state/kick_off.gd" id="27_4vsmn"]
 [ext_resource type="Script" path="res://object/player/state/grind_rail.gd" id="34_5a2ep"]
 [ext_resource type="Script" path="res://object/player/state/floor_slide.gd" id="44_abk8y"]
+[ext_resource type="Script" path="res://object/player/state/grabbed.gd" id="48_v380v"]
+[ext_resource type="Script" path="res://object/player/state/TrickRocket.gd" id="49_vihsh"]
+[ext_resource type="Script" path="res://object/player/state/trick_spinner.gd" id="50_blq20"]
+[ext_resource type="Script" path="res://framework/FrameTimer.gd" id="50_tjctf"]
 
 [sub_resource type="Animation" id="Animation_aiivk"]
 resource_name = "Idle"
@@ -108,12 +111,14 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_dmrwf"]
 radius = 2.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_lxh6p"]
-radius = 3.16228
+[sub_resource type="CircleShape2D" id="CircleShape2D_wmtlh"]
+radius = 3.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_b3puk"]
-radius = 4.0
-height = 8.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_lxh6p"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kya5m"]
+radius = 13.0
 
 [node name="Smiley" instance=ExtResource("1_ib3fj")]
 light_mask = 0
@@ -303,6 +308,14 @@ bus = &"Fx"
 script = ExtResource("4_52o34")
 pitch_variation = 0.006
 
+[node name="Coin5" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="26"]
+stream = ExtResource("21_wxf7x")
+volume_db = -14.0
+pitch_scale = 2.5
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
 [node name="Foot1" type="Sprite2D" parent="Flip" index="2"]
 unique_name_in_owner = true
 light_mask = 4
@@ -327,8 +340,8 @@ animation = &"HappyToSad"
 [node name="Body" parent="." index="2"]
 collision_layer = 2
 motion_mode = 0
+slide_on_ceiling = false
 floor_stop_on_slope = false
-floor_constant_speed = true
 floor_block_on_wall = false
 gravity = 700
 simple_physics = false
@@ -357,17 +370,27 @@ collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" index="0"]
-shape = SubResource("CircleShape2D_lxh6p")
+shape = SubResource("CircleShape2D_wmtlh")
 
-[node name="ObjectDetector" type="Area2D" parent="." index="4"]
+[node name="BumpableObjectDetector" type="Area2D" parent="." index="4"]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 8
+monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectDetector" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumpableObjectDetector" index="0"]
 shape = SubResource("CircleShape2D_lxh6p")
 
-[node name="StateMachine" parent="." index="5" node_paths=PackedStringArray("animation_players")]
+[node name="TrickableObjectDetector" type="Area2D" parent="." index="5"]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrickableObjectDetector" index="0"]
+shape = SubResource("CircleShape2D_kya5m")
+
+[node name="StateMachine" parent="." index="6" node_paths=PackedStringArray("animation_players")]
 animation_players = [NodePath("../Flip/AnimationPlayer")]
 
 [node name="Idle" type="Node2D" parent="StateMachine" index="0"]
@@ -377,6 +400,7 @@ apply_gravity = false
 [node name="Fall" type="Node2D" parent="StateMachine" index="1"]
 script = ExtResource("18_rseg1")
 apply_physics = false
+apply_gravity = false
 apply_friction = false
 
 [node name="CanLandTimer" type="Timer" parent="StateMachine/Fall" index="0"]
@@ -433,42 +457,13 @@ target_position = Vector2(17.675, 17.675)
 [node name="SkidSoundTimer" type="Timer" parent="StateMachine/Run" index="4"]
 one_shot = true
 
-[node name="Kick" type="Node2D" parent="StateMachine" index="3"]
-script = ExtResource("26_ikwih")
+[node name="Grabbed" type="Node2D" parent="StateMachine" index="3"]
+script = ExtResource("48_v380v")
+update_feet_position_lerp_value = 1.0
+update_face_position_lerp_value = 1.0
+apply_physics = false
 apply_gravity = false
 apply_friction = false
-
-[node name="KickRay" type="RayCast2D" parent="StateMachine/Kick" index="0"]
-enabled = false
-target_position = Vector2(30, 0)
-hit_from_inside = true
-
-[node name="ObjectDetector" type="Area2D" parent="StateMachine/Kick" index="1"]
-visible = false
-collision_layer = 0
-monitoring = false
-monitorable = false
-
-[node name="ObjectDetectorShape" type="CollisionShape2D" parent="StateMachine/Kick/ObjectDetector" index="0"]
-shape = SubResource("CapsuleShape2D_b3puk")
-disabled = true
-
-[node name="HazardRay" type="RayCast2D" parent="StateMachine/Kick" index="2"]
-enabled = false
-target_position = Vector2(30, 0)
-collision_mask = 4
-hit_from_inside = true
-collide_with_areas = true
-
-[node name="Foot1Rest" type="RayCast2D" parent="StateMachine/Kick" index="3"]
-enabled = false
-target_position = Vector2(0, 20)
-hit_from_inside = true
-
-[node name="Foot2Rest" type="RayCast2D" parent="StateMachine/Kick" index="4"]
-enabled = false
-target_position = Vector2(0, 20)
-hit_from_inside = true
 
 [node name="FloorSlide" type="Node2D" parent="StateMachine" index="4"]
 script = ExtResource("44_abk8y")
@@ -499,52 +494,74 @@ target_position = Vector2(0, 20)
 hit_from_inside = true
 
 [node name="RecoveryTimer" type="Timer" parent="StateMachine/KickOff" index="2"]
+process_callback = 0
 wait_time = 0.1
 one_shot = true
 
 [node name="GrindRail" type="Node2D" parent="StateMachine" index="6"]
 script = ExtResource("34_5a2ep")
+process_trickable_objects = false
 apply_gravity = false
 apply_friction = false
 
-[node name="CeilingDetector" type="RayCast2D" parent="." index="6"]
+[node name="TrickSpinner" type="Node2D" parent="StateMachine" index="7"]
+script = ExtResource("50_blq20")
+update_feet_position_lerp_value = 1.0
+update_face_position_lerp_value = 1.0
+process_trickable_objects = false
+center_camera = true
+apply_physics = false
+apply_gravity = false
+apply_friction = false
+
+[node name="TrickRocket" type="Node2D" parent="StateMachine" index="8"]
+script = ExtResource("49_vihsh")
+apply_gravity = false
+apply_friction = false
+
+[node name="CeilingDetector" type="RayCast2D" parent="." index="7"]
 unique_name_in_owner = true
 target_position = Vector2(0, -5)
 collision_mask = 513
 hit_from_inside = true
 
-[node name="Foot1Rest" type="RayCast2D" parent="." index="7"]
+[node name="Foot1Rest" type="RayCast2D" parent="." index="8"]
 unique_name_in_owner = true
 rotation = 0.174533
 target_position = Vector2(0, 40)
 hit_from_inside = true
 
-[node name="Foot2Rest" type="RayCast2D" parent="." index="8"]
+[node name="Foot2Rest" type="RayCast2D" parent="." index="9"]
 unique_name_in_owner = true
 rotation = -0.174533
 target_position = Vector2(0, 40)
 hit_from_inside = true
 
-[node name="CameraTarget" type="Marker2D" parent="." index="9"]
+[node name="CameraTarget" type="Marker2D" parent="." index="10"]
 unique_name_in_owner = true
 
-[node name="FeetPos" type="RayCast2D" parent="." index="10"]
+[node name="FeetPos" type="RayCast2D" parent="." index="11"]
 unique_name_in_owner = true
 self_modulate = Color(0.669624, 0.3145, 1, 1)
 target_position = Vector2(0, 25)
 hit_from_inside = true
 
-[node name="CameraTargetRaycast" type="RayCast2D" parent="." index="11"]
+[node name="CameraTargetRaycast" type="RayCast2D" parent="." index="12"]
 target_position = Vector2(0, 10)
+hit_from_inside = true
 
-[node name="WallRetainMomentumTimer" type="Timer" parent="." index="12"]
+[node name="WallRetainMomentumTimer" type="Timer" parent="." index="13"]
 process_callback = 0
 one_shot = true
 
-[node name="GrindCooldown" type="Timer" parent="." index="13"]
+[node name="GrindCooldown" type="Timer" parent="." index="14"]
 process_callback = 0
 wait_time = 0.167
 one_shot = true
 
-[connection signal="area_entered" from="StateMachine/Kick/ObjectDetector" to="StateMachine/Kick" method="_on_object_detector_area_entered"]
-[connection signal="area_exited" from="StateMachine/Kick/ObjectDetector" to="StateMachine/Kick" method="_on_object_detector_area_exited"]
+[node name="ReTrickTimer" type="Timer" parent="." index="15"]
+process_callback = 0
+wait_time = 0.0833333
+one_shot = true
+script = ExtResource("50_tjctf")
+frames = 5

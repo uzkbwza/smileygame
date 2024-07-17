@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3 uid="uid://un242k5i7xjy"]
+
+[ext_resource type="Script" path="res://object/player/state/kick.gd" id="1_r0lf0"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_b3puk"]
+radius = 4.0
+height = 8.0
+
+[node name="Kick" type="Node2D"]
+script = ExtResource("1_r0lf0")
+apply_gravity = false
+apply_friction = false
+
+[node name="KickRay" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(30, 0)
+hit_from_inside = true
+
+[node name="ObjectDetector" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+monitoring = false
+monitorable = false
+
+[node name="ObjectDetectorShape" type="CollisionShape2D" parent="ObjectDetector"]
+shape = SubResource("CapsuleShape2D_b3puk")
+disabled = true
+
+[node name="HazardRay" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(30, 0)
+collision_mask = 4
+hit_from_inside = true
+collide_with_areas = true
+
+[node name="Foot1Rest" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(0, 20)
+hit_from_inside = true
+
+[node name="Foot2Rest" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(0, 20)
+hit_from_inside = true
+
+[connection signal="area_entered" from="ObjectDetector" to="." method="_on_object_detector_area_entered"]
+[connection signal="area_exited" from="ObjectDetector" to="." method="_on_object_detector_area_exited"]

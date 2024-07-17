@@ -3,9 +3,11 @@ extends BaseObject2D
 class_name SmileyPlayer
 
 signal coin_collected
+signal landed
 
 const RUN_SPEED  = 800
 const DUCK_SPEED_MODIFIER = 0.8
+const SPLAT_SPEED = 1000
 
 const VISUAL_LEG_LENGTH = 21
 const MIN_IDLE_LEG_LENGTH = 20
@@ -19,13 +21,17 @@ const WALL_RETAIN_MOMENTUM_LENIENCY = 0.2
 const MAX_GROUNDED_Y_NORMAL = -0.25
 
 const JUMP_WINDOW = 3
-const KICK_WINDOW = 5
+const TRICK_WINDOW = 5
+const SLIDE_WINDOW = 3
 
 const FOOTSTEP_PARTICLE_MIN_SPEED = 10
 
 const DUCK_FORCE = 900
 
 const GROUNDED_VERT_DRAG = 1.000
+
+const RE_TRICK_TIMEOUT_FRAMES = 6
+
 
 @export var tutorial_character := false
 @export var disable_feet := false
@@ -58,13 +64,19 @@ var foot_2_pos: Vector2 = Vector2()
 @onready var wall_detector_2: RayCast2D = %WallDetector2
 @onready var wall_retain_momentum_timer: Timer = $WallRetainMomentumTimer
 @onready var grind_cooldown: Timer = $GrindCooldown
-@onready var object_detector: Area2D = %ObjectDetector
+@onready var bumpable_object_detector: Area2D = %BumpableObjectDetector
+@onready var trickable_object_detector: Area2D = %TrickableObjectDetector
+
+@onready var re_trick_timer: FrameTimer = $ReTrickTimer
 
 var debug_lines: Array[Line2D] = []
 
 var is_grounded: bool = false:
 	get:
 		return is_grounded and !slope_too_steep()
+
+
+var was_grounded := false
 
 var last_rail: RailPost
 
@@ -93,10 +105,12 @@ var input_move_dir_vec_normalized: Vector2 = Vector2()
 var input_move_dir_vec_just_pressed: Vector2i = Vector2i()
 var input_move_dir_vec_just_pressed_normalized: Vector2 = Vector2()
 var input_duck: bool = false
-var input_jump: bool = false
-var input_jump_held: bool = false
-var input_kick: bool = false
-var input_kick_held: bool = false
+var input_primary: bool = false
+var input_primary_held: bool = false
+
+var input_secondary: bool = false
+var input_secondary_held: bool = false
+
 var input_up_held: bool:
 	get:
 		return input_move_dir_vec.y < 0
@@ -128,8 +142,9 @@ var input_up_hold_time = 0
 var input_down_hold_time = 0
 var input_left_hold_time = 0
 var input_right_hold_time = 0
-var input_jump_hold_time = 0
-var input_kick_hold_time = 0
+var input_primary_hold_time = 0
+
+var input_secondary_hold_time = 0
 
 var can_coyote_jump := false
 var invulnerable := false
@@ -149,6 +164,11 @@ var last_aerial_velocity := Vector2()
 var nearby_hazards: Array[Node2D] = []
 
 var last_position: Vector2 = Vector2()
+
+var last_movement: Vector2:
+	get:
+		return (global_position - last_position)
+
 
 var foot_1_was_touching_ground := false:
 	set(value):
@@ -186,6 +206,11 @@ var feet_touching_terrain = null
 var body_touching_terrain = []
 var body_touching_terrain_new = []
 
+#var bumpable_objects_detected = []
+var trickable_objects_detected = []
+var processed_trickable_objects = []
+var last_tricked_object = null
+
 var touching_wall := false
 var touching_wall_dir := 0
 
@@ -196,7 +221,10 @@ var grind_position = Vector2()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-
+	z_index += 10
+	for child in get_children():
+		if child is Node2D:
+			child.z_index -= 10
 
 	if disable_feet:
 		foot_1.hide()
@@ -204,6 +232,7 @@ func _ready() -> void:
 		
 	remove_child.call_deferred(camera_target)
 	get_parent().add_child.call_deferred(camera_target)
+	re_trick_timer.timeout.connect(set.bind("last_tricked_object", null))
 
 	#if Debug.enabled:
 		#debug_line = Line2D.new()
@@ -217,10 +246,17 @@ func _ready() -> void:
 	reset_idle_feet()
 	
 	feet_ray.target_position.y = FEET_DIST
-	object_detector.area_entered.connect(on_object_entered)
-	object_detector.area_exited.connect(on_object_exited)
-	object_detector.body_entered.connect(on_object_entered)
-	object_detector.body_exited.connect(on_object_exited)
+
+	bumpable_object_detector.area_entered.connect(on_bumpable_object_entered)
+	#bumpable_object_detector.area_exited.connect(on_bumpable_object_exited)
+	bumpable_object_detector.body_entered.connect(on_bumpable_object_entered)
+	#bumpable_object_detector.body_exited.connect(on_bumpable_object_exited)
+	
+	trickable_object_detector.area_entered.connect(on_trickable_object_entered)
+	trickable_object_detector.area_exited.connect(on_trickable_object_exited)
+	
+	trickable_object_detector.body_entered.connect(on_trickable_object_entered)
+	trickable_object_detector.body_exited.connect(on_trickable_object_exited)
 	
 	hurtbox.body_entered.connect(on_hurtbox_hazard_entered)
 	hurtbox.area_entered.connect(on_hurtbox_hazard_entered)
@@ -229,13 +265,19 @@ func _ready() -> void:
 	
 	start_position = global_position
 
-func on_object_entered(object: Node2D):
+func on_bumpable_object_entered(object: Node2D):
 	if object.has_method("on_player_touched"):
 		object.on_player_touched(self)
-	#elif object is ...
+	#bumpable_objects_detected.append(object)
 
-func on_object_exited(object: Node2D):
-	pass
+#func on_bumpable_object_exited(object: Node2D):
+	#bumpable_objects_detected.erase(object)
+
+func on_trickable_object_entered(object: Node2D):
+	trickable_objects_detected.append(object)
+
+func on_trickable_object_exited(object: Node2D):
+	trickable_objects_detected.erase(object)
 
 func on_hurtbox_hazard_entered(hazard: Node2D) -> void:
 	nearby_hazards.append(hazard)
@@ -260,18 +302,18 @@ func get_floor_angle() -> float:
 	## normalized to up
 	return ground_normal.rotated(TAU/4).angle()
 
-func on_grabbed_coin() -> void:
+func coin_touch_sound():
 	play_sound("Coin")
 	play_sound("Coin2")
 	play_sound("Coin3")
 	play_sound("Coin4")
-	coin_collected.emit()
 
+func on_grabbed_coin() -> void:
+	play_sound("Coin5")
+	coin_collected.emit()
 
 func _physics_process(delta: float) -> void:
 	delta = 0.01666666666667
-
-	last_position = global_position
 
 	if body.is_on_floor():
 		body.velocity.y *= 0
@@ -285,12 +327,12 @@ func _physics_process(delta: float) -> void:
 	if recording:
 		record_replay()
 	
-	if !tutorial_character:
-		modulate.g = 0.0 if recording else 1.0
-		modulate.b = 0.0 if recording else 1.0
-		
-		modulate.r = 0.0 if playing_replay else 1.0
-		modulate.b = 0.0 if playing_replay else 1.0
+	#if !tutorial_character:
+		#modulate.g = 0.0 if recording else 1.0
+		#modulate.b = 0.0 if recording else 1.0
+		#
+		#modulate.r = 0.0 if playing_replay else 1.0
+		#modulate.b = 0.0 if playing_replay else 1.0
 	
 	#var shape_dist = body.speed * 0.05
 	if is_grounded:
@@ -312,8 +354,10 @@ func _physics_process(delta: float) -> void:
 	update_camera_target(delta)
 	
 	if Input.is_action_just_pressed("debug_restart"):
-		#get_tree().reload_current_scene()
-		die()
+		if Debug.enabled:
+			get_tree().reload_current_scene()
+		else:
+			die()
 
 	floor_overlap_ratio = 0.0
 	if feet_ray.is_colliding():
@@ -345,8 +389,6 @@ func _physics_process(delta: float) -> void:
 		if !ceiling_detector.is_colliding():
 			ducking = false
 
-
-	
 	if !playing_replay:
 		if !invulnerable and nearby_hazards.size() > 0:
 			die()
@@ -354,18 +396,99 @@ func _physics_process(delta: float) -> void:
 			die()
 
 	var collision_count = body.get_slide_collision_count()
+	
+	
 	body_touching_terrain_new.clear()
 	if collision_count > 0:
 		for i in collision_count:
-			var object = body.get_slide_collision(i).get_collider()
+			var collision = body.get_slide_collision(i)
+			var object = collision.get_collider()
+			if last_aerial_velocity.dot(collision.get_normal()) < -SPLAT_SPEED:
+				die()
 			if object and not (object in body_touching_terrain_new):
 				if not (object in body_touching_terrain):
 					collide_with_terrain(object)
 				body_touching_terrain_new.append(object)
+			
 	body_touching_terrain.clear()
 	for body in body_touching_terrain_new:
 		body_touching_terrain.append(body)
 
+	if is_grounded and !was_grounded:
+		landed.emit()
+	was_grounded = is_grounded
+	
+	last_position = global_position
+
+func process_trickable_objects():
+	if !input_trick_window():
+		return
+
+	Utils.sort_node_array_by_distance(trickable_objects_detected, global_position)
+
+	for object in trickable_objects_detected:
+		var tricked_object = process_trickable_object(object)
+		if tricked_object:
+			re_trick_timer.go(RE_TRICK_TIMEOUT_FRAMES)
+			last_tricked_object = tricked_object
+			return
+
+func process_trickable_object(obj) -> Node2D:
+	while obj != null:
+		if obj == last_tricked_object and !re_trick_timer.is_stopped():
+			return null
+		
+		if obj is TrickTarget:
+
+			#var data = {"trick_jump": true, "retain_speed": abs(body.velocity.x) + abs(impulse.x)}
+			var data = {
+				"rocket_time": obj.rocket_time, 
+				"direction": (Vector2((facing), 0) if not input_move_dir_vec_normalized else input_move_dir_vec_normalized)
+			}
+
+			#global_position = obj.global_position
+
+			# TODO: rocket effect
+			change_state("TrickRocket", data)
+			obj.tricked_by(self)
+			return obj
+		
+		elif obj is TrickSpinner:
+			if obj.captured == null:
+				var data = {
+					"captor": obj
+				}
+				obj.capture_player(self)
+				change_state("TrickSpinner", {"captor": obj})
+				return obj
+			return null
+
+		elif obj is RailPost:
+			
+			if can_trick_rail(obj):
+				change_state("GrindRail", { "rail": obj })
+			else:
+				return null
+			
+			return obj # object was processed and will be cleared
+		
+		elif obj.has_method("tricked_by"):
+			obj.tricked_by(self)
+			return obj
+
+		obj = obj.get_parent()
+
+	return obj
+
+func can_trick_rail(rail: RailPost) -> bool:
+	if (!grind_cooldown.is_stopped()) and last_rail == rail:
+		return false
+	var offset = rail.get_offset(global_position)
+	if offset <= 0 or offset >= rail.length:
+		var point = rail.path_node.to_global(rail.path_node.curve.sample_baked(offset))
+		if abs(global_position.x - point.x) < abs(global_position.x + body.velocity.x - point.x):
+			return false
+	return true
 
 func update_ground_normal():
 	feet_ray.force_raycast_update()
@@ -390,6 +513,8 @@ func die():
 	body.set_physics_process(false)
 	await get_tree().create_timer(1.0).timeout
 	#get_tree().reload_current_scene()
+	#queue_free()
+	#return
 	global_position = start_position
 	set_physics_process(true)
 	body.set_physics_process(true)
@@ -410,36 +535,73 @@ func debug_process() -> void:
 	Debug.dbg("floor_normal", ground_normal)
 	Debug.dbg("touching_wall_dir", touching_wall_dir)
 	Debug.dbg("feet_collider", feet_ray.get_collider().name if feet_ray.is_colliding() and feet_ray.get_collider() else "null" if feet_ray.is_colliding() else "not colliding")
+	Debug.dbg("vert_drag", get_vert_drag())
 	#Debug.dbg("feet_rotation", feet_ray.global_rotation)
 	
 
 func update_camera_target(delta: float) -> void:
 
-	var min_x = -INF if input_move_dir <= 0 else camera_offset.x
-	var max_x = INF if input_move_dir >= 0 else camera_offset.x
-	camera_offset = Math.splerp_vec(camera_offset, Vector2((facing) * 20 + 20 * (body.velocity.x / 200), CAMERA_VERT_OFFSET), delta, 10.0)
-	camera_offset.x = clamp(camera_offset.x, min_x, max_x)
+	#var min_x = -INF if input_move_dir <= 0 else camera_offset.x
+	#var max_x = INF if input_move_dir >= 0 else camera_offset.x
+	camera_offset = Math.splerp_vec(camera_offset, Vector2((body.velocity.x) * 0.12 + 20 * (body.velocity.x / 200), CAMERA_VERT_OFFSET) + Vector2(facing * 20, 0), delta, 10.0)
+	#camera_offset.x = clamp(camera_offset.x, min_x, max_x)
+
+	Debug.dbg("camera_offset_x", camera_offset.x)
 
 	camera_target.global_position.x = global_position.x + camera_offset.x
+	if current_state.center_camera:
+		camera_target.global_position = global_position
 	if wall_sliding:
 		camera_target.global_position.y = y + camera_offset.y
 	elif grinding:
 		camera_target.global_position = Math.splerp_vec(camera_target.global_position, grind_position + camera_offset * 0.5, delta, 2.0)
-	elif is_grounded or position.y >= last_grounded_height:
-		if is_grounded:
-			camera_target.global_position.y = last_grounded_height + camera_offset.y
-		else:
-			camera_target.global_position.y = last_grounded_height + camera_offset.y + body.velocity.y * 0.25
-			var dist = global_position.y - camera_target.global_position.y + (200)
-			if dist > (Global.viewport_size.y / 2):
-				var diff = dist - (Global.viewport_size.y / 2)
-				camera_target.global_position.y += diff
+	#elif is_grounded or position.y >= last_grounded_height:
+	elif is_grounded:
+		#if is_grounded:
+		camera_target.global_position.y = last_grounded_height + camera_offset.y
+		#else:
+			#camera_target.global_position.y = last_grounded_height + camera_offset.y + body.velocity.y * 0.25
+			#var dist = global_position.y - camera_target.global_position.y + (300)
+			#if dist > (Global.viewport_size.y / 2):
+				#var diff = dist - (Global.viewport_size.y / 2)
+				#camera_target.global_position.y += diff
 	else:
-		camera_target.global_position.y = Math.splerp(camera_target.global_position.y, global_position.y, delta, 2.0)
+		var down_amount = 0
+		if body.velocity.y > 0 and !is_grounded:
+			down_amount = body.velocity.y * 0.35
+		var dist = global_position.y - camera_target.global_position.y
+		var diff = 0.0
+		if dist > (Global.viewport_size.y / 2):
+			diff = dist - (Global.viewport_size.y / 2)
+
+		camera_target.global_position.y = Math.splerp(camera_target.global_position.y, global_position.y + down_amount + diff, delta, 5.0)
 	#camera_target.global_position = global_position + camera_offset
+	camera_target_raycast.position *= 0
 	camera_target_raycast.target_position = to_local(camera_target.global_position)
-	if camera_target_raycast.is_colliding():
-		camera_target.global_position = camera_target_raycast.get_collision_point()
+	
+	var camera_target_raycast_check_resolution = 10
+	var camera_target_raycast_check_height = 100
+	camera_target_raycast.force_raycast_update()
+	var collision_point = camera_target_raycast.get_collision_point()
+	var blocking := true
+	var perp := camera_target_raycast.target_position.rotated(TAU/4).normalized()
+	#var furthest_dist = 0.0
+#
+	var start :Vector2 = -perp * camera_target_raycast_check_height/2.0
+	var end :Vector2 = perp * camera_target_raycast_check_height/2.0
+	for i in range(camera_target_raycast_check_resolution):
+		camera_target_raycast.position = start.lerp(end, i / float(camera_target_raycast_check_resolution))
+		camera_target_raycast.force_raycast_update()
+		if !camera_target_raycast.is_colliding():
+			blocking = false
+			break
+		#var dist = camera_target_raycast.to_local(camera_target_raycast.get_collision_point()).length()
+		#if dist > furthest_dist:
+			#furthest_dist = dist
+	if blocking:
+		camera_target.global_position = collision_point
+		#camera_target.global_position = camera_target.global_position + to_local(collision_point).normalized() * furthest_dist
+
 
 func footstep_effect(foot: SmileyFoot) -> void:
 	var speed = body.speed
@@ -508,6 +670,7 @@ func _process(delta: float) -> void:
 					l.visible = Debug.draw
 			if line.points.size() > 10000:
 				line.points = line.points.slice(1)
+			pass
 
 	queue_redraw()
 
@@ -517,10 +680,10 @@ func process_input() -> void:
 	input_move_dir_vec_normalized = Vector2(input_move_dir_vec).normalized()
 	input_move_dir_vec_just_pressed = Utils.bools_to_vector2i(Input.is_action_just_pressed("move_left"), Input.is_action_just_pressed("move_right"),Input.is_action_just_pressed("move_up"), Input.is_action_just_pressed("move_down"))
 	input_move_dir_vec_just_pressed_normalized = Vector2(input_move_dir_vec_just_pressed).normalized()
-	input_jump = Input.is_action_just_pressed("jump")
-	input_jump_held = Input.is_action_pressed("jump")
-	input_kick = Input.is_action_just_pressed("kick")
-	input_kick_held = Input.is_action_pressed("kick")
+	input_primary = Input.is_action_just_pressed("jump")
+	input_primary_held = Input.is_action_pressed("jump")
+	input_secondary = Input.is_action_just_pressed("kick")
+	input_secondary_held = Input.is_action_pressed("kick")
 	input_duck = Input.is_action_pressed("move_down")
 	#
 	#if Input.is_action_just_pressed("start_recording"):
@@ -538,15 +701,15 @@ func process_input() -> void:
 
 func process_input_held_times():
 
-	if input_jump_held:
-		input_jump_hold_time += 1
+	if input_primary_held:
+		input_primary_hold_time += 1
 	else:
-		input_jump_hold_time = 0
+		input_primary_hold_time = 0
 		
-	if input_kick_held:
-		input_kick_hold_time += 1
+	if input_secondary_held:
+		input_secondary_hold_time += 1
 	else:
-		input_kick_hold_time = 0
+		input_secondary_hold_time = 0
 		
 	if input_up_held:
 		input_up_hold_time += 1
@@ -573,11 +736,13 @@ func frame_window(held_time: int, window: int):
 	return held_time > 0 and held_time <= window
 
 func input_jump_window():
-	return frame_window(input_jump_hold_time, JUMP_WINDOW)
+	return frame_window(input_primary_hold_time, JUMP_WINDOW)
 
-func input_kick_window():
-	return frame_window(input_kick_hold_time, KICK_WINDOW)
+func input_trick_window():
+	return frame_window(input_secondary_hold_time, TRICK_WINDOW)
 
+func input_slide_window():
+	return frame_window(input_down_hold_time, SLIDE_WINDOW)
 
 func start_playback() -> void:
 	playing_replay = true
@@ -631,8 +796,8 @@ func input_to_bitflags() -> int:
 	input |= FLAG_RIGHT if input_move_dir_vec.x > 0 else 0
 	input |= FLAG_UP    if input_move_dir_vec.y < 0 else 0
 	input |= FLAG_DOWN  if input_move_dir_vec.y > 0 else 0
-	input |= FLAG_A     if input_jump_held else 0
-	input |= FLAG_B     if input_kick_held else 0
+	input |= FLAG_A     if input_primary_held else 0
+	#input |= FLAG_B     if input_secondary_held else 0
 	return input
 
 func bitflags_to_input(input: int) -> void:
@@ -650,10 +815,10 @@ func bitflags_to_input(input: int) -> void:
 	input_move_dir = input_move_dir_vec.x
 	input_move_dir_vec_normalized = Vector2(input_move_dir_vec).normalized()
 	input_move_dir_vec_just_pressed_normalized = Vector2(input_move_dir_vec_just_pressed).normalized()
-	input_jump = a and !input_jump_held
-	input_jump_held = a
-	input_kick = b and !input_kick_held
-	input_kick_held = b
+	input_primary = a and !input_primary_held
+	input_primary_held = a
+#	input_secondary = b and !input_secondary_held
+#	input_secondary_held = b
 	input_duck = input_move_dir_vec.y == 1
 
 func set_flip(dir: int) -> void:
@@ -784,5 +949,5 @@ func _draw():
 		draw_rect(Rect2(dpad_pos + Vector2(-h/2, dist), Vector2(h, w)), get_color.call(input_down_hold_time))
 		draw_rect(Rect2(dpad_pos + Vector2(-w - dist, -h/2), Vector2(w, h)), get_color.call(input_left_hold_time))
 		draw_rect(Rect2(dpad_pos + Vector2(dist, -h/2), Vector2(w, h)), get_color.call(input_right_hold_time))
-		draw_circle(buttons_pos + Vector2(-10, 0), lerp(10, 5, hold_time_ratio.call(input_jump_hold_time)), get_color.call(input_jump_hold_time))
-		draw_circle(buttons_pos + Vector2(10, 0), lerp(10, 5, hold_time_ratio.call(input_kick_hold_time)), get_color.call(input_kick_hold_time))
+		draw_circle(buttons_pos + Vector2(-10, 0), lerp(10, 5, hold_time_ratio.call(input_primary_hold_time)), get_color.call(input_primary_hold_time))
+		draw_circle(buttons_pos + Vector2(10, 0), lerp(10, 5, hold_time_ratio.call(input_secondary_hold_time)), get_color.call(input_secondary_hold_time))

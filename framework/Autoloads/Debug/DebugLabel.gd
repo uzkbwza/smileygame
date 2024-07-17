@@ -8,7 +8,7 @@ func _ready():
 		hide()
 	timer = Timer.new()
 	add_child(timer)
-	timer.wait_time = 0.00001
+	timer.wait_time = 0.0001
 	timer.timeout.connect(loop)
 	loop()
 	

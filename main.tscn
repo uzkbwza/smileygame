@@ -1,28 +1,20 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxpugm2wudu7x"]
+[gd_scene load_steps=9 format=3 uid="uid://dxpugm2wudu7x"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_npn1s"]
 [ext_resource type="Script" path="res://game_view.gd" id="2_bjns2"]
 [ext_resource type="Script" path="res://framework/IntegerScaleViewportContainer.gd" id="3_65avi"]
 [ext_resource type="PackedScene" uid="uid://cpqdfl1ftr3f7" path="res://levels/level_bg.tscn" id="4_ddm5g"]
-[ext_resource type="Shader" path="res://object/hazard/sadman/Sadman.gdshader" id="7_jq4jp"]
-[ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://object/player/player-die1.png" id="8_nrmxe"]
 [ext_resource type="PackedScene" uid="uid://c8sjhubr16uad" path="res://hud/game_hud_layer.tscn" id="9_51c25"]
-[ext_resource type="Script" path="res://tile_map_camera.gd" id="9_h475i"]
 [ext_resource type="PackedScene" uid="uid://wtc5byypctgy" path="res://levels/TestLevel.tscn" id="10_pi37r"]
 [ext_resource type="Theme" uid="uid://bf211gwt1w3k4" path="res://theme.tres" id="13_iop45"]
 [ext_resource type="Script" path="res://framework/Autoloads/Debug/DebugLabel.gd" id="14_bhb4p"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wmyc1"]
-shader = ExtResource("7_jq4jp")
-shader_parameter/time_scale = 0.141
-shader_parameter/squash_scale = 16.3345
-shader_parameter/modulate = Color(1, 0.607843, 0.196078, 0.352941)
 
 [node name="Root" type="Node"]
 script = ExtResource("1_npn1s")
 
 [node name="BgLayer" type="CanvasLayer" parent="."]
 layer = -128
+visible = false
 
 [node name="ColorRect" type="ColorRect" parent="BgLayer"]
 anchors_preset = 15
@@ -66,47 +58,6 @@ render_target_update_mode = 4
 
 [node name="LevelBg" parent="GameView/LevelBg/SubViewport" instance=ExtResource("4_ddm5g")]
 
-[node name="LevelParallax" type="SubViewportContainer" parent="GameView"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch = true
-script = ExtResource("3_65avi")
-metadata/_edit_lock_ = true
-
-[node name="SubViewport" type="SubViewport" parent="GameView/LevelParallax"]
-transparent_bg = true
-handle_input_locally = false
-snap_2d_transforms_to_pixel = true
-canvas_item_default_texture_filter = 0
-size = Vector2i(640, 360)
-render_target_update_mode = 4
-
-[node name="CanvasLayer" type="CanvasLayer" parent="GameView/LevelParallax/SubViewport"]
-follow_viewport_enabled = true
-
-[node name="Parallax2D2" type="Parallax2D" parent="GameView/LevelParallax/SubViewport/CanvasLayer"]
-scroll_scale = Vector2(0.5, 0.5)
-repeat_size = Vector2(30, 30)
-repeat_times = 100
-
-[node name="Sprite2D" type="Sprite2D" parent="GameView/LevelParallax/SubViewport/CanvasLayer/Parallax2D2"]
-visible = false
-modulate = Color(1, 1, 1, 0.156863)
-material = SubResource("ShaderMaterial_wmyc1")
-scale = Vector2(0.3015, 0.3015)
-texture = ExtResource("8_nrmxe")
-
-[node name="BGCamera" type="Camera2D" parent="GameView/LevelParallax/SubViewport/CanvasLayer" node_paths=PackedStringArray("game_view")]
-unique_name_in_owner = true
-process_mode = 3
-process_priority = -10
-process_physics_priority = -10
-script = ExtResource("9_h475i")
-game_view = NodePath("../../../..")
-
 [node name="GameViewport" type="SubViewportContainer" parent="GameView"]
 clip_children = 2
 anchors_preset = 15
@@ -140,20 +91,8 @@ level = NodePath("../GameLayer/TestLevel")
 
 [node name="DebugLayer" type="CanvasLayer" parent="."]
 
-[node name="Control" type="Control" parent="DebugLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("13_iop45")
-metadata/_edit_lock_ = true
-metadata/_edit_group_ = true
-
-[node name="DebugLabel" type="Label" parent="DebugLayer/Control"]
-modulate = Color(1, 1, 1, 0.701961)
-layout_mode = 1
+[node name="DebugLabel" type="Label" parent="DebugLayer"]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -169,3 +108,15 @@ horizontal_alignment = 3
 autowrap_mode = 2
 justification_flags = 161
 script = ExtResource("14_bhb4p")
+
+[node name="Control" type="Control" parent="DebugLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("13_iop45")
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true

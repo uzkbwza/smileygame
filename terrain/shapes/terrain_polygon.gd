@@ -20,7 +20,14 @@ const SHADOW_OFFSET = Vector2(16, 16)
 		if value.border:
 			value.create_border()
 		copy_to = null
-		
+
+@export var copy_from: TerrainShape:
+	set(value):
+		if !Engine.is_editor_hint():
+			return
+		if value:
+			value.copy_to = self
+
 @export var center: bool:
 	set(value):
 		if value:

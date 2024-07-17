@@ -17,10 +17,15 @@ static func clear_children(node: Node, deferred=true) -> void:
 static func enum_string(value: int, enum_) -> String:
 	return enum_.keys()[value].capitalize().to_lower()
 
-static func sort_array_by_distance(arr: Array, from: Vector2):
+static func sort_node_array_by_distance(arr: Array, from:Vector2):
 	arr.sort_custom(func(a, b): return \
-		from.distance_squared_to(a.center) < \
-		from.distance_squared_to(b.center))
+		from.distance_squared_to(a.global_position) < \
+		from.distance_squared_to(b.global_position))
+		
+static func sort_array_by_distance(arr: Array[Vector2], from: Vector2):
+	arr.sort_custom(func(a, b): return \
+		from.distance_squared_to(a) < \
+		from.distance_squared_to(b))
 
 static func get_first_dict_key_below_number(dict: Dictionary, num: int):
 	var highest = -INF

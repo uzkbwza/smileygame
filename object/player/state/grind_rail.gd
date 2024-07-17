@@ -12,6 +12,8 @@ const MIN_SPEED = 50
 const END_DIST = 10
 const MAX_BODY_DIST= 10
 const MIN_START_SPEED = 160
+const FALL_GRIND_COOLDOWN = 0.35
+const JUMP_GRIND_COOLDOWN = 0.167
 
 var grind_position: Vector2
 
@@ -183,11 +185,13 @@ func _update(delta: float):
 		if (grind_offset) < 0.0 or grind_offset >= rail.length:
 			queue_state_change("Fall", extra_data)
 			return
-		#elif player.input_kick:
-			#queue_state_change("Fall", extra_data)
-			#return
+		elif player.input_secondary:
+			player.grind_cooldown.start(FALL_GRIND_COOLDOWN)
+			player.last_rail = rail
+			queue_state_change("Fall", extra_data)
+			return
 	else:
-		player.grind_cooldown.start()
+		player.grind_cooldown.start(JUMP_GRIND_COOLDOWN)
 		player.last_rail = rail
 		player.play_sound("GrindEnd1")
 		player.play_sound("GrindEnd2")

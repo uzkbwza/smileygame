@@ -3,7 +3,7 @@ extends RefCounted
 class_name ObjectFx
 
 var object: BaseObject2D
-var rng = BetterRng.new()
+static var rng = BetterRng.new()
 
 func _init(object: BaseObject2D):
 	self.object = object

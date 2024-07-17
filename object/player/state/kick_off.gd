@@ -23,7 +23,9 @@ func _exit():
 	foot_2_rest.enabled = false
 
 func _update(delta: float):
-	check_landing()
+	if !check_landing():
+		if body.get_slide_collision_count() > 0:
+			return "Fall"
 	#player.squish()
 	
 	player.is_grounded = player.feet_ray.is_colliding() and body.velocity.y >= 0
@@ -48,5 +50,3 @@ func _update(delta: float):
 
 	if recovery_timer.is_stopped():
 		queue_state_change("Fall", {"retain_speed": abs(body.velocity.x)})
-		#return "Fall" if !player.input_kick_held else "Kick"
-		#return "Fall" if !player.input_kick_held else "Kick"

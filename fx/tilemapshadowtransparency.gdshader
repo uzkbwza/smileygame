@@ -5,4 +5,3 @@ void fragment() {
 	COLOR.a = pow(COLOR.a, 3);
 	COLOR.rgb *= 0.0;
 }
-

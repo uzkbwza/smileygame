@@ -52,8 +52,11 @@ func _process(delta: float) -> void:
 				#closest_dist = dist
 				#zone = z
 			overlapping_zones.append(z)
+	
+	overlapping_zones.sort_custom(func(a, b): return \
+		p_pos.distance_squared_to(a.center) < \
+		p_pos.distance_squared_to(b.center))
 
-	Utils.sort_array_by_distance(overlapping_zones, p_pos)
 	#
 	#if zone != current_camera_zone:
 		#prev_camera_zone = current_camera_zone

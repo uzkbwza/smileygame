@@ -12,6 +12,6 @@ void vertex() {
 
 void fragment() {
 	vec2 uv = UV;
-	
+
 	COLOR = texture(TEXTURE, uv);
 }

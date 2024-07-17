@@ -15,7 +15,7 @@ class_name DisappearingBlock
 @onready var reform_: VariableSound2D = $Reform
 @onready var gpu_particles_2d_3: GPUParticles2D = $GPUParticles2D3
 
-var rng = BetterRng.new()
+static var rng = BetterRng.new()
 var crumbling = false
 
 func _ready():

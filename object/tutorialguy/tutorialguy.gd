@@ -28,11 +28,11 @@ func _process(delta: float) -> void:
 	color_tutorial_sprite(tut_left, input_move_dir_vec.x == -1)
 	color_tutorial_sprite(tut_right, input_move_dir_vec.x == 1)
 
-	color_tutorial_sprite(tut_jump_controller, input_jump_held)
-	color_tutorial_sprite(tut_kick_controller, input_kick_held)
+	color_tutorial_sprite(tut_jump_controller, input_primary_held)
+	color_tutorial_sprite(tut_kick_controller, input_secondary_held)
 	
-	color_tutorial_sprite(tut_jump_keyboard, input_jump_held)
-	color_tutorial_sprite(tut_kick_keyboard, input_kick_held)
+	color_tutorial_sprite(tut_jump_keyboard, input_primary_held)
+	color_tutorial_sprite(tut_kick_keyboard, input_secondary_held)
 	
 	tut_jump_keyboard.visible = GlobalInput.keyboard
 	tut_kick_keyboard.visible = GlobalInput.keyboard

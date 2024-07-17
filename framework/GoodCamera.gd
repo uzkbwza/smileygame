@@ -11,7 +11,7 @@ class_name GoodCamera
 
 #var shake_tween
 var shake_amount = 0
-var rng = BetterRng.new()
+static var rng = BetterRng.new()
 
 var offs_dir = Vector2()
 var offs_value = 0

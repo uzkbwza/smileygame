@@ -43,7 +43,7 @@ var real_num_points:
 var lines: Array[PackedVector2Array] = []
 var vels: Array[float] = []
 var widths: Array[float] = []
-var rng = BetterRng.new()
+static var rng = BetterRng.new()
 var t = 0.0
 # Called when the node enters the scene tree for the first time.
 

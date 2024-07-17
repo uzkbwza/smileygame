@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://38friq2j2mlh"]
+
+[ext_resource type="Script" path="res://object/environment/spinner/spinner.gd" id="1_qyj2l"]
+[ext_resource type="Texture2D" uid="uid://csusweeqb5fst" path="res://placeholders/whitecircle.png" id="2_rf55o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u3e2x"]
+radius = 42.0
+
+[node name="Spinner" type="Node2D"]
+script = ExtResource("1_qyj2l")
+
+[node name="Pivot" type="Node2D" parent="."]
+unique_name_in_owner = true
+rotation = 1.5708
+
+[node name="Line2D" type="Line2D" parent="Pivot"]
+unique_name_in_owner = true
+points = PackedVector2Array(0, 0, 80, 0)
+
+[node name="Head" type="Area2D" parent="Pivot"]
+unique_name_in_owner = true
+position = Vector2(80, 0)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+
+[node name="Icon" type="Sprite2D" parent="Pivot/Head"]
+texture = ExtResource("2_rf55o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pivot/Head"]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_u3e2x")

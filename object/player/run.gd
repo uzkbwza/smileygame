@@ -55,7 +55,7 @@ func _update(delta: float):
 	slope_detector.enabled = player.get_slope_level() < 0
 	player.is_grounded = player.is_grounded or slope_detector.is_colliding()
 	var fell = false
-	var fall_data = {"retain_speed": abs(body.velocity.x)}
+	#var fall_data = {"retain_speed": abs(body.velocity.x)}
 
 	#else:
 		#if body.velocity.y <= 0:
@@ -176,7 +176,8 @@ func _update(delta: float):
 		prev_speed = run_speed if run_speed > prev_speed else prev_speed
 		prev_speed *= PREV_SPEED_DECAY
 		prev_speed *= (1 - (PREV_SPEED_DECAY_SLOPE_AMOUNT * -(min(0, slope))))
-
+		if player.input_slide_window():
+			return "FloorSlide"
 
 	player.foot_1_pos = foot_1_rest.get_collision_point() if foot_1_rest.is_colliding() else Physics.get_point_on_raycast(foot_1_rest, 1.0 if !player.input_duck else 0.75)
 	player.foot_2_pos = foot_2_rest.get_collision_point() if foot_2_rest.is_colliding() else Physics.get_point_on_raycast(foot_2_rest, 1.0 if !player.input_duck else 0.75)
@@ -188,16 +189,17 @@ func _update(delta: float):
 			body.velocity += (norm.rotated(TAU/4 * player.facing) * (prev_speed - body.speed))
 
 
+	#if player.input_move_dir_vec.y > 0 and player.input_jump_window():
+
 
 	if skid_time >= MAX_SKID_TIME:
 		return "Idle"
-	
-	if !check_jump(fall_data):
-		if check_fall(fall_data):
+
+	if !check_jump():
+		if check_fall():
 			pass
 		
-		if player.input_kick:
-			queue_state_change("FloorSlide")
+
 		#check_grounded_kick(fall_data)
 
 func _exit():

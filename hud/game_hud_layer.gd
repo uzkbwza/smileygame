@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+class_name GameHudLayer
+
 @export var level: SmileyLevel
 @onready var coin_label: Label = %CoinLabel
 
