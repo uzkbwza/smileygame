@@ -1,3 +1,1 @@
-Copyright (c) 2023 Ian Sly <ivysly@protonmail.com>
-
-please dont sell this if you're not me
+this is mine copyright ian sly 2024 please dont steal it and sell it but i wont get mad if you do normal not weird guy things with it just dont be rude
