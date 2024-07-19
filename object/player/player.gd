@@ -53,6 +53,11 @@ var foot_2_pos: Vector2 = Vector2()
 @onready var foot_1_rest: RayCast2D = %Foot1Rest
 @onready var foot_2_rest: RayCast2D = %Foot2Rest
 
+#@onready var foot_dangler_1: RigidBody2D = $FootDangler1
+#@onready var foot_dangler_2: RigidBody2D = $FootDangler2
+#@onready var foot_dangler_joint_1: PinJoint2D = $FootDanglerJoint1
+#@onready var foot_dangler_joint_2: PinJoint2D = $FootDanglerJoint2
+
 @onready var foot_1_rest_idle_angle: float = foot_1_rest.global_rotation
 @onready var foot_2_rest_idle_angle: float = foot_2_rest.global_rotation
 #@onready var boost_tile_detector: RayCast2D = %BoostTileDetector
@@ -149,6 +154,7 @@ var input_secondary_hold_time = 0
 var can_coyote_jump := false
 var invulnerable := false
 var can_apply_duck_force := true
+var dead = false
 
 var start_position: Vector2
 
@@ -231,7 +237,12 @@ func _ready() -> void:
 		foot_2.hide()
 		
 	remove_child.call_deferred(camera_target)
-	get_parent().add_child.call_deferred(camera_target)
+	Global.get_level().add_child.call_deferred(camera_target)
+	#remove_child.call_deferred(foot_dangler_1)
+	#remove_child.call_deferred(foot_dangler_2)
+	#get_parent().add_child.call_deferred(foot_dangler_1)
+	#get_parent().add_child.call_deferred(foot_dangler_2)
+
 	re_trick_timer.timeout.connect(set.bind("last_tricked_object", null))
 
 	#if Debug.enabled:
@@ -508,18 +519,14 @@ func get_slope_level() -> float:
 
 func die():
 	#hide()
+	if dead:
+		return
+	dead = true
 	nearby_hazards.clear()
-	set_physics_process(false)
-	body.set_physics_process(false)
-	await get_tree().create_timer(1.0).timeout
-	#get_tree().reload_current_scene()
-	#queue_free()
-	#return
-	global_position = start_position
-	set_physics_process(true)
-	body.set_physics_process(true)
-	body.reset_momentum()
-	change_state("Idle")
+	change_state("Die")
+	#set_physics_process.call_deferred(false)
+	#body.set_physics_process.call_deferred(false)
+	#body.apply_physics(get_physics_process_delta_time())
 
 func debug_process() -> void:
 	#Debug.dbg("ducking", ducking)
@@ -527,10 +534,11 @@ func debug_process() -> void:
 	Debug.dbg("body_vel", body.velocity.round())
 	Debug.dbg("facing", facing)
 	Debug.dbg("body_accel", body.accel.round())
+	Debug.dbg("body_speed", body.speed)
 	Debug.dbg("body_impulses", body.impulses.round())
 	Debug.dbg("aerial_vel", last_aerial_velocity.round())
 	Debug.dbg("input_dir", input_move_dir_vec)
-	Debug.dbg("floor_overlap", floor_overlap_ratio)
+	#Debug.dbg("floor_overlap", floor_overlap_ratio)
 	Debug.dbg("slope", get_slope_level())
 	Debug.dbg("floor_normal", ground_normal)
 	Debug.dbg("touching_wall_dir", touching_wall_dir)
@@ -547,6 +555,10 @@ func update_camera_target(delta: float) -> void:
 	#camera_offset.x = clamp(camera_offset.x, min_x, max_x)
 
 	Debug.dbg("camera_offset_x", camera_offset.x)
+	
+	if dead:
+		camera_target.global_position = global_position
+		return
 
 	camera_target.global_position.x = global_position.x + camera_offset.x
 	if current_state.center_camera:
@@ -912,6 +924,7 @@ func foot_idle(foot: Node2D, foot_rest: RayCast2D) -> Vector2:
 	foot.global_rotation = foot_normal.angle()
 	return foot_pos
 
+	
 func _draw():
 	if Debug.draw:
 		#print((global_position - last_position))

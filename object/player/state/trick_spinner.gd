@@ -4,6 +4,7 @@ var captor: TrickSpinner
 
 func _enter():
 	captor = data.captor
+	player.can_coyote_jump = true
 	captor.apply_torque_impulse(captor.process_2d_impulse(body.velocity))
 
 func _update(delta: float):

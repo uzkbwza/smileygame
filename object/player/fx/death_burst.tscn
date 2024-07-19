@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://3ufv1v7pqnu0"]
+
+[ext_resource type="PackedScene" uid="uid://clqmafq7aouke" path="res://framework/Fx/DisappearingParticle.tscn" id="1_yr0wx"]
+
+[node name="DisappearingParticle" instance=ExtResource("1_yr0wx")]

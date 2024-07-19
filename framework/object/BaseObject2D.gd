@@ -23,14 +23,14 @@ var xy: Vector2:
 var hitstopped := false
 var hit_tween: Tween
 var rng := BetterRng.new()
-var fx := ObjectFx.new(self)
+#var fx := ObjectFx.new(self)
 
 var sounds: Dictionary = {}
 
 @export var start_flipped = false
 
 @onready var body: BaseObjectBody2D = %Body
-@onready var sprite = get_node_or_null("%Sprite")
+@onready var sprite: AnimatedSprite2D = get_node_or_null("%Sprite")
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 @onready var state_machine: StateMachine2D = %StateMachine
 @onready var flip: Node2D = $"%Flip"
@@ -66,7 +66,7 @@ func spawn_scene(scene: PackedScene, offset: Vector2=Vector2(), direction: Vecto
 
 func spawn_scene_direct(scene: PackedScene) -> Node2D:
 	var child = scene.instantiate()
-	get_parent().add_child(child)
+	Global.get_level().add_child(child)
 	child.reset_physics_interpolation()
 	return child
 
@@ -76,7 +76,7 @@ func _finish_spawn(child: Node, offset: Vector2, direction: Vector2, particle_fl
 		child.scale.x *= -1
 	else:
 		child.global_rotation = direction.angle()
-	get_parent().add_child(child)
+	Global.get_level().add_child(child)
 	child.reset_physics_interpolation()
 
 	pass

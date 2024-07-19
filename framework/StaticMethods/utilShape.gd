@@ -129,6 +129,34 @@ static func closest_point_on_line_segment(p: Vector2, q: Vector2, point: Vector2
 		s = p + ls * (q - p)
 	return s
 	
+static func ray_to_line_segment_origin(ray_origin: Vector2, ray_dir: Vector2, segment_start: Vector2, segment_end: Vector2):
+	# Calculate the direction of the segment
+	var seg_dir = segment_end - segment_start
+	
+	# Calculate the denominator
+	var denom = ray_dir.x * seg_dir.y - ray_dir.y * seg_dir.x
+	
+	# If the denominator is zero, the lines are parallel or coincident
+	if abs(denom) < 1e-10:
+		return null
+	
+	# Calculate the numerators
+	var num1 = (segment_start.x - ray_origin.x) * seg_dir.y - (segment_start.y - ray_origin.y) * seg_dir.x
+	var num2 = (segment_start.x - ray_origin.x) * ray_dir.y - (segment_start.y - ray_origin.y) * ray_dir.x
+	
+	# Calculate the intersection t values
+	var t1 = num1 / denom
+	var t2 = num2 / denom
+	
+	# Check if the intersection is within the segment and in the direction of the ray
+	if t1 >= 0 and t2 >= 0 and t2 <= 1:
+		# Calculate the intersection point
+		var intersection = ray_origin + t1 * ray_dir
+		return intersection
+	
+	# If no valid intersection, return null
+	return null
+	
 static func get_random_point_in_polygon(polygon: PackedVector2Array, rng: BetterRng, num_points = 1, min_distance_between_points=0):
 	var tris := get_polygon_tris(polygon)
 	if tris.size() == 0:

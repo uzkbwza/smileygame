@@ -574,7 +574,7 @@ metadata/_edit_group_ = true
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.709804)
-z_index = -11
+z_index = -9
 material = SubResource("CanvasItemMaterial_woa8m")
 texture = ExtResource("2_b66qb")
 

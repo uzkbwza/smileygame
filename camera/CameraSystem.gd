@@ -68,7 +68,7 @@ func _process(delta: float) -> void:
 	#Debug.dbg("last_zone", prev_camera_zone.get_instance_id() if prev_camera_zone else null)
 	#Debug.dbg("curr_zone", current_camera_zone.get_instance_id() if current_camera_zone else null)
 	
-	Debug.dbg("overlapping zones", overlapping_zones.size())
+	#Debug.dbg("overlapping zones", overlapping_zones.size())
 	camera.limit_bottom = 1000000
 	camera.limit_top = -1000000
 	camera.limit_left = -1000000

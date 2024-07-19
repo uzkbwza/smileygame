@@ -91,8 +91,8 @@ func queue_state(new_state: String, data=null, old_state=state) -> void:
 		queued_data = []
 		queued_states.push_back(new_state)
 		queued_data.append(data)
-	if Debug.enabled and queued_data and queued_data[0] != null:
-		Debug.dbg("queued_state_data", queued_data.duplicate(true))
+	#if Debug.enabled and queued_data and queued_data[0] != null:
+		#Debug.dbg("queued_state_data", queued_data.duplicate(true))
 
 func update(delta: float) -> void:
 	if !state.update:

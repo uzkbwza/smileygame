@@ -1,11 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dxpugm2wudu7x"]
+[gd_scene load_steps=8 format=3 uid="uid://dxpugm2wudu7x"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_npn1s"]
 [ext_resource type="Script" path="res://game_view.gd" id="2_bjns2"]
 [ext_resource type="Script" path="res://framework/IntegerScaleViewportContainer.gd" id="3_65avi"]
-[ext_resource type="PackedScene" uid="uid://cpqdfl1ftr3f7" path="res://levels/level_bg.tscn" id="4_ddm5g"]
-[ext_resource type="PackedScene" uid="uid://c8sjhubr16uad" path="res://hud/game_hud_layer.tscn" id="9_51c25"]
-[ext_resource type="PackedScene" uid="uid://wtc5byypctgy" path="res://levels/TestLevel.tscn" id="10_pi37r"]
+[ext_resource type="PackedScene" uid="uid://bopjrdhyrjclp" path="res://game.tscn" id="4_3g1x4"]
+[ext_resource type="Script" path="res://framework/Autoloads/Debug/debug_history.gd" id="8_oxlv7"]
 [ext_resource type="Theme" uid="uid://bf211gwt1w3k4" path="res://theme.tres" id="13_iop45"]
 [ext_resource type="Script" path="res://framework/Autoloads/Debug/DebugLabel.gd" id="14_bhb4p"]
 
@@ -38,26 +37,6 @@ process_priority = -3
 follow_viewport_enabled = true
 script = ExtResource("2_bjns2")
 
-[node name="LevelBg" type="SubViewportContainer" parent="GameView"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch = true
-script = ExtResource("3_65avi")
-metadata/_edit_lock_ = true
-
-[node name="SubViewport" type="SubViewport" parent="GameView/LevelBg"]
-handle_input_locally = false
-snap_2d_transforms_to_pixel = true
-snap_2d_vertices_to_pixel = true
-canvas_item_default_texture_filter = 0
-size = Vector2i(640, 360)
-render_target_update_mode = 4
-
-[node name="LevelBg" parent="GameView/LevelBg/SubViewport" instance=ExtResource("4_ddm5g")]
-
 [node name="GameViewport" type="SubViewportContainer" parent="GameView"]
 clip_children = 2
 anchors_preset = 15
@@ -79,20 +58,11 @@ audio_listener_enable_2d = true
 size = Vector2i(640, 360)
 render_target_update_mode = 4
 
-[node name="GameLayer" type="CanvasLayer" parent="GameView/GameViewport/SubViewport"]
-unique_name_in_owner = true
-follow_viewport_enabled = true
-
-[node name="TestLevel" parent="GameView/GameViewport/SubViewport/GameLayer" instance=ExtResource("10_pi37r")]
-texture_repeat = 0
-
-[node name="GameHUDLayer" parent="GameView/GameViewport/SubViewport" node_paths=PackedStringArray("level") instance=ExtResource("9_51c25")]
-level = NodePath("../GameLayer/TestLevel")
+[node name="Game" parent="GameView/GameViewport/SubViewport" instance=ExtResource("4_3g1x4")]
 
 [node name="DebugLayer" type="CanvasLayer" parent="."]
 
 [node name="DebugLabel" type="Label" parent="DebugLayer"]
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -109,6 +79,17 @@ autowrap_mode = 2
 justification_flags = 161
 script = ExtResource("14_bhb4p")
 
+[node name="DebugHistory" type="Control" parent="DebugLayer"]
+layout_mode = 3
+anchor_left = 0.622
+anchor_right = 1.0
+anchor_bottom = 0.189
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("8_oxlv7")
+
 [node name="Control" type="Control" parent="DebugLayer"]
 visible = false
 layout_mode = 3
@@ -120,3 +101,5 @@ grow_vertical = 2
 theme = ExtResource("13_iop45")
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]

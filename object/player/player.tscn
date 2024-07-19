@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://b50q5nl24l32n"]
+[gd_scene load_steps=61 format=3 uid="uid://b50q5nl24l32n"]
 
 [ext_resource type="PackedScene" uid="uid://ckdj8lntj2rnd" path="res://framework/object/BaseObject2D.tscn" id="1_ib3fj"]
 [ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://object/player/player-die1.png" id="2_b3jsg"]
@@ -48,6 +48,7 @@
 [ext_resource type="Script" path="res://object/player/state/kick_off.gd" id="27_4vsmn"]
 [ext_resource type="Script" path="res://object/player/state/grind_rail.gd" id="34_5a2ep"]
 [ext_resource type="Script" path="res://object/player/state/floor_slide.gd" id="44_abk8y"]
+[ext_resource type="Script" path="res://object/player/state/die.gd" id="47_wat83"]
 [ext_resource type="Script" path="res://object/player/state/grabbed.gd" id="48_v380v"]
 [ext_resource type="Script" path="res://object/player/state/TrickRocket.gd" id="49_vihsh"]
 [ext_resource type="Script" path="res://object/player/state/trick_spinner.gd" id="50_blq20"]
@@ -390,9 +391,6 @@ monitorable = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TrickableObjectDetector" index="0"]
 shape = SubResource("CircleShape2D_kya5m")
 
-[node name="StateMachine" parent="." index="6" node_paths=PackedStringArray("animation_players")]
-animation_players = [NodePath("../Flip/AnimationPlayer")]
-
 [node name="Idle" type="Node2D" parent="StateMachine" index="0"]
 script = ExtResource("16_1k1wy")
 apply_gravity = false
@@ -465,7 +463,16 @@ apply_physics = false
 apply_gravity = false
 apply_friction = false
 
-[node name="FloorSlide" type="Node2D" parent="StateMachine" index="4"]
+[node name="Die" type="Node2D" parent="StateMachine" index="4"]
+script = ExtResource("47_wat83")
+hide_feet = false
+update_feet_position_lerp_value = 1.0
+update_face_position_lerp_value = 1.0
+apply_physics = false
+apply_gravity = false
+apply_friction = false
+
+[node name="FloorSlide" type="Node2D" parent="StateMachine" index="5"]
 script = ExtResource("44_abk8y")
 apply_friction = false
 
@@ -480,7 +487,7 @@ enabled = false
 [node name="Foot2Ray" type="RayCast2D" parent="StateMachine/FloorSlide" index="2"]
 enabled = false
 
-[node name="KickOff" type="Node2D" parent="StateMachine" index="5"]
+[node name="KickOff" type="Node2D" parent="StateMachine" index="6"]
 script = ExtResource("27_4vsmn")
 
 [node name="Foot1Rest" type="RayCast2D" parent="StateMachine/KickOff" index="0"]
@@ -498,13 +505,13 @@ process_callback = 0
 wait_time = 0.1
 one_shot = true
 
-[node name="GrindRail" type="Node2D" parent="StateMachine" index="6"]
+[node name="GrindRail" type="Node2D" parent="StateMachine" index="7"]
 script = ExtResource("34_5a2ep")
 process_trickable_objects = false
 apply_gravity = false
 apply_friction = false
 
-[node name="TrickSpinner" type="Node2D" parent="StateMachine" index="7"]
+[node name="TrickSpinner" type="Node2D" parent="StateMachine" index="8"]
 script = ExtResource("50_blq20")
 update_feet_position_lerp_value = 1.0
 update_face_position_lerp_value = 1.0
@@ -514,7 +521,7 @@ apply_physics = false
 apply_gravity = false
 apply_friction = false
 
-[node name="TrickRocket" type="Node2D" parent="StateMachine" index="8"]
+[node name="TrickRocket" type="Node2D" parent="StateMachine" index="9"]
 script = ExtResource("49_vihsh")
 apply_gravity = false
 apply_friction = false
@@ -561,7 +568,7 @@ one_shot = true
 
 [node name="ReTrickTimer" type="Timer" parent="." index="15"]
 process_callback = 0
-wait_time = 0.0166667
+wait_time = 0.0833333
 one_shot = true
 script = ExtResource("50_tjctf")
 frames = 5

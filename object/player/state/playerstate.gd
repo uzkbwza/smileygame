@@ -60,7 +60,7 @@ func new_debug_line():
 	debug_line.z_index = player.z_index -1
 
 	debug_line.default_color = debug_color
-	player.get_parent().add_child.call_deferred(debug_line)
+	Global.get_level().add_child.call_deferred(debug_line)
 	if player.debug_lines:
 		debug_line.add_point(player.debug_lines[-1].points[-1])
 	player.debug_lines.append(debug_line)
@@ -74,6 +74,11 @@ func _exit_shared() -> void:
 	
 	player.foot_2.flip_h = false
 	player.foot_1.flip_h = false
+	#player.foot_dangler_1.hide()
+	#player.foot_dangler_2.hide()
+	player.foot_1.show()
+	player.foot_2.show()
+	
 	if Debug.enabled:
 		queue_redraw()
 

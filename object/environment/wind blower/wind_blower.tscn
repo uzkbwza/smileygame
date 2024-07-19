@@ -1,0 +1,143 @@
+[gd_scene load_steps=21 format=3 uid="uid://rch2bxtloa5o"]
+
+[ext_resource type="Script" path="res://object/environment/wind blower/wind_blower.gd" id="1_ve8yt"]
+[ext_resource type="Texture2D" uid="uid://begv5wlexgeny" path="res://icon.svg" id="2_cxx33"]
+[ext_resource type="Shader" path="res://object/environment/wind blower/blower_wind.gdshader" id="3_xuylc"]
+[ext_resource type="Texture2D" uid="uid://ce6dedgbcto4n" path="res://placeholders/whitepixel.png" id="4_f4yj1"]
+[ext_resource type="Texture2D" uid="uid://dtjnqp45e5w5s" path="res://fx/little_circle.png" id="5_7pjur"]
+
+[sub_resource type="Gradient" id="Gradient_m206h"]
+offsets = PackedFloat32Array(0, 0.451187, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sxmrn"]
+resource_local_to_scene = true
+size = Vector2(112, 64)
+
+[sub_resource type="Curve" id="Curve_ex84f"]
+_data = [Vector2(0, 0.376623), 0.0, 0.0, 0, 0, Vector2(0.637394, 0.779221), 0.0, 0.0, 0, 0, Vector2(1, 0.225467), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ynlb7"]
+curve = SubResource("Curve_ex84f")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dya48"]
+resource_local_to_scene = true
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(0, 32, 0)
+spread = 11.374
+initial_velocity_min = 78.21
+initial_velocity_max = 245.76
+gravity = Vector3(0, 98, 0)
+scale_min = 0.0
+scale_max = 0.45
+scale_curve = SubResource("CurveTexture_ynlb7")
+color = Color(0.94, 0.94, 0.94, 0.737255)
+
+[sub_resource type="Curve" id="Curve_edntt"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.116147, 1), 0.0, 0.0, 0, 0, Vector2(0.441926, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_6626j"]
+curve = SubResource("Curve_edntt")
+
+[sub_resource type="Curve" id="Curve_uw37o"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.441926, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_ntr8d"]
+curve = SubResource("Curve_uw37o")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jrj5p"]
+noise_type = 0
+frequency = 0.0488
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4s43r"]
+seamless = true
+noise = SubResource("FastNoiseLite_jrj5p")
+
+[sub_resource type="Gradient" id="Gradient_10uo6"]
+offsets = PackedFloat32Array(0.00294985, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+metadata/_snap_enabled = true
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_e3fig"]
+gradient = SubResource("Gradient_10uo6")
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
+metadata/_snap_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iecvq"]
+resource_local_to_scene = true
+shader = ExtResource("3_xuylc")
+shader_parameter/speed = 0.07
+shader_parameter/threshold = 0.237
+shader_parameter/threshold2 = 0.741
+shader_parameter/alpha = 0.22
+shader_parameter/alpha2 = 0.501
+shader_parameter/step_ = 1.0165
+shader_parameter/step2 = 0.0
+shader_parameter/alpha_step = 0.0001
+shader_parameter/screen_warp_amount = 0.0345
+shader_parameter/rotation = 0.0
+shader_parameter/texture_length = 1.28
+shader_parameter/texture_width = 0.64
+shader_parameter/noise = SubResource("NoiseTexture2D_4s43r")
+shader_parameter/gradient_texture = SubResource("CurveTexture_6626j")
+shader_parameter/gradient_texture2 = SubResource("CurveTexture_ntr8d")
+shader_parameter/side_gradient_texture = SubResource("GradientTexture2D_e3fig")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s1tk5"]
+size = Vector2(32, 64)
+
+[node name="WindBlower" type="StaticBody2D"]
+z_index = 1
+collision_mask = 0
+script = ExtResource("1_ve8yt")
+strength_gradient = SubResource("Gradient_m206h")
+length = 128
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="."]
+z_index = -1
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape2D" parent="Area2D"]
+unique_name_in_owner = true
+visible = false
+z_index = -1
+position = Vector2(72, 0)
+shape = SubResource("RectangleShape2D_sxmrn")
+
+[node name="Icon" type="Sprite2D" parent="."]
+z_index = -2
+scale = Vector2(0.25, 0.5)
+texture = ExtResource("2_cxx33")
+metadata/_edit_lock_ = true
+
+[node name="Dust" type="GPUParticles2D" parent="."]
+z_index = 4
+position = Vector2(16, 0)
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_dya48")
+texture = ExtResource("5_7pjur")
+lifetime = 2.0
+visibility_rect = Rect2(0, -32, 128, 64)
+
+[node name="WindSprite" type="Sprite2D" parent="."]
+z_index = -1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_iecvq")
+position = Vector2(16, -32)
+scale = Vector2(112, 64)
+texture = ExtResource("4_f4yj1")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_s1tk5")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

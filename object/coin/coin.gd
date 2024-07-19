@@ -2,9 +2,11 @@ extends Area2D
 
 class_name Coin
 
-const LAUNCH_SPEED = 500
+signal mover_detach_needed()
+
+const LAUNCH_SPEED = 300
 const ACCEL = 1000
-const MIN_TIME = 0.05
+const MIN_TIME = 0.2
 const MIN_DISTANCE = 32
 
 static var rng = BetterRng.new()
@@ -85,9 +87,12 @@ func launch():
 	pass
 
 func on_player_touched(player: SmileyPlayer):
+	if self.player:
+		return
+	mover_detach_needed.emit()
 	trail_particles.emitting = true
 	trail_particles.show()
-	icon.scale *= 0.85
+	#icon.scale *= 0.85
 	self.player = player
 	player.coin_touch_sound()
 	launch()
@@ -98,7 +103,7 @@ func on_player_touched(player: SmileyPlayer):
 
 func _on_player_touched(player: SmileyPlayer):
 	var particle = preload("res://object/coin/coin_grab_effect.tscn").instantiate()
-	get_parent().add_child(particle)
+	Global.get_level().add_child(particle)
 	particle.global_position = global_position
 
 func _draw() -> void:

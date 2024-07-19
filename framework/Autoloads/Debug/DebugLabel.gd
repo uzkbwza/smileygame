@@ -19,3 +19,4 @@ func loop():
 			text = text + line + "\n"
 		timer.start()
 	visible = Debug.draw
+	#hide()

@@ -8,11 +8,11 @@ const GRAVITY = 0.075
 const DRAG = 2.0
 const CAPTURED_DRAG = 0.25
 const RETURN_SPEED = 0.3
-const BASE_MASS = 20
-const SPEED_MULTIPLIER = 3
+const SPEED_MULTIPLIER = 2.5
 const MIN_SPEED = 6.8
 const MAX_SPIN_AMOUNT = 15.02
 const MIN_IMPULSE_SPEED_AMOUNT = 0.75
+const BASE_MASS = 20
 const BASE_LENGTH = 80
 
 @export_range(16, 512, 16.1) var length :int = BASE_LENGTH:

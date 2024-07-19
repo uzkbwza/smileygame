@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://djwpxcscd4jh4"]
+
+[ext_resource type="Script" path="res://object/movers/path_mover.gd" id="1_0oblk"]
+[ext_resource type="Script" path="res://object/movers/mover_component.gd" id="2_agfx5"]
+
+[node name="PathMover" type="Line2D"]
+width = 2.0
+default_color = Color(0, 0, 0, 1)
+script = ExtResource("1_0oblk")
+
+[node name="MoverComponent" type="Node2D" parent="."]
+script = ExtResource("2_agfx5")

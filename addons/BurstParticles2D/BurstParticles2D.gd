@@ -263,7 +263,11 @@ func burst() -> void:
 		var update_method: Callable = _update_particle if !Engine.is_editor_hint() else _update_particle_editor
 
 		var update_functions = _get_update_functions()
-	
+		var t_start = preprocess_amount if !reverse else 1.0
+		var t_end = 1.0 if !reverse else preprocess_amount
+		t = t_start
+		tween.tween_property(self, "t", t_end, lifetime)
+		
 		for p_id in range(num_particles):
 			
 			arr_texture[p_id] = texture
@@ -300,10 +304,7 @@ func burst() -> void:
 				arr_max_angle[p_id] *= -1
 
 			update_method.bind(p_id, update_functions).call(preprocess_amount if !reverse else 1.0)
-			var t_start = preprocess_amount if !reverse else 1.0
-			var t_end = 1.0 if !reverse else preprocess_amount
-			t = t_start
-			tween.tween_property(self, "t", t_end, lifetime)
+
 			tween.tween_method(update_method.bind(p_id, update_functions), t_start, t_end, p_lifetime).set_delay(0.0 if !reverse else lifetime - p_lifetime)
 			tween.tween_callback(_kill_particle.bind(p_id)).set_delay(p_lifetime)
 		
@@ -438,4 +439,3 @@ func kill():
 	for i in num_particles:
 		if i < arr_rid.size():
 			_kill_particle(i)
-

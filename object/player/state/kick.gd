@@ -102,8 +102,8 @@ func _update(delta: float):
 		diagonal_sticky_time -= delta
 
 	
-	Debug.dbg("kick_ray.get_collision_normal()",  kick_ray.get_collision_normal())
-	Debug.dbg("kick_ray.is_colliding()",  kick_ray.is_colliding())
+	#Debug.dbg("kick_ray.get_collision_normal()",  kick_ray.get_collision_normal())
+	#Debug.dbg("kick_ray.is_colliding()",  kick_ray.is_colliding())
 	
 	collision_overlap = 0.0
 	

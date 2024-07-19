@@ -13,8 +13,8 @@ config_version=5
 config/name="all smiles"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-run/max_fps=1000
 config/icon="res://icon.svg"
+run/vsync/vsync_mode=1
 
 [autoload]
 

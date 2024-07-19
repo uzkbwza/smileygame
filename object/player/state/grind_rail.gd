@@ -11,6 +11,7 @@ const EXTRA_SPEED = 1.35
 const MIN_SPEED = 50
 const END_DIST = 10
 const MAX_BODY_DIST= 10
+const GRIND_CONTROL_CHANGE_MIN_SPEED = 100
 const MIN_START_SPEED = 160
 const FALL_GRIND_COOLDOWN = 0.35
 const JUMP_GRIND_COOLDOWN = 0.167
@@ -85,7 +86,7 @@ func _update(delta: float):
 		if player.input_move_dir != 0:
 			control_dir *= -1
 
-	if player.input_move_dir != last_input or player.input_move_dir == 0 or abs(grind_velocity) < 200:
+	if player.input_move_dir != last_input or player.input_move_dir == 0 or abs(grind_velocity) < GRIND_CONTROL_CHANGE_MIN_SPEED:
 	#if player.input_move_dir != last_input or player.input_move_dir == 0:
 		control_dir = 1
 		
@@ -185,7 +186,7 @@ func _update(delta: float):
 		if (grind_offset) < 0.0 or grind_offset >= rail.length:
 			queue_state_change("Fall", extra_data)
 			return
-		elif player.input_secondary:
+		elif !player.input_secondary_held:
 			player.grind_cooldown.start(FALL_GRIND_COOLDOWN)
 			player.last_rail = rail
 			queue_state_change("Fall", extra_data)

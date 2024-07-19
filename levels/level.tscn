@@ -45,7 +45,7 @@ position = Vector2(872, -184)
 [node name="BackgroundShapes" type="Parallax2D" parent="."]
 unique_name_in_owner = true
 modulate = Color(0.533333, 0.533333, 0.533333, 1)
-z_index = -10
+z_index = -1000
 scroll_scale = Vector2(0.25, 0.25)
 
 [node name="TerrainShapes" type="Node2D" parent="."]

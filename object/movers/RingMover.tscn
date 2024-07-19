@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://drs74oysr2aas"]
+
+[ext_resource type="Script" path="res://object/movers/ring_mover.gd" id="1_xo8fy"]
+[ext_resource type="PackedScene" uid="uid://ddtde1d7qlm7j" path="res://object/movers/MoverComponent.tscn" id="2_4bbh8"]
+
+[node name="RingMover" type="Node2D"]
+script = ExtResource("1_xo8fy")
+
+[node name="MoverComponent" parent="." instance=ExtResource("2_4bbh8")]

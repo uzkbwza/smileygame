@@ -2,8 +2,11 @@ extends Node
 
 signal draw_toggled
 
-var enabled = true
-var draw = false:
+const HISTORY_SIZE = 500
+
+var enabled := true
+var profiling := true
+var draw := false:
 	get:
 		return draw and enabled
 	set(value):
@@ -12,7 +15,9 @@ var draw = false:
 		if different:
 			draw_toggled.emit()
 
-var show_object_info = true
+var show_object_info := true
+
+var profiler := GameProfiler.new()
 
 var items = {
 }
@@ -20,18 +25,48 @@ var items = {
 var times = {
 }
 
-var dbg_function: Callable
+var histories = {
+	
+}
 
-func dbg_enabled(id, value):
+var history_data = {
+}
+
+var dbg_function: Callable
+var dbg_history_function: Callable
+
+var rng := BetterRng.new()
+
+func dbg_enabled(id: String, value: Variant) -> void:
 #	return
 	items[id] = value
 
-func dbg_disabled(_id, _value):
+func dbg_disabled(_id: String, _value: Variant) -> void:
 	pass
 
-#func _input(event):
-#	if event.is_action_pressed("ui_toggle_debug_draw") and enabled:
-#		draw = !draw
+func dbg_enabled_history(id: String, v: float, color:= Color.WHITE, min: float=-1000.0, max: float=1000.0) -> void:
+	dbg_enabled(id, v)
+	var arr: PackedFloat64Array
+	if histories.has(id):
+		arr = histories[id]
+	else:
+		arr = []
+		histories[id] = arr
+		history_data[id] = {
+			"color": color,
+			"min": min,
+			"max": max,
+		}
+
+	arr.append(v)
+	
+	if arr.size() >= HISTORY_SIZE:
+		arr = arr.slice(arr.size() - HISTORY_SIZE)
+		histories[id] = arr
+	pass
+
+func dbg_disabled_history(_id: String, _v: Variant, _color:= Color.WHITE, _min: float=-1000.0, _max: float=1000.0) -> void:
+	pass
 
 class TimeLength:
 	var length
@@ -55,13 +90,22 @@ func _enter_tree():
 	if !OS.is_debug_build():
 		enabled = false
 
+	if profiling:
+		EngineDebugger.register_profiler("main", profiler)
+		EngineDebugger.profiler_enable("main", true)
+
 	if enabled:
 		dbg_function = dbg_enabled
+		dbg_history_function = dbg_enabled_history
+		set_process(true)
 	else:
 		dbg_function = dbg_disabled
+		dbg_history_function = dbg_disabled_history
+		set_process(false)
+
 
 func _process(delta):
-#	yield(get_tree(), "idle_frame")
+
 	for time_array in times:
 		var total_time = 0
 		var counter = 0
@@ -79,8 +123,11 @@ func _process(delta):
 func dbg_prop(object: Object, prop: String):
 	dbg(prop, object.get(prop))
 
-func dbg(id, v):
+func dbg(id: String, v: Variant):
 	dbg_function.call(id, v)
+
+func dbg_history(id: String, v: Variant, color:= Color.WHITE, min: float=-1000.0, max: float=1000.0):
+	dbg_history_function.call(id, v, color, min, max) 
 
 func dbg_dict(dict: Dictionary):
 	for key in dict:

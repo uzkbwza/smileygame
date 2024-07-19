@@ -35,6 +35,16 @@ static func splerp(a: float, b: float, delta: float, half_life: float) -> float:
 static func splerp_vec(a: Vector2, b: Vector2, delta: float, half_life: float) -> Vector2:
 	return b + (a - b) * pow(2, -delta / (half_life / 60))
 
+static func ping_pong_interpolate(value: float, a: float, b: float, ease:=1.0) -> float:
+	var start = min(a, b)
+	var end = max(a, b)
+	var t = inverse_lerp(start, end, value)
+	
+	var f = fposmod(t, 1.0)
+	if floori(t) % 2 != 0:
+		f = 1.0 - f
+	return start + ease(f, ease) * (end - start)
+
 static func damp(source: float, target: float, smoothing: float, dt: float) -> float:
 	return lerp(source, target, dtlerp(smoothing, dt))
 

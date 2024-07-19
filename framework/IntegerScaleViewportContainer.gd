@@ -17,6 +17,8 @@ var pixel_perfect_scaling_enabled:
 			ProjectSettings.get_setting("display/window/size/viewport_height"),
 		)
 
+@export var update_list: Array[Control] = []
+
 func _ready():
 	stretch = true
 	sub_viewport.size_2d_override_stretch = true
@@ -47,4 +49,8 @@ func update_viewport():
 	stretch = true
 	stretch_shrink = viewport_pixel_scale
 	position = window_size / 2 - Vector2i(size) / 2
+	for control in update_list:
+		control.position = position
+		control.size = size
+		pass
 	DisplayServer.window_set_min_size(viewport_size)

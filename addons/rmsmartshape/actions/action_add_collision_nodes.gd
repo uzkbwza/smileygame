@@ -53,4 +53,3 @@ func undo() -> void:
 	_shape.owner = owner
 	grandparent.move_child(_shape, _saved_index)
 	_shape.position = _saved_pos
-
