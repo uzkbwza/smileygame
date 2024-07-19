@@ -9,7 +9,7 @@ const WIDTH = 1
 @export var num_bodies := 100
 @export_flags_2d_physics var collision_mask := 1
 @export_flags_2d_physics var collision_layer := 0
-@export var autostart := true
+@export var autostart := false
 
 @export_category("Line Properties")
 @export_range(1, 100, 1, "or_greater") var segment_count := 2

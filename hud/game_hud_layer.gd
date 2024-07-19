@@ -9,11 +9,10 @@ var elapsed_time = 0.0
 
 func setup_level(level: SmileyLevel):
 	self.level = level
+	if level == null:
+		return
 	level.coin_collected.connect(on_coin_collected)
 	on_coin_collected.call_deferred()
-
-func _ready() -> void:
-	setup_level(level)
 
 func on_coin_collected():
 	# TODO: better effect

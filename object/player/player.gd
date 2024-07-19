@@ -2,8 +2,10 @@ extends BaseObject2D
 
 class_name SmileyPlayer
 
-signal coin_collected
 signal landed
+signal coin_collected
+signal death_animation_started
+signal death_animation_finished
 
 const RUN_SPEED  = 800
 const DUCK_SPEED_MODIFIER = 0.8
@@ -80,6 +82,9 @@ var is_grounded: bool = false:
 	get:
 		return is_grounded and !slope_too_steep()
 
+var ground_object_last_position
+var ground_object_velocity
+var last_ground_object
 
 var was_grounded := false
 
@@ -414,7 +419,7 @@ func _physics_process(delta: float) -> void:
 		for i in collision_count:
 			var collision = body.get_slide_collision(i)
 			var object = collision.get_collider()
-			if last_aerial_velocity.dot(collision.get_normal()) < -SPLAT_SPEED:
+			if body.velocity.dot(collision.get_normal()) < -SPLAT_SPEED and !is_grounded:
 				die()
 			if object and not (object in body_touching_terrain_new):
 				if not (object in body_touching_terrain):
@@ -429,6 +434,28 @@ func _physics_process(delta: float) -> void:
 		landed.emit()
 	was_grounded = is_grounded
 	
+	if !is_grounded:
+		if ground_object_velocity != null:
+			body.apply_impulse(ground_object_velocity)
+		ground_object_velocity = null
+		ground_object_last_position = null
+	else:
+		var ground_object := get_ground_object()
+		if ground_object:
+			if ground_object != last_ground_object:
+				ground_object_velocity = null
+				ground_object_last_position = null
+
+			if ground_object_last_position == null:
+				ground_object_last_position = ground_object.global_position
+			
+			var ground_object_diff = (ground_object.global_position - ground_object_last_position)
+			Debug.dbg("ground_object_diff", ground_object_diff)
+			body.move_directly(ground_object_diff)
+			ground_object_velocity = ground_object_diff / delta
+			ground_object_last_position = ground_object.global_position
+			last_ground_object = ground_object
+
 	last_position = global_position
 
 func process_trickable_objects():
@@ -924,7 +951,12 @@ func foot_idle(foot: Node2D, foot_rest: RayCast2D) -> Vector2:
 	foot.global_rotation = foot_normal.angle()
 	return foot_pos
 
-	
+
+func get_ground_object() -> PhysicsBody2D:
+	if feet_ray.is_colliding():
+		return feet_ray.get_collider()
+	return null
+
 func _draw():
 	if Debug.draw:
 		#print((global_position - last_position))

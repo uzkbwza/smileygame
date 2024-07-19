@@ -16,6 +16,7 @@ const BRICK_TERRAIN_SOURCE = 4
 @onready var tile_map: LevelTileMapLayer = %GreyBox
 @onready var terrain_shapes: Node2D = %TerrainShapes
 @onready var background_shapes: Parallax2D = %BackgroundShapes
+@export var level_bg: PackedScene
 
 @export_range(0.0, 3520, 176) var death_height := 0:
 	set(value):
@@ -27,6 +28,10 @@ const BRICK_TERRAIN_SOURCE = 4
 @onready var player: SmileyPlayer = $Smiley
 @onready var camera_system: CameraSystem = $CameraSystem
 @onready var camera: GoodCamera = %Camera
+
+@onready var death_animation_layer = %DeathAnimationLayer
+@onready var background_color_overlay: ColorRect = %BackgroundColorOverlay
+@onready var giant_player_sprite: Sprite2D = %GiantPlayerSprite
 
 var debug_collision_lines = []
 
@@ -69,6 +74,36 @@ func _ready():
 		instantiate_tutorial_character()
 	assert(death_height > 0)
 	
+	player.death_animation_started.connect(on_player_death_animation_started)
+	player.death_animation_finished.connect(on_player_death_animation_finished)
+	death_animation_layer.hide()
+
+func on_player_death_animation_started():
+	var tween = create_tween()
+	
+	
+	giant_player_sprite.modulate.a = 0.0
+	background_color_overlay.color.a = 0.0
+	background_color_overlay.global_position = player.global_position - background_color_overlay.size / 2.0
+	
+	death_animation_layer.show()
+	
+	#tween.set_ease(Tween.EASE_IN_OUT)
+	#tween.set_trans(Tween.TRANS_CIRC)
+	tween.set_parallel(true)
+	tween.tween_property(background_color_overlay, "color:a", 0.5, 0.25)
+	tween.tween_property(giant_player_sprite, "modulate", Color.WHITE, 0.25)
+	tween.tween_interval(1.0)
+	while tween.is_running():
+		await RenderingServer.frame_pre_draw
+		giant_player_sprite.texture = player.sprite.sprite_frames.get_frame_texture(player.sprite.animation, player.sprite.frame)
+		pass
+		
+func on_player_death_animation_finished():
+	death_animation_layer.hide()
+	background_color_overlay.color.a = 0.0
+	giant_player_sprite.modulate.a = 0.0
+
 
 func initialize_object_data():
 	if coins_left > num_coins:
@@ -189,16 +224,16 @@ func process_terrain_shapes():
 	for terrain_polygon in terrain_shapes.get_children():
 		if terrain_polygon is TerrainShape:
 			terrain_polygon.create_physics_body()
-			var shadow = terrain_polygon.get_shadow_polygon() 
-			shadow_polygons.add_child(shadow)
+			#var shadow = terrain_polygon.get_shadow_polygon() 
+			#shadow_polygons.add_child(shadow)
 			#var shadow_outline = terrain_polygon.get_shadow_border()
 			#if shadow_outline:
 				#shadow_polygons.add_child(shadow_outline)
 		
-	for background_polygon in background_shapes.get_children():
-		if background_polygon is TerrainShape:
-			var shadow = background_polygon.get_shadow_polygon()
-			background_shadow_polygons.add_child(shadow)
+	#for background_polygon in background_shapes.get_children():
+		#if background_polygon is TerrainShape:
+			#var shadow = background_polygon.get_shadow_polygon()
+			#background_shadow_polygons.add_child(shadow)
 			#var shadow_outline = background_polygon.get_shadow_border()
 			#if shadow_outline:
 				#background_shadow_polygons.add_child(shadow_outline)

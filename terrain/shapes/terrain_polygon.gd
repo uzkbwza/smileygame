@@ -60,9 +60,15 @@ const SHADOW_OFFSET = Vector2(16, 16)
 @export var offset_border = true
 @export_range(-16.0, 16.0, 0.5) var border_offset: float = 2.0
 
+@export_flags_2d_physics var collision_layer = 1
+
+@export var force_create_physics_body := false
+@export var create_shadow := true
+
 
 var border_node = null
 var child_poly = null
+var body: PhysicsBody2D
 
 #var line_in_front := true
 
@@ -96,22 +102,31 @@ func _ready():
 			child.queue_free()
 	else:
 		set_process(false)
+		if force_create_physics_body:
+			create_physics_body.call_deferred()
+	if create_shadow or Engine.is_editor_hint():
+		var shadow = get_shadow_polygon()
+		add_child.call_deferred(shadow)
+		shadow.color.a = SmileyLevel.SHADOW_COLOR.a
+		shadow.position = SHADOW_OFFSET
+	elif get_parent().get_meta("is_mover", false):
+		push_warning("moving terrain object has no shadow at %s" % get_path())
 	#TODO: inner infill polygon
 	self_modulate.a = 1.0
 	if border:
 		create_border.call_deferred()
 
 func _process(delta: float) -> void:
-	if border_node:
-		if border_node.points != previous:
-			update_border()
-		else:
-			previous = border_node.points if border_node else null
-		if border == null:
-			border_node.queue_free()
-	elif border:
-		create_border()
-
+	if Engine.is_editor_hint():
+		if border_node:
+			if border_node.points != previous:
+				update_border()
+			else:
+				previous = border_node.points if border_node else null
+			if border == null:
+				border_node.queue_free()
+		elif border:
+			create_border()
 
 func update_border():
 	if Engine.is_editor_hint():
@@ -145,8 +160,6 @@ func update_border():
 		child_poly.polygon = Geometry2D.offset_polygon(border_node.points, (border_offset))[0]
 		child_poly.texture = texture
 
-		#child_poly.polygon = polygon
-
 func create_border():
 	var line = Line2D.new()
 	border_node = line
@@ -158,9 +171,10 @@ func create_border():
 	add_child(line)
 	update_border()
 
-
 func create_physics_body():
-	var body = CharacterBody2D.new()
+	body = StaticBody2D.new()
+	body.z_index += 1
+	body.collision_layer = collision_layer
 	var collision_polygon_2d = CollisionPolygon2D.new()
 	#collision_polygon_2d.polygon = polygon if child_poly == null else child_poly.polygon
 	collision_polygon_2d.polygon = polygon
@@ -170,11 +184,12 @@ func create_physics_body():
 func get_shadow_polygon():
 	var shape = Polygon2D.new()
 	shape.polygon = polygon if border_node == null else border_node.points if offset_border else polygon
-	shape.color = color
 	shape.texture_repeat = true
 	shape.texture = texture
 	shape.color = Color.BLACK
 	shape.global_position = global_position + SHADOW_OFFSET
+	shape.z_as_relative = true
+	shape.z_index = -10
 	return shape
 
 func get_shadow_border():

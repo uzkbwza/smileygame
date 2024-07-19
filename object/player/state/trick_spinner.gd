@@ -14,8 +14,9 @@ func _update(delta: float):
 	body.velocity = captor.get_2d_velocity()
 
 	if !check_landing():
-		if check_jump():
-			return
+		#if check_jump():
+			#return
+		pass
 
 	if !player.input_secondary_held:
 		fall_and_retain_speed()

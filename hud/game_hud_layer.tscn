@@ -54,7 +54,6 @@ offset_top = 1.0
 offset_right = 630.667
 offset_bottom = 193.0
 theme_override_font_sizes/font_size = 64
-text = "0/10000"
 
 [node name="Coin" parent="." instance=ExtResource("3_ymdr1")]
 position = Vector2(18, 17)

@@ -12,6 +12,7 @@ const SPEED_MULTIPLIER = 2.5
 const MIN_SPEED = 6.8
 const MAX_SPIN_AMOUNT = 15.02
 const MIN_IMPULSE_SPEED_AMOUNT = 0.75
+const UPWARD_MOMENTUM_MULTIPLIER = 1.25
 const BASE_MASS = 20
 const BASE_LENGTH = 80
 
@@ -97,7 +98,8 @@ func get_2d_velocity() -> Vector2:
 	var current_dir = Math.ang2vec(current_angle)
 	var speed = abs(velocity) * length
 	var diff = (current_dir.rotated(sign(velocity) * 0.01) - current_dir).normalized()
-	return (diff * speed) * BASE_MASS * SPEED_MULTIPLIER * (BASE_LENGTH / float(length))
+	var mod = 1 + ((UPWARD_MOMENTUM_MULTIPLIER - 1) * max(diff.dot(Vector2.UP), 0))
+	return (diff * speed) * BASE_MASS * SPEED_MULTIPLIER * (BASE_LENGTH / float(length)) * mod
 
 func capture_player(player: SmileyPlayer) -> void:
 	velocity *= 0

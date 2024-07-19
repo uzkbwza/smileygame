@@ -145,6 +145,7 @@ class BurstParticlesRng extends RandomNumberGenerator:
 @export var direction := Vector2(1, 0)
 @export_range(-360.0, 360.0, 0.5, "or_greater", "or_less") var direction_rotation_degrees := 0.0
 @export_range(0.0, 1.0) var direction_rotation_randomness := 0.0
+@export var randomize_direction := false
 @export var randomly_flip_rotation := false
 @export_range(0.0, 4096, 0.001, "or_greater") var distance := 100.0
 @export_range(0.0, 1.0) var distance_randomness := 0.0
@@ -181,6 +182,7 @@ class BurstParticlesRng extends RandomNumberGenerator:
 
 var current_particle_id: int = 0
 
+
 var rng = BurstParticlesRng.new()
 var shared_material = null
 var current_shader = SHADER
@@ -200,6 +202,7 @@ func _create_particle() -> int:
 	arr_texture[p_id] = texture
 	arr_rid[p_id] = p_rid
 	RenderingServer.canvas_item_set_parent(p_rid, get_canvas_item())
+	RenderingServer.canvas_item_set_interpolated(p_rid, false)
 	if use_gradient_map:
 		var p_material = (_create_material() if arr_material[p_id] == null else arr_material[p_id]) if !share_material else shared_material
 		RenderingServer.canvas_item_set_material(p_rid, p_material)
@@ -216,9 +219,10 @@ func _ready() -> void:
 		burst()
 	if !Engine.is_editor_hint():
 		set_process.call_deferred(false)
+	physics_interpolation_mode = PhysicsInterpolationMode.PHYSICS_INTERPOLATION_MODE_OFF
 
-func _process(delta: float) -> void:
-	pass
+#func _process(delta: float) -> void:
+	#pass
 
 func _create_material() -> ShaderMaterial:
 	var mat = ShaderMaterial.new()
@@ -259,6 +263,7 @@ func burst() -> void:
 		# start burst
 		tween = create_tween()
 		tween.set_parallel(true)
+		tween.set_process_mode(Tween.TWEEN_PROCESS_IDLE)
 
 		var update_method: Callable = _update_particle if !Engine.is_editor_hint() else _update_particle_editor
 
@@ -268,10 +273,15 @@ func burst() -> void:
 		t = t_start
 		tween.tween_property(self, "t", t_end, lifetime)
 		
+		var random_angle = 0
+		if randomize_direction:
+			random_angle = rng.randf_range(0, TAU)
+		
 		for p_id in range(num_particles):
 			
 			arr_texture[p_id] = texture
-			var p_dir: float = direction.angle()
+			var p_dir: float = direction.angle() if !randomize_direction else random_angle
+
 			var p_spread: float = deg_to_rad(rng.randf_range(-spread_degrees/2.0, spread_degrees/2.0))
 
 			if center_concentration > 0 and !rng.percent(percent_force_uniform):
@@ -330,6 +340,13 @@ func _get_update_functions() -> Array[Callable]:
 	# of every particle every frame.
 	
 	var update_functions: Array[Callable] = []
+	
+	#if !Engine.is_editor_hint() and get_tree().physics_interpolation:
+		#update_functions.append(func(t: float, p_id: int) -> void:
+			#await RenderingServer.frame_pre_draw 
+			#if arr_rid[p_id].is_valid():
+				#RenderingServer.canvas_item_reset_physics_interpolation(arr_rid[p_id])
+		#)
 
 	if x_scale_curve:
 		update_functions.append(func(t: float, p_id: int) -> void: arr_x_scale[p_id] = x_scale_curve.sample_baked(t))
@@ -426,6 +443,7 @@ func _update_particle(t: float, particle_id: int, update_functions: Array[Callab
 	# worse. branchless though!
 	for function in update_functions:
 		function.call(t, particle_id)
+
 
 func _update_particle_editor(t: float, particle_id: int, update_functions: Array[Callable]) -> void:
 	if particle_id >= num_particles or arr_dead[particle_id]:

@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 		if offs_dir != Vector2():
 			offset += offs_dir * offs_value * sin(shake_freq * t)
 		else:
-			offset += offs_value * rng.random_vec()
+			offset += offs_value * rng.random_vec(true)
 
 func _physics_process(delta: float) -> void:
 	if target:

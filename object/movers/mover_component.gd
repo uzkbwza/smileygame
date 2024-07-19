@@ -12,6 +12,7 @@ var parent: Node2D
 
 func _ready() -> void:
 	parent = get_parent()
+	parent.set_meta("is_mover", true)
 	var children = parent.get_children()
 	var movable : Array[Node2D] = []
 	for i in mini(children.size(), max_children):

@@ -1,24 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://bopjrdhyrjclp"]
+[gd_scene load_steps=4 format=3 uid="uid://bopjrdhyrjclp"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_b4mtv"]
-[ext_resource type="PackedScene" uid="uid://cpqdfl1ftr3f7" path="res://levels/level_bg.tscn" id="1_k4w3y"]
 [ext_resource type="PackedScene" uid="uid://wtc5byypctgy" path="res://levels/TestLevel.tscn" id="2_snr1f"]
 [ext_resource type="PackedScene" uid="uid://c8sjhubr16uad" path="res://hud/game_hud_layer.tscn" id="3_6ncn7"]
 
 [node name="Game" type="CanvasLayer"]
 script = ExtResource("1_b4mtv")
+startup_level = ExtResource("2_snr1f")
 
 [node name="LevelBGLayer" type="CanvasLayer" parent="."]
 
-[node name="LevelBg" type="SubViewportContainer" parent="LevelBGLayer"]
+[node name="LevelBgContainer" type="SubViewportContainer" parent="LevelBGLayer"]
+unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
-[node name="SubViewport" type="SubViewport" parent="LevelBGLayer/LevelBg"]
+[node name="LevelBgViewport" type="SubViewport" parent="LevelBGLayer/LevelBgContainer"]
+unique_name_in_owner = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 snap_2d_vertices_to_pixel = true
@@ -26,14 +30,8 @@ canvas_item_default_texture_filter = 0
 size = Vector2i(640, 360)
 render_target_update_mode = 4
 
-[node name="LevelBg" parent="LevelBGLayer/LevelBg/SubViewport" instance=ExtResource("1_k4w3y")]
-
 [node name="GameWorldLayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
 follow_viewport_enabled = true
 
-[node name="TestLevel" parent="GameWorldLayer" instance=ExtResource("2_snr1f")]
-texture_repeat = 0
-
-[node name="GameHUDLayer" parent="." node_paths=PackedStringArray("level") instance=ExtResource("3_6ncn7")]
-level = NodePath("../GameWorldLayer/TestLevel")
+[node name="GameHUDLayer" parent="." instance=ExtResource("3_6ncn7")]

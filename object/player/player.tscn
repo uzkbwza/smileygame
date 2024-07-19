@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://b50q5nl24l32n"]
+[gd_scene load_steps=68 format=3 uid="uid://b50q5nl24l32n"]
 
 [ext_resource type="PackedScene" uid="uid://ckdj8lntj2rnd" path="res://framework/object/BaseObject2D.tscn" id="1_ib3fj"]
 [ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://object/player/player-die1.png" id="2_b3jsg"]
@@ -46,6 +46,13 @@
 [ext_resource type="AudioStream" uid="uid://bt5tjwpgm5hy2" path="res://object/coin/sound/coin2.wav" id="23_1ox7k"]
 [ext_resource type="AudioStream" uid="uid://g4xk4qfx0ih5" path="res://object/coin/sound/coin6.wav" id="24_mxrf2"]
 [ext_resource type="Script" path="res://object/player/state/kick_off.gd" id="27_4vsmn"]
+[ext_resource type="AudioStream" uid="uid://c25pms47xdyhi" path="res://object/player/sound/die1.wav" id="28_7cedd"]
+[ext_resource type="AudioStream" uid="uid://c7h0cre2rek6t" path="res://object/player/sound/die2.wav" id="29_6hbus"]
+[ext_resource type="AudioStream" uid="uid://c4raknbg88qkr" path="res://object/player/sound/die3.wav" id="30_2y3en"]
+[ext_resource type="AudioStream" uid="uid://00075xs581bi" path="res://object/player/sound/die4.wav" id="31_rmkwh"]
+[ext_resource type="AudioStream" uid="uid://bqo5jkfosr03m" path="res://object/player/sound/die8.wav" id="31_x74gb"]
+[ext_resource type="AudioStream" uid="uid://b36thtttsv6hx" path="res://object/player/sound/die5.wav" id="32_2g4et"]
+[ext_resource type="AudioStream" uid="uid://c5hfj75rele5y" path="res://object/player/sound/die6.wav" id="33_snhli"]
 [ext_resource type="Script" path="res://object/player/state/grind_rail.gd" id="34_5a2ep"]
 [ext_resource type="Script" path="res://object/player/state/floor_slide.gd" id="44_abk8y"]
 [ext_resource type="Script" path="res://object/player/state/die.gd" id="47_wat83"]
@@ -313,6 +320,54 @@ pitch_variation = 0.006
 stream = ExtResource("21_wxf7x")
 volume_db = -14.0
 pitch_scale = 2.5
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die1" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="27"]
+stream = ExtResource("28_7cedd")
+volume_db = -8.5
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die2" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="28"]
+stream = ExtResource("29_6hbus")
+volume_db = -5.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die8" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="29"]
+stream = ExtResource("31_x74gb")
+volume_db = -5.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die3" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="30"]
+stream = ExtResource("30_2y3en")
+volume_db = -10.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die4" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="31"]
+stream = ExtResource("31_rmkwh")
+volume_db = -2.0
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die5" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="32"]
+stream = ExtResource("32_2g4et")
+bus = &"Fx"
+script = ExtResource("4_52o34")
+pitch_variation = 0.01
+
+[node name="Die6" type="AudioStreamPlayer2D" parent="Flip/Sounds" index="33"]
+stream = ExtResource("33_snhli")
+volume_db = -20.0
 bus = &"Fx"
 script = ExtResource("4_52o34")
 pitch_variation = 0.01

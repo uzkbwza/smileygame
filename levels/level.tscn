@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://slqbwnid78go"]
+[gd_scene load_steps=10 format=3 uid="uid://slqbwnid78go"]
 
 [ext_resource type="Script" path="res://levels/level.gd" id="1_bb30t"]
 [ext_resource type="PackedScene" uid="uid://b50q5nl24l32n" path="res://object/player/player.tscn" id="1_ipjpd"]
+[ext_resource type="Texture2D" uid="uid://cpjyxjiwwtwf" path="res://object/player/player-die1.png" id="2_m680j"]
 [ext_resource type="Script" path="res://framework/GoodCamera.gd" id="2_oaxte"]
 [ext_resource type="Script" path="res://camera/CameraSystem.gd" id="2_r3kni"]
 [ext_resource type="TileSet" uid="uid://corij70qfdc2b" path="res://terrain/tileset.tres" id="3_m3iuj"]
@@ -47,6 +48,31 @@ unique_name_in_owner = true
 modulate = Color(0.533333, 0.533333, 0.533333, 1)
 z_index = -1000
 scroll_scale = Vector2(0.25, 0.25)
+
+[node name="DeathAnimationLayer" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+z_index = -2
+scroll_scale = Vector2(0, 0)
+scroll_offset = Vector2(-1, 0)
+
+[node name="BackgroundColorOverlay" type="ColorRect" parent="DeathAnimationLayer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1000, 1000)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0, 0, 0, 0)
+
+[node name="GiantPlayerSprite" type="Sprite2D" parent="DeathAnimationLayer"]
+unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.858824)
+position = Vector2(0, -16)
+scale = Vector2(20, 20)
+texture = ExtResource("2_m680j")
 
 [node name="TerrainShapes" type="Node2D" parent="."]
 unique_name_in_owner = true
