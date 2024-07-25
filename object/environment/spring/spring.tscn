@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a6hqp"]
 size = Vector2(64, 16)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_by7s3"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jlc1v"]
 size = Vector2(40, 60)
 
 [node name="Spring" type="Area2D"]
@@ -36,7 +36,7 @@ shape = SubResource("RectangleShape2D_a6hqp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(24, 0)
-shape = SubResource("RectangleShape2D_by7s3")
+shape = SubResource("RectangleShape2D_jlc1v")
 
 [node name="PointA" type="Marker2D" parent="."]
 position = Vector2(16, -32)

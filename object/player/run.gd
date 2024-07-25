@@ -129,7 +129,7 @@ func _update(delta: float):
 			player.play_sound("Skid")
 			player.play_sound("Skid2")
 			var particle_offs := player.to_local(player.feet_ray.get_collision_point() + Vector2(player.facing * player.rng.randf_range(8, -5), 0).rotated(player.get_floor_angle()))
-			var particle = player.spawn_scene(preload("res://object/player/fx/skid_dust.tscn"), particle_offs, dir)
+			var particle = player.spawn_scene(preload("res://object/player/fx/skid_dust.tscn"), particle_offs, dir, false )
 
 		body.velocity.x *= 0.999
 		prev_speed = 0

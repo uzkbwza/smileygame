@@ -4,7 +4,7 @@ class_name SmileyState
 
 #const JUMP_VELOCITY = 910
 const JUMP_VELOCITY := 310.0
-const KICK_JUMP_FORCE := 200.0
+#const KICK_JUMP_FORCE := 200.0
 const GROUND_POUND_SPEED := 350.0
 const UPWARD_MOMENTUM_JUMP_MULTIPLIER := 1.0
 const PERP_JUMP_MODIFIER := 1.0

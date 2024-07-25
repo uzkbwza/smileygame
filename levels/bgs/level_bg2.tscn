@@ -1,0 +1,99 @@
+[gd_scene load_steps=8 format=3 uid="uid://beuil6dfovq3i"]
+
+[ext_resource type="Shader" path="res://fx/BgFx.gdshader" id="1_5uyfb"]
+[ext_resource type="Texture2D" uid="uid://bvqvbwxesmfav" path="res://levels/bg2.jpg" id="2_xe8tj"]
+[ext_resource type="Texture2D" uid="uid://4qhc7c7p5ddt" path="res://levels/airport.png" id="3_u7g3k"]
+[ext_resource type="Texture2D" uid="uid://d0g46hlhg3njf" path="res://levels/bg1.png" id="4_hr4i6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yll4y"]
+shader = ExtResource("1_5uyfb")
+shader_parameter/alpha = 0.761
+shader_parameter/h_osc_speed = 1.0
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 0.0155
+shader_parameter/h_osc_freq = -0.633
+shader_parameter/v_osc_speed = 2.2
+shader_parameter/v_osc = false
+shader_parameter/v_osc_width = 0.1
+shader_parameter/v_osc_freq = 2.0
+shader_parameter/scroll = false
+shader_parameter/scroll_speed = 0.0155
+shader_parameter/scroll_dir = Vector2(1, 1)
+shader_parameter/use_custom_texture = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fcd5y"]
+shader = ExtResource("1_5uyfb")
+shader_parameter/alpha = 0.24
+shader_parameter/h_osc_speed = 1.0
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 0.0025
+shader_parameter/h_osc_freq = 9.1885
+shader_parameter/v_osc_speed = 2.2
+shader_parameter/v_osc = false
+shader_parameter/v_osc_width = 0.1
+shader_parameter/v_osc_freq = 2.0
+shader_parameter/scroll = false
+shader_parameter/scroll_speed = -0.015
+shader_parameter/scroll_dir = Vector2(1, 0)
+shader_parameter/use_custom_texture = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rkktj"]
+shader = ExtResource("1_5uyfb")
+shader_parameter/alpha = 0.496
+shader_parameter/h_osc_speed = 0.0335
+shader_parameter/h_osc = true
+shader_parameter/h_osc_interleaved = true
+shader_parameter/h_osc_width = 19.3235
+shader_parameter/h_osc_freq = 0.061
+shader_parameter/v_osc_speed = 0.205
+shader_parameter/v_osc = true
+shader_parameter/v_osc_width = 0.633
+shader_parameter/v_osc_freq = 7.301
+shader_parameter/scroll = false
+shader_parameter/scroll_speed = 0.1
+shader_parameter/scroll_dir = Vector2(0, 1)
+shader_parameter/use_custom_texture = false
+
+[node name="LevelBg" type="Node"]
+
+[node name="BgColor" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BgTexture3" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_yll4y")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_xe8tj")
+
+[node name="BgTexture2" type="TextureRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_fcd5y")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_u7g3k")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="BgTexture" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_rkktj")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_hr4i6")
+expand_mode = 1
+stretch_mode = 1

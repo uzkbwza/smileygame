@@ -7,6 +7,7 @@ class_name PathMover
 @export_range(-1, 1, 2) var direction: int = 1
 @export_range(0.0, 1024.0, 16) var speed = 64.0
 @export_exp_easing() var easing = 1.0
+@export_range(0.0, 2.0, 0.01) var start_offset = 0.0
 
 @export var center: bool:
 	set(value):
@@ -78,7 +79,7 @@ func _physics_process(delta: float) -> void:
 	var length = curve.get_baked_length()
 	var finished = true
 	for i in count:
-		var offset = (float(i) / count) * length
+		var offset = fposmod((float(i) / count) + start_offset, 2.0) * length
 
 		var object = objects[i]
 		if !is_instance_valid(object):

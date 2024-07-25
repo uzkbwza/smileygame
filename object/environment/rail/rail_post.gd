@@ -6,7 +6,7 @@ class_name RailPost
 
 ## TODO: closed loops
 
-const RAIL_WIDTH = 32.0
+const RAIL_WIDTH = 48.0
 
 @onready var area_2d: Area2D = $Area2D
 

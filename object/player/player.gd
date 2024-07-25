@@ -737,7 +737,7 @@ func debug_process() -> void:
 	
 
 func update_camera_target(delta: float) -> void:
-	camera_offset = Math.splerp_vec(camera_offset, Vector2((body.velocity.x) * 0.12 + 20 * (body.velocity.x / 150), CAMERA_VERT_OFFSET) + Vector2(facing * 20, 0), delta, 10.0)
+	camera_offset = Math.splerp_vec(camera_offset, Vector2((body.velocity.x) * 0.12 + 35 * (body.velocity.x / 100), CAMERA_VERT_OFFSET) + Vector2(facing * 20, 0), delta, 10.0)
 
 	Debug.dbg("camera_offset_x", camera_offset.x)
 	
@@ -776,8 +776,8 @@ func update_camera_target(delta: float) -> void:
 	camera_target_raycast.position *= 0
 	camera_target_raycast.target_position = to_local(camera_target.global_position)
 	
-	var camera_target_raycast_check_resolution = 10
-	var camera_target_raycast_check_height = 100
+	var camera_target_raycast_check_resolution = 20
+	var camera_target_raycast_check_height = 200
 	camera_target_raycast.force_raycast_update()
 	var collision_point = camera_target_raycast.get_collision_point()
 	var blocking := true
@@ -971,6 +971,9 @@ func frame_window(pressed_time: Variant, window: int, reset=true):
 		
 func hold_window(held_time: int, window: int):
 	return held_time > 0 and held_time <= window
+
+func reset_jump_window() -> void:
+	input_primary_last_press_time = INPUT_PRESS_BOUND
 
 func input_jump_window(reset=true):
 	return frame_window("input_primary_last_press_time", JUMP_WINDOW, reset)

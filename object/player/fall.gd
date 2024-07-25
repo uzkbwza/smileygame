@@ -139,7 +139,11 @@ func _enter():
 			#return "Kick"
 
 func get_terrain_colliders() -> Array[PhysicsBody2D]:
-	return colliding_terrain
+	var arr: Array[PhysicsBody2D] = []
+	for object in colliding_terrain:
+		if is_instance_valid(object):
+			arr.append(object)
+	return arr
 
 func update_closest_collision_data():
 	is_near_wall = false
@@ -199,7 +203,7 @@ func wall_slide(delta: float):
 		kick_dir = nearest_collision_normal
 	
 	var remapped_overlap = remap(nearest_collision_overlap_ratio, 0.0, 1.0, KICK_OVERLAP_GRAVITY_START, 1.0)
-	if player.input_jump_window():
+	if elapsed_ticks > 1 and !(player.can_coyote_jump and (time < COYOTE_TIME)) and player.input_jump_window():
 		var kick_strength = pow(remapped_overlap, 2)
 		if kick_strength > 1.0 - MAX_STRENGTH_LENIENCY:
 			kick_strength = 1.0
