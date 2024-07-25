@@ -68,6 +68,12 @@ func dbg_enabled_history(id: String, v: float, color:= Color.WHITE, min: float=-
 func dbg_disabled_history(_id: String, _v: Variant, _color:= Color.WHITE, _min: float=-1000.0, _max: float=1000.0) -> void:
 	pass
 
+func clear_items():
+	items.clear()
+	histories.clear()
+	history_data.clear()
+	times.clear()
+
 class TimeLength:
 	var length
 	var name
@@ -117,9 +123,13 @@ func _process(delta):
 		dbg_max(time_array + " max", total_time)
 #		times.erase(time_array)
 
-	if Input.is_action_just_pressed("debug_show") and Debug.enabled:
+	if GlobalInput.is_action_just_pressed("debug_show") and Debug.enabled:
 		draw = !draw
 
+	if GlobalInput.is_action_just_pressed("debug_restart"):
+		if Debug.enabled:
+			get_tree().reload_current_scene()
+	
 func dbg_prop(object: Object, prop: String):
 	dbg(prop, object.get(prop))
 

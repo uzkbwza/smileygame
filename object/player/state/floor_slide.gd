@@ -2,8 +2,10 @@ extends SmileyState
 
 class_name SmileyFloorSlideState
 
-const DOWN_DRAG = 0.07
-const DRAG = 0.999
+const DOWN_DRAG = -0.4
+const DRAG = 0.99
+const MIN_DRAG = 0.01
+const MAX_DRAG = 0.3
 const KICKOFF_DIST = 7
 const SLOPE_SPEED_BOOST = 200
 const BASE_SLOPE_BOOST = 100
@@ -44,32 +46,35 @@ func _enter():
 
 func _update(delta):
 	
-	body.velocity = Math.splerp_vec(body.velocity, player.ground_normal.rotated(TAU/4 * player.facing) * body.velocity.length(), delta, 1.25)
+	body.velocity = Math.splerp_vec(body.velocity, player.ground_normal.rotated(TAU/4 * player.facing) * body.velocity.length(), delta, 2.25)
+	
+	var jump = player.input_jump_window(false)
 	
 	if !player.input_primary_held and elapsed_time > MIN_TIME:
 		return "Run"
 
 	player.duck()
-
 	player.squish()
 	player.feet_lift_body(1000, 2, 10)
 	#player.is_grounded = player.feet_ray.is_colliding()
 
 	var extra_data = {"retain_speed": abs(body.velocity.x)}
 	#var extra_data = {"retain_speed": abs(body.velocity.x), "no_buffer_kick": true}
-	if player.input_primary:
+	if jump:
 		buffer_jump = true
 
 	var jumped = false
 	
-
-	if !(buffer_jump and elapsed_time > MIN_JUMP_TIME and player.input_primary_held and check_jump(extra_data, true)):
-		if buffer_jump and player.input_primary_held:
+	var jump_tricked = buffer_jump and player.process_jumpable_objects(true)
+	
+	
+	if !(buffer_jump and elapsed_time > MIN_JUMP_TIME and jump and (jump_tricked or check_jump(extra_data, true))):
+		if buffer_jump and elapsed_time > MIN_JUMP_TIME :
 			if !player.is_grounded:
 				if body.velocity.y > 0:
 					body.velocity.y = 0
-				check_jump(extra_data, true)
-				jumped = true
+			check_jump(extra_data, true)
+			jumped = true
 		else:
 			if check_fall(extra_data, false):
 				body.velocity = body.velocity.length() * Vector2(player.facing, 0).rotated(floor_angle)
@@ -77,16 +82,21 @@ func _update(delta):
 	else:
 		jumped = true
 
-	if !jumped and buffer_jump and player.input_primary_held and player.get_slope_level() > last_slope:
+	if !jumped and buffer_jump and player.input_primary_held and player.get_slope_level() > last_slope and !jump_tricked:
 			if body.velocity.y > 0:
 				body.velocity.y = 0
+			#if !player.process_jumpable_objects(true):
 			check_jump(extra_data, true)
+			jumped = true
+			#check_jump(extra_data, true)
 			return
 
 	last_slope = player.get_slope_level()
 
 
-	var drag = lerpf(DOWN_DRAG, DRAG, -min(player.slope_level, 0))
+	var drag = lerpf(DOWN_DRAG, DRAG, remap(-(player.slope_level), -1.0, 1.0, 0.0, 1.0))
+	drag = clamp(drag, MIN_DRAG, MAX_DRAG)
+	Debug.dbg("floor_slide_drag", drag)
 	body.apply_drag(delta, drag, drag)
 	if rng.chance_delta(20.0, delta):
 		player.play_sound("FloorSlide2", false)
@@ -121,7 +131,7 @@ func _update(delta):
 	wall_detector.target_position = KICKOFF_DIST * player.ground_normal.rotated(TAU/4) * Vector2(player.facing, 1)
 	player.update_ground_normal()
 	
-	body.apply_force(player.ground_normal * -800)
+	body.apply_force(player.ground_normal * -200)
 
 	
 	wall_detector.force_raycast_update()
@@ -138,7 +148,7 @@ func _update(delta):
 		#print(body.velocity)
 		#queue_state_change("Fall")
 		check_jump({}, true)
-	#elif player.input_secondary:
+	#elif player.input_secondary_pressed:
 		#queue_state_change("KickOff", { "kick_dir": , "kick_strength": 1.0 } )
 		#if check_grounded_kick({"retain_speed": abs(body.velocity.x)}):
 			#pass

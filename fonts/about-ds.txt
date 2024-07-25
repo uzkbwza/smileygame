@@ -1,0 +1,8 @@
+DataSun Font
+By: Techno Cool XYZ (or powspwow)
+
+My first publicly released vector font using Inkscape's font system,
+and then FontForge to have it exported. Traced from font style seen
+from the old Object Pascal related graphic programs.
+
+Available in TTF, and OTF.

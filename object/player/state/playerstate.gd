@@ -3,18 +3,19 @@ extends ObjectState
 class_name SmileyState
 
 #const JUMP_VELOCITY = 910
-const JUMP_VELOCITY = 310
-const KICK_JUMP_FORCE = 200
-const GROUND_POUND_SPEED = 350
-const UPWARD_MOMENTUM_JUMP_MULTIPLIER = 1.0
-const PERP_JUMP_MODIFIER = 1.0
-const OVERLAP_JUMP_CORRECTION = 16
-const FALL_OFF_SPEED = 0
-const MAX_DEBUG_LINES = 5
+const JUMP_VELOCITY := 310.0
+const KICK_JUMP_FORCE := 200.0
+const GROUND_POUND_SPEED := 350.0
+const UPWARD_MOMENTUM_JUMP_MULTIPLIER := 1.0
+const PERP_JUMP_MODIFIER := 1.0
+const OVERLAP_JUMP_CORRECTION := 16.0
+const FALL_OFF_SPEED := 0.0
+const MAX_DEBUG_LINES := 5
 
-@export_range(0.0, 1.0) var update_feet_position_lerp_value = 0.5
-@export_range(0.0, 1.0)  var update_face_position_lerp_value = 0.5
+@export_range(0.0, 1.0) var update_feet_position_lerp_value := 0.5
+@export_range(0.0, 1.0)  var update_face_position_lerp_value := 0.5
 @export var process_trickable_objects := true
+@export var process_jumpable_objects := true
 @export var center_camera := false
 
 var debug_color := Color.WHITE
@@ -24,6 +25,7 @@ var player: SmileyPlayer
 var rng: BetterRng
 
 var elapsed_time := 0.0
+var elapsed_ticks := 0
 
 
 func init():
@@ -88,10 +90,16 @@ func _update_shared(delta: float) -> void:
 		player.update_face_position(update_face_position_lerp_value)
 	if update_feet_position_lerp_value > 0:
 		player.update_feet_position(update_feet_position_lerp_value)
-	elapsed_time += delta
-	if process_trickable_objects:
-		player.process_trickable_objects.call_deferred()
 
+	if process_trickable_objects:
+		player.process_trickable_objects()
+		
+	if process_jumpable_objects:
+		player.process_jumpable_objects()
+	
+	elapsed_time += delta
+	elapsed_ticks += 1
+	
 	if Debug.enabled:
 		queue_redraw()
 
@@ -106,11 +114,11 @@ func check_fall(extra_data: Dictionary = {}, reset_y = true) -> bool:
 	return false
 
 func check_duck() -> void:
-	if player.input_duck:
+	if player.input_duck_held:
 		player.duck()
 	
 #func check_grounded_kick(extra_data = {}) -> bool:
-	#if player.input_secondary:
+	#if player.input_secondary_pressed:
 		#if body.velocity.y > 0:
 			#body.velocity.y *=0 
 		#if body.impulses.y > 0:
@@ -124,8 +132,15 @@ func check_duck() -> void:
 		#return true
 	#return false
 
+func get_terrain_colliders() -> Array[PhysicsBody2D]:
+	return []
+
 func check_jump(extra_data: Dictionary = {}, force=false) -> bool:
+
 	if force or (player.input_jump_window() and !(player.ceiling_detector.is_colliding() and player.ducking)):
+		if player.state_machine.queued_states.size() > 0:
+			return false
+		
 		if body.velocity.y > 0:
 			body.velocity.y *= 0
 		if body.impulses.y > 0:
@@ -143,6 +158,10 @@ func check_jump(extra_data: Dictionary = {}, force=false) -> bool:
 		body.move_and_collide(Vector2(0, player.floor_overlap_ratio * -OVERLAP_JUMP_CORRECTION))
 		extra_data.merge({"jump": true})
 		queue_state_change("Fall", extra_data)
+		
+		player.jumped_off_ground.emit(Vector2.UP)
+		player.jumped_off_something.emit(Vector2.UP)
+		
 		var normal = player.ground_normal
 		var perp_jump = sign(player.input_move_dir) == sign(normal.x) and player.input_move_dir != 0 and player.is_grounded and sign(body.velocity.x) != sign(normal.x)
 		var lerp_amount = 1.0 if perp_jump else 0.0

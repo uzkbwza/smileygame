@@ -102,6 +102,7 @@ scale = Vector2(3, 3)
 texture = ExtResource("1_0ldmb")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+z_index = 2
 material = SubResource("ShaderMaterial_82odu")
 texture = ExtResource("1_0ldmb")
 

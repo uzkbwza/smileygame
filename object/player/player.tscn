@@ -446,6 +446,14 @@ monitorable = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TrickableObjectDetector" index="0"]
 shape = SubResource("CircleShape2D_kya5m")
 
+[node name="JumpableObjectDetector" type="Area2D" parent="." index="6"]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 32
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="JumpableObjectDetector" index="0"]
+shape = SubResource("CircleShape2D_kya5m")
+
 [node name="Idle" type="Node2D" parent="StateMachine" index="0"]
 script = ExtResource("16_1k1wy")
 apply_gravity = false
@@ -513,7 +521,9 @@ one_shot = true
 [node name="Grabbed" type="Node2D" parent="StateMachine" index="3"]
 script = ExtResource("48_v380v")
 update_feet_position_lerp_value = 1.0
-update_face_position_lerp_value = 1.0
+update_face_position_lerp_value = 0.0
+process_trickable_objects = false
+process_jumpable_objects = false
 apply_physics = false
 apply_gravity = false
 apply_friction = false
@@ -523,12 +533,15 @@ script = ExtResource("47_wat83")
 hide_feet = false
 update_feet_position_lerp_value = 1.0
 update_face_position_lerp_value = 1.0
+process_trickable_objects = false
+process_jumpable_objects = false
 apply_physics = false
 apply_gravity = false
 apply_friction = false
 
 [node name="FloorSlide" type="Node2D" parent="StateMachine" index="5"]
 script = ExtResource("44_abk8y")
+process_jumpable_objects = false
 apply_friction = false
 
 [node name="WallDetector" type="RayCast2D" parent="StateMachine/FloorSlide" index="0"]
@@ -562,15 +575,14 @@ one_shot = true
 
 [node name="GrindRail" type="Node2D" parent="StateMachine" index="7"]
 script = ExtResource("34_5a2ep")
-process_trickable_objects = false
 apply_gravity = false
-apply_friction = false
 
 [node name="TrickSpinner" type="Node2D" parent="StateMachine" index="8"]
 script = ExtResource("50_blq20")
 update_feet_position_lerp_value = 1.0
 update_face_position_lerp_value = 1.0
 process_trickable_objects = false
+process_jumpable_objects = false
 center_camera = true
 apply_physics = false
 apply_gravity = false
@@ -581,49 +593,71 @@ script = ExtResource("49_vihsh")
 apply_gravity = false
 apply_friction = false
 
-[node name="CeilingDetector" type="RayCast2D" parent="." index="7"]
+[node name="CeilingDetector" type="RayCast2D" parent="." index="8"]
 unique_name_in_owner = true
 target_position = Vector2(0, -5)
 collision_mask = 513
 hit_from_inside = true
 
-[node name="Foot1Rest" type="RayCast2D" parent="." index="8"]
+[node name="Foot1Rest" type="RayCast2D" parent="." index="9"]
 unique_name_in_owner = true
 rotation = 0.174533
 target_position = Vector2(0, 40)
 hit_from_inside = true
 
-[node name="Foot2Rest" type="RayCast2D" parent="." index="9"]
+[node name="Foot2Rest" type="RayCast2D" parent="." index="10"]
 unique_name_in_owner = true
 rotation = -0.174533
 target_position = Vector2(0, 40)
 hit_from_inside = true
 
-[node name="CameraTarget" type="Marker2D" parent="." index="10"]
+[node name="CameraTarget" type="Marker2D" parent="." index="11"]
 unique_name_in_owner = true
 
-[node name="FeetPos" type="RayCast2D" parent="." index="11"]
+[node name="FeetPos" type="RayCast2D" parent="." index="12"]
 unique_name_in_owner = true
 self_modulate = Color(0.669624, 0.3145, 1, 1)
 target_position = Vector2(0, 25)
 hit_from_inside = true
 
-[node name="CameraTargetRaycast" type="RayCast2D" parent="." index="12"]
+[node name="CameraTargetRaycast" type="RayCast2D" parent="." index="13"]
 target_position = Vector2(0, 10)
 hit_from_inside = true
 
-[node name="WallRetainMomentumTimer" type="Timer" parent="." index="13"]
+[node name="WallRetainMomentumTimer" type="Timer" parent="." index="14"]
 process_callback = 0
 one_shot = true
 
-[node name="GrindCooldown" type="Timer" parent="." index="14"]
+[node name="GrindCooldown" type="Timer" parent="." index="15"]
 process_callback = 0
 wait_time = 0.167
 one_shot = true
 
-[node name="ReTrickTimer" type="Timer" parent="." index="15"]
+[node name="ReTrickTimer" type="Timer" parent="." index="16"]
 process_callback = 0
 wait_time = 0.0833333
 one_shot = true
 script = ExtResource("50_tjctf")
 frames = 5
+
+[node name="ReJumpTimer" type="Timer" parent="." index="17"]
+process_callback = 0
+wait_time = 0.0833333
+one_shot = true
+script = ExtResource("50_tjctf")
+frames = 5
+
+[node name="DamageInvulnerability" type="Timer" parent="." index="18"]
+process_callback = 0
+wait_time = 0.333333
+one_shot = true
+script = ExtResource("50_tjctf")
+frames = 20
+
+[node name="InvulnFlashTimer" type="Timer" parent="." index="19"]
+wait_time = 0.05
+script = ExtResource("50_tjctf")
+frames = 3
+force_physics = false
+
+[connection signal="timeout" from="InvulnFlashTimer" to="." method="_on_invuln_flash_timer_timeout"]

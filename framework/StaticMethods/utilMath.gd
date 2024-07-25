@@ -25,15 +25,39 @@ static func inverse_lerp_clamp(a: Variant, b: Variant, v: float) -> Variant:
 	return clamp(inverse_lerp(a, b, v), 0.0, 1.0)
 
 static func angle_diff(from: float, to: float) -> float:
-	return fposmod(to-from + PI, PI*2) - PI
+	var result = fposmod(to-from + PI, TAU) - PI
+	return result
 
 ## exponential decay function stolen from freya holmer 
-## i call it spring lerp or splerp for short because it's funny
+## i call it a funny name ever since framk incorrectly referred to it as spring lerp
+## uses frames at 60fps instead of seconds
 static func splerp(a: float, b: float, delta: float, half_life: float) -> float:
 	return b + (a - b) * pow(2, -delta / (half_life / 60))
+
+static func splerp_color(a: Color, b: Color, delta: float, half_life: float) -> Color:
+	return a.lerp(b, 1 - pow(2, -delta / (half_life / 60)))
 	
+
 static func splerp_vec(a: Vector2, b: Vector2, delta: float, half_life: float) -> Vector2:
 	return b + (a - b) * pow(2, -delta / (half_life / 60))
+
+static func splerp_angle(a: float, b: float, delta: float, half_life: float) -> float:
+	return lerp_angle(a, b, 1 - pow(2, -delta / (half_life / 60)))
+	
+static func splerp_wrap(a: float, b: float, mod: float, delta: float, half_life: float) -> float:
+	return lerp_wrap(a, b, mod, 1 - pow(2, -delta / (half_life / 60)))
+
+static func lerp_wrap(a:float, b:float, mod:float, weight:float) -> float:
+	return a + wrap_diff(a, b, mod) * weight
+
+static func wrap_diff(from: float, to: float, wrap: float) -> float:
+	var max_angle = wrap / 2.0
+	var difference = fmod(to - from, max_angle)
+	return fmod(2 * difference, max_angle) - difference
+
+
+static func wrap_dist_from_center(from: float, center: float, wrap: float) -> float:
+	return wrap_diff(from - center, 0, wrap)
 
 static func ping_pong_interpolate(value: float, a: float, b: float, ease:=1.0) -> float:
 	var start = min(a, b)

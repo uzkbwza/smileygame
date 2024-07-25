@@ -84,7 +84,7 @@ func on_player_death_animation_started():
 	
 	giant_player_sprite.modulate.a = 0.0
 	background_color_overlay.color.a = 0.0
-	background_color_overlay.global_position = player.global_position - background_color_overlay.size / 2.0
+	#background_color_overlay.global_position = player.global_position - background_color_overlay.size / 2.0
 	
 	death_animation_layer.show()
 	

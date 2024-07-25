@@ -39,7 +39,7 @@ func strength_formula(distance: float) -> float:
 	return strength_gradient.sample(distance / length).v
 	#return (1.0 - (distance / length)) ** 2
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		update_everything()
 		queue_redraw()

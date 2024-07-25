@@ -36,6 +36,34 @@ static func get_first_dict_key_below_number(dict: Dictionary, num: int):
 			highest = key
 	return highest
 
+static func load_resource_threaded(resource_path: StringName, await_callback: Callable, progress_callback:Callable = func(progress: Array) -> void: return) -> Resource:
+	#print(resource_path) 
+
+	var progress: Array[int] = [0]
+	var resource: Resource
+
+	ResourceLoader.load_threaded_request(resource_path)
+	
+	while true:
+		var status = ResourceLoader.load_threaded_get_status(resource_path, progress)
+		var signal_ = await_callback.call()
+		if signal_ == null:
+			break
+		await signal_
+		if is_instance_valid(progress_callback):
+			progress_callback.call(progress)
+		match status:
+			ResourceLoader.ThreadLoadStatus.THREAD_LOAD_INVALID_RESOURCE:
+				break
+			ResourceLoader.ThreadLoadStatus.THREAD_LOAD_FAILED:
+				break
+			ResourceLoader.ThreadLoadStatus.THREAD_LOAD_LOADED:
+				resource = ResourceLoader.load_threaded_get(resource_path)
+				break
+			ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
+				continue
+	return resource
+
 static func tree_set_all_process(p_node: Node, p_active: bool, p_self_too: bool = false) -> void:
 	if not p_node:
 		push_error("p_node is empty")

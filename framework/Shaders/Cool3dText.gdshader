@@ -27,6 +27,7 @@ varying vec2 vertex_base;
 varying flat vec2 glyph_position;
 varying vec2 padding;
 varying vec4 my_modulate;
+
 void vertex() {
 	// Magic :)
 	vertex_base = vec2(float(VERTEX_ID>>1), float(6>>VERTEX_ID&1));

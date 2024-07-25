@@ -18,7 +18,7 @@ func _update(delta: float):
 			#return
 		pass
 
-	if !player.input_secondary_held:
+	if !player.input_secondary_held and elapsed_ticks > 2:
 		fall_and_retain_speed()
 		return
 
@@ -31,4 +31,4 @@ func _update(delta: float):
 func _exit():
 	player.last_tricked_object = captor
 	player.re_trick_timer.go(12)
-	captor.release_player()
+	captor.release_player.call_deferred()

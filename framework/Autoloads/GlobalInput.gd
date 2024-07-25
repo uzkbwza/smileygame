@@ -31,6 +31,14 @@ func _input(event):
 		if event.pressed and event.keycode == KEY_F11:
 			Display.toggle_fullscreen()
 
+func can_process_input(node: Node) -> bool:
+	return node.get_meta("input_enabled", true)
+
+func is_action_pressed(action: StringName) -> bool:
+	return Input.is_action_pressed(action)
+
+func is_action_just_pressed(action: StringName) -> bool:
+	return Input.is_action_just_pressed(action)
 
 func toggle_mouse_mode():
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:

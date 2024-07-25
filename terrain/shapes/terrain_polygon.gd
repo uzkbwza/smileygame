@@ -40,6 +40,12 @@ const SHADOW_OFFSET = Vector2(16, 16)
 			center_root = false
 			move_root_to_center()
 
+@export var reset_transform: bool:
+	set(value):
+		if value:
+			reset_transform = false
+			do_reset_transform()
+
 @export var reset_root: bool:
 	set(value):
 		if value:
@@ -85,6 +91,13 @@ func center_points():
 		var new_points = Shape.move_polygon(polygon, move)
 		polygon = new_points
 
+func do_reset_transform():
+	polygon = Transform2D(rotation, scale, 0.0, position) * polygon
+	rotation *= 0
+	position *= 0
+	scale = Vector2.ONE
+	pass
+
 func move_root_to_center():
 	var current_center = Shape.get_polygon_center(polygon)
 	global_position = to_global(current_center)
@@ -100,6 +113,7 @@ func _ready():
 	if Engine.is_editor_hint():
 		for child in get_children():
 			child.queue_free()
+		do_reset_transform()
 	else:
 		set_process(false)
 		if force_create_physics_body:
@@ -172,7 +186,7 @@ func create_border():
 	update_border()
 
 func create_physics_body():
-	body = StaticBody2D.new()
+	body = KinematicObject2D.new()
 	body.z_index += 1
 	body.collision_layer = collision_layer
 	var collision_polygon_2d = CollisionPolygon2D.new()

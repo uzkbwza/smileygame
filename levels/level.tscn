@@ -51,6 +51,7 @@ scroll_scale = Vector2(0.25, 0.25)
 
 [node name="DeathAnimationLayer" type="Parallax2D" parent="."]
 unique_name_in_owner = true
+visible = false
 z_index = -2
 scroll_scale = Vector2(0, 0)
 scroll_offset = Vector2(-1, 0)
@@ -70,7 +71,7 @@ color = Color(0, 0, 0, 0)
 [node name="GiantPlayerSprite" type="Sprite2D" parent="DeathAnimationLayer"]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.858824)
-position = Vector2(0, -16)
+position = Vector2(256, 176)
 scale = Vector2(20, 20)
 texture = ExtResource("2_m680j")
 

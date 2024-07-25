@@ -35,4 +35,4 @@ func _exit_shared():
 		player.foot_2.global_position = player.global_position
 
 	super._exit_shared()
-	player.invulnerable = false
+	#player.invulnerable = false

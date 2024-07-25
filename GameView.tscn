@@ -1,0 +1,73 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddpmcelqunldi"]
+
+[ext_resource type="Script" path="res://game_view.gd" id="1_logd5"]
+[ext_resource type="Script" path="res://framework/IntegerScaleViewportContainer.gd" id="2_sutc2"]
+
+[node name="GameView" type="CanvasLayer"]
+process_priority = -3
+follow_viewport_enabled = true
+script = ExtResource("1_logd5")
+
+[node name="GameViewport" type="SubViewportContainer" parent="."]
+clip_children = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("2_sutc2")
+metadata/_edit_lock_ = true
+
+[node name="GameSubViewport" type="SubViewport" parent="GameViewport"]
+unique_name_in_owner = true
+physics_interpolation_mode = 1
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="GameViewport/GameSubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScreenOverlayViewport" type="SubViewportContainer" parent="."]
+clip_children = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("2_sutc2")
+metadata/_edit_lock_ = true
+
+[node name="ScreenOverlaySubViewport" type="SubViewport" parent="ScreenOverlayViewport"]
+physics_interpolation_mode = 1
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="ScreenFadeRect" type="ColorRect" parent="ScreenOverlayViewport/ScreenOverlaySubViewport"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0, 0, 0, 0)

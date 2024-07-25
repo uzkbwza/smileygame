@@ -1,9 +1,11 @@
 extends Node
 
-var rainbow = Utils.rainbow_gradient()
+const MAIN_CAMPAIGN = preload("res://levels/campaigns/MainCampaign.tres")
 
+var rainbow = Utils.rainbow_gradient()
 var level: Node2D
 
+var current_campaign: Campaign = MAIN_CAMPAIGN
 
 @onready var viewport_size := Vector2i(
 			ProjectSettings.get_setting("display/window/size/viewport_width"),
@@ -12,7 +14,6 @@ var level: Node2D
 
 func _ready():
 	RenderingServer.set_default_clear_color(Color("000000"))
-
 
 func get_level() -> Node2D:
 	if !is_instance_valid(level):

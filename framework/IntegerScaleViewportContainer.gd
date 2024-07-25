@@ -10,8 +10,6 @@ var pixel_perfect_scaling_enabled:
 	get:
 		return Config.pixel_perfect_mode
 
-@onready var sub_viewport = $SubViewport
-
 @onready var viewport_size := Vector2i(
 			ProjectSettings.get_setting("display/window/size/viewport_width"),
 			ProjectSettings.get_setting("display/window/size/viewport_height"),
@@ -19,7 +17,14 @@ var pixel_perfect_scaling_enabled:
 
 @export var update_list: Array[Control] = []
 
+var sub_viewport: SubViewport
+
 func _ready():
+	for child in get_children():
+		if child is SubViewport:
+			sub_viewport = child
+			break
+
 	stretch = true
 	sub_viewport.size_2d_override_stretch = true
 	get_viewport().size_changed.connect(update_viewport)
@@ -27,6 +32,7 @@ func _ready():
 	update_viewport.call_deferred()
 
 func update_viewport():
+	#hide()
 	await RenderingServer.frame_post_draw
 
 	var window_size: Vector2i = DisplayServer.window_get_size()
@@ -54,3 +60,5 @@ func update_viewport():
 		control.size = size
 		pass
 	DisplayServer.window_set_min_size(viewport_size)
+	#await RenderingServer.frame_post_draw
+	#show()

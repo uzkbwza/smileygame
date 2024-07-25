@@ -220,6 +220,7 @@ static func create_one_tileset(input: TileSetGeneratorInput, image_index, palett
 	generate_palettes()
 	print("generating " + params_to_filename(input.name, image_index, palette_index_1, palette_index_2, palette_offset_index))
 	var input_tileset = input.texture.get_image() 
+	#input_tileset.convert(Image.FORMAT_RGBA8)
 	var input_name = input.name
 	
 	var time = Time.get_ticks_msec()
@@ -242,6 +243,7 @@ static func create_one_tileset(input: TileSetGeneratorInput, image_index, palett
 	
 	for file in Utils.walk_path(INPUT_BLOCKS_FOLDER.path_join(input_name), true, "png"):
 		var image = ResourceLoader.load(file).get_image()
+		image.convert(Image.FORMAT_RGBA8)
 		input_block_images.append(image)
 		TILE_WIDTH = image.get_width()
 		TILE_HEIGHT = image.get_height()

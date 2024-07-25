@@ -17,6 +17,8 @@ const WALL_SLIDE_RAYCAST_LENGTH = 8
 
 const DIAGONAL_STICKY_TIME = 0.0167
 
+const ALLOW_JUMP_TRICKING_FRAMES = 4
+
 const WIDEST_ANGLE = TAU/6
 
 const KICK_OVERLAP_GRAVITY_START = 1.0 - (WALL_SLIDE_RAYCAST_LENGTH / SmileyKickState.KICK_DIST)
@@ -61,6 +63,8 @@ var slide_time = 0.0
 var slide_dir := Vector2()
 var slide_input_force_dir := Vector2()
 
+var colliding_terrain: Array[PhysicsBody2D] = []
+
 func _ready():
 	for i in WALL_SLIDE_RAYCAST_RESOLUTION:
 		var raycast = RayCast2D.new()
@@ -69,8 +73,6 @@ func _ready():
 		add_child.call_deferred(raycast)
 		wall_raycasts.append(raycast)
 		raycast.hide()
-
-
 
 func _enter():
 	player.wall_sliding = false
@@ -98,6 +100,8 @@ func _enter():
 	jump_grace_pos.enabled = true
 	foot_2_rest.enabled = true
 	player.is_grounded = false
+	#process_jumpable_objects = data == null or (data is Dictionary and !data.has("jump"))
+	
 	starting_dir = signf(body.velocity.x)
 	prev_speed = 0.0
 
@@ -131,11 +135,16 @@ func _enter():
 	slide_time = 0.0
 #
 	#if player.input_secondary_held:
-		#if !(data and data.get("jump") and player.input_duck):
+		#if !(data and data.get("jump") and player.input_duck_held):
 			#return "Kick"
+
+func get_terrain_colliders() -> Array[PhysicsBody2D]:
+	return colliding_terrain
 
 func update_closest_collision_data():
 	is_near_wall = false
+
+	colliding_terrain.clear()
 
 	nearest_collision_distance = INF
 	for raycast in wall_raycasts:
@@ -153,6 +162,10 @@ func update_closest_collision_data():
 			nearest_collision_distance = dist
 			nearest_collision_normal = normal
 			nearest_collision_point = point
+			
+		var collider = raycast.get_collider()
+		if (dist < 16 or player.input_move_dir_vec_normalized.dot(normal) < -MIN_SLIDE_DIFFERENCE) and !(collider in colliding_terrain):
+			colliding_terrain.append(collider)
 
 	if !is_near_wall:
 		return
@@ -186,7 +199,7 @@ func wall_slide(delta: float):
 		kick_dir = nearest_collision_normal
 	
 	var remapped_overlap = remap(nearest_collision_overlap_ratio, 0.0, 1.0, KICK_OVERLAP_GRAVITY_START, 1.0)
-	if player.input_primary:
+	if player.input_jump_window():
 		var kick_strength = pow(remapped_overlap, 2)
 		if kick_strength > 1.0 - MAX_STRENGTH_LENIENCY:
 			kick_strength = 1.0
@@ -233,7 +246,10 @@ func wall_slide(delta: float):
 			particle.rotation = body.velocity.angle()
 			particle.starting_velocity = maxf(body.speed * 0.5, 200)
 			particle.go.call_deferred()
-	
+#
+	#if elapsed_ticks > ALLOW_JUMP_TRICKING_FRAMES:
+		#process_jumpable_objects = true
+	#
 	if player.feet_ray.is_colliding():
 		player.set_deferred("is_grounded", true)
 
@@ -249,7 +265,7 @@ func wall_slide(delta: float):
 	player.foot_1_was_touching_ground = foot_1_rest.is_colliding()
 
 	if wall_sliding:
-		body.apply_gravity(Vector2.DOWN * lerpf(body.gravity, body.gravity * clampf(slide_time, 0, 2), remapped_overlap))
+		body.apply_gravity(Vector2.DOWN * lerpf(body.gravity, body.gravity * clampf(slide_time, 0, 1), remapped_overlap))
 		pass
 	else:
 		body.apply_gravity()

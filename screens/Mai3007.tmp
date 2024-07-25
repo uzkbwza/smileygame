@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://b68y2gupisf4b"]
+
+[ext_resource type="Script" path="res://screens/main_menu.gd" id="1_pu06s"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+physics_interpolation_mode = 2
+script = ExtResource("1_pu06s")
+
+[node name="Bg" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="Bg"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0728427, 0.0728426, 0.0728426, 1)
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="MenuStuff" type="CanvasLayer" parent="."]
+
+[node name="Anchor" type="Node2D" parent="MenuStuff"]
+metadata/_edit_lock_ = true

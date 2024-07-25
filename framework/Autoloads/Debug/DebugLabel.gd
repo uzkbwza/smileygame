@@ -1,9 +1,9 @@
 extends Label
 
 class_name DebugLabel
-var timer
+var timer: Timer
 
-func _ready():
+func _ready() -> void:
 	if !Debug.draw:
 		hide()
 	timer = Timer.new()
@@ -12,11 +12,14 @@ func _ready():
 	timer.timeout.connect(loop)
 	loop()
 	
-func loop():
+func loop() -> void:
+	visible = Debug.draw
+	if !visible:
+		timer.start()
+		return
+		
 	if Debug.enabled:
 		text = ""
 		for line in Debug.lines():
 			text = text + line + "\n"
 		timer.start()
-	visible = Debug.draw
-	#hide()

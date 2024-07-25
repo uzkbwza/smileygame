@@ -112,6 +112,8 @@ func load_file() -> void:
 	
 	var image = TileSetGenerator.create_one_tileset(input, pattern_index, palette_index, palette_index, palette_offset)
 	
+	image.convert(Image.FORMAT_RGBA8)
+	
 	if image:
 		self.set_image(image) 
 

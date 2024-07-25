@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhxafqxbde27r"]
+
+[ext_resource type="Script" path="res://object/environment/spring/spring.gd" id="1_a5vai"]
+[ext_resource type="Texture2D" uid="uid://begv5wlexgeny" path="res://icon.svg" id="2_qahkk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a6hqp"]
+size = Vector2(64, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_by7s3"]
+size = Vector2(40, 60)
+
+[node name="Spring" type="Area2D"]
+process_physics_priority = -1
+collision_layer = 48
+collision_mask = 2
+script = ExtResource("1_a5vai")
+
+[node name="Base" type="Sprite2D" parent="."]
+position = Vector2(8, 0)
+rotation = 1.57079
+scale = Vector2(0.5, 0.125)
+texture = ExtResource("2_qahkk")
+
+[node name="End" type="Sprite2D" parent="."]
+position = Vector2(40, 0)
+rotation = 1.57079
+scale = Vector2(0.5, 0.125)
+texture = ExtResource("2_qahkk")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+rotation = 1.57079
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-9.53674e-07, -8)
+shape = SubResource("RectangleShape2D_a6hqp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(24, 0)
+shape = SubResource("RectangleShape2D_by7s3")
+
+[node name="PointA" type="Marker2D" parent="."]
+position = Vector2(16, -32)
+
+[node name="PointB" type="Marker2D" parent="."]
+position = Vector2(16, 32)
+
+[node name="SpringStart" type="Marker2D" parent="."]
+position = Vector2(8, 0)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

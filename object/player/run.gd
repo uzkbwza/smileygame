@@ -129,7 +129,8 @@ func _update(delta: float):
 			player.play_sound("Skid")
 			player.play_sound("Skid2")
 			var particle_offs := player.to_local(player.feet_ray.get_collision_point() + Vector2(player.facing * player.rng.randf_range(8, -5), 0).rotated(player.get_floor_angle()))
-			player.spawn_scene(preload("res://object/player/fx/skid_dust.tscn"), particle_offs, dir)
+			var particle = player.spawn_scene(preload("res://object/player/fx/skid_dust.tscn"), particle_offs, dir)
+
 		body.velocity.x *= 0.999
 		prev_speed = 0
 		retain_speed = false
@@ -169,7 +170,7 @@ func _update(delta: float):
 			#body.velocity = player.ground_normal.rotated(TAU/4 * player.facing) * body.speed
 			
 		if slope > 0:
-			body.velocity = Math.splerp_vec(body.velocity, player.ground_normal.rotated(TAU/4 * player.facing) * body.speed, delta, 5.5 * (1 - slope))
+			body.velocity = Math.splerp_vec(body.velocity, player.ground_normal.rotated(TAU/4 * player.facing) * body.speed, delta, 5.5 * (1 - slope) * max(1 - body.speed / 300, 0.0))
 
 		player.feet_lift_body(SmileyPlayer.SPRING_AMOUNT, 2)  
 
@@ -179,8 +180,8 @@ func _update(delta: float):
 		if player.input_slide_window():
 			return "FloorSlide"
 
-	player.foot_1_pos = foot_1_rest.get_collision_point() if foot_1_rest.is_colliding() else Physics.get_point_on_raycast(foot_1_rest, 1.0 if !player.input_duck else 0.75)
-	player.foot_2_pos = foot_2_rest.get_collision_point() if foot_2_rest.is_colliding() else Physics.get_point_on_raycast(foot_2_rest, 1.0 if !player.input_duck else 0.75)
+	player.foot_1_pos = foot_1_rest.get_collision_point() if foot_1_rest.is_colliding() else Physics.get_point_on_raycast(foot_1_rest, 1.0 if !player.input_duck_held else 0.75)
+	player.foot_2_pos = foot_2_rest.get_collision_point() if foot_2_rest.is_colliding() else Physics.get_point_on_raycast(foot_2_rest, 1.0 if !player.input_duck_held else 0.75)
 
 
 	if retain_speed:

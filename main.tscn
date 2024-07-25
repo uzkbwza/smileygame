@@ -1,15 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://dxpugm2wudu7x"]
+[gd_scene load_steps=6 format=3 uid="uid://dxpugm2wudu7x"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_npn1s"]
-[ext_resource type="Script" path="res://game_view.gd" id="2_bjns2"]
-[ext_resource type="Script" path="res://framework/IntegerScaleViewportContainer.gd" id="3_65avi"]
-[ext_resource type="PackedScene" uid="uid://bopjrdhyrjclp" path="res://game.tscn" id="4_3g1x4"]
+[ext_resource type="PackedScene" uid="uid://ddpmcelqunldi" path="res://GameView.tscn" id="2_6e08l"]
 [ext_resource type="Script" path="res://framework/Autoloads/Debug/debug_history.gd" id="8_oxlv7"]
 [ext_resource type="Theme" uid="uid://bf211gwt1w3k4" path="res://theme.tres" id="13_iop45"]
 [ext_resource type="Script" path="res://framework/Autoloads/Debug/DebugLabel.gd" id="14_bhb4p"]
 
 [node name="Root" type="Node"]
 script = ExtResource("1_npn1s")
+start_screen = "res://screens/MainMenu.tscn"
+start_screen_debug = "res://screens/MainMenu.tscn"
 
 [node name="BgLayer" type="CanvasLayer" parent="."]
 layer = -128
@@ -31,33 +31,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GameView" type="CanvasLayer" parent="."]
-process_priority = -3
-follow_viewport_enabled = true
-script = ExtResource("2_bjns2")
-
-[node name="GameViewport" type="SubViewportContainer" parent="GameView"]
-clip_children = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch = true
-script = ExtResource("3_65avi")
-metadata/_edit_lock_ = true
-
-[node name="SubViewport" type="SubViewport" parent="GameView/GameViewport"]
-physics_interpolation_mode = 1
-transparent_bg = true
-handle_input_locally = false
-snap_2d_transforms_to_pixel = true
-canvas_item_default_texture_filter = 0
-audio_listener_enable_2d = true
-size = Vector2i(640, 360)
-render_target_update_mode = 4
-
-[node name="Game" parent="GameView/GameViewport/SubViewport" instance=ExtResource("4_3g1x4")]
+[node name="GameView" parent="." instance=ExtResource("2_6e08l")]
+unique_name_in_owner = true
 
 [node name="DebugLayer" type="CanvasLayer" parent="."]
 
@@ -100,5 +75,3 @@ grow_vertical = 2
 theme = ExtResource("13_iop45")
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]

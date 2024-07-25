@@ -176,7 +176,7 @@ func _update(delta: float):
 	player.squish(get_accurate_velocity())
 	#body.velocity.y = min(body.velocity.y, get_accurate_velocity().y) # FIX THIS
 	
-	var jump_input = player.input_jump_window()
+	var jump_input = player.input_jump_window(false)
 
 	if jump_input:
 		update_body_velocity()

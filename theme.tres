@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=2 format=3 uid="uid://bf211gwt1w3k4"]
 
-[ext_resource type="FontFile" uid="uid://brlrkkquxpeig" path="res://framework/font/PixeloidSans.ttf" id="1_l8nxl"]
+[ext_resource type="FontFile" uid="uid://dfiiylc8b7dgm" path="res://framework/font/liberation_sans/LiberationSans-Bold.ttf" id="1_3dl1v"]
 
 [resource]
-default_font = ExtResource("1_l8nxl")
-default_font_size = 9
+default_font = ExtResource("1_3dl1v")
+default_font_size = 18

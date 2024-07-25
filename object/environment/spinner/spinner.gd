@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 		var diff = angle_difference(current_angle, starting_direction)
 		accel += sign(diff) * RETURN_SPEED 
 		#print(diff)
-		if abs(diff) < 0.01 and abs(velocity) <= 0.01:
+		if abs(diff) < 0.02 and abs(velocity) <= 0.01:
 			current_angle = starting_direction
 			set_physics_process.call_deferred(false)
 	else:
